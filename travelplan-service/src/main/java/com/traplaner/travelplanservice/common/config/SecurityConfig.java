@@ -1,7 +1,7 @@
 package com.traplaner.travelplanservice.common.config;
 
-import com.project.traplaner.common.auth.JwtAuthFilter;
-import com.project.traplaner.common.dto.CustomAuthenticationEntryPoint;
+import com.traplaner.travelplanservice.common.auth.JwtAuthFilter;
+import com.traplaner.travelplanservice.common.dto.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -42,11 +42,6 @@ public class SecurityConfig {
                     auth
                             .requestMatchers(
                                     "/",
-                                    "/members/**",
-                                    "/WEB-INF/views/**",
-                                    "static/**",
-                                    "assets/img/*",
-                                    "/favicon.ico",
                                     "/error",
                                     "/main/top3-favorite")
                             .permitAll()

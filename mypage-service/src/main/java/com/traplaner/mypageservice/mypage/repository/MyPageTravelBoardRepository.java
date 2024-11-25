@@ -1,7 +1,4 @@
 package com.traplaner.mypageservice.mypage.repository;
-
-import com.traplaner.mypage.dto.response.TravelBoardResponseDTO;
-import com.traplaner.travelBoard.entity.TravelBoard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

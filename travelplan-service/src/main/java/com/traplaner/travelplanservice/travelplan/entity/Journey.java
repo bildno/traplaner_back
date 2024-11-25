@@ -38,7 +38,7 @@ public class Journey {
     private int id;
 
     @JoinColumn(name = "travel_id", nullable = false)
-    int travl;
+    int travelId;
 
     @Column(name = "journey_name", nullable = false)
     String journeyName;

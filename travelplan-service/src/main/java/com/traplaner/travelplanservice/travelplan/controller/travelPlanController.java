@@ -24,12 +24,7 @@ import java.util.Map;
 public class travelPlanController {
     private final TravelService travelService;
 
-    @GetMapping("/travelplan")
-    public String travelPlan() {
-        return "travelplan/travelplan";
-    }
-
-    @PostMapping("/travelplan")
+    @PostMapping("/create")
     @ResponseBody
     public ResponseEntity<?> travelSave(@AuthenticationPrincipal TokenUserInfo userInfo,
                                         @RequestParam("data") String data,
@@ -57,7 +52,7 @@ public class travelPlanController {
 
         //서비스 로직으로 전환된 json 데이터 전달
 
-        Travel savedTravel = travelService.saveTravel(requestDTO.getTravel(), userInfo.getEmail());
+        Travel savedTravel = travelService.saveTravel(requestDTO.getTravel(), Integer.parseInt(userInfo.getId()));
         travelService.saveJourneys(requestDTO.getJourneys());
 
         //이거 뭐임...? 기억에 없는데엽...? 내가 쓴건가? 강사님이 고쳐주신건가보당 ㅎㅎ;;; 근데 왜 있어야하는거지ㅠ......?

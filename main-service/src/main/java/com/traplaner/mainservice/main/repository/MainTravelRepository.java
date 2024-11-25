@@ -1,8 +1,5 @@
 package com.traplaner.mainservice.main.repository;
 
-import com.traplaner.mainservice.main.dto.MainTravelDto;
-import com.traplaner.mainservice.main.dto.TopThreeFavoriteTravelDto;
-//import com.traplaner.mainservice.travelplan.entity.Travel;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

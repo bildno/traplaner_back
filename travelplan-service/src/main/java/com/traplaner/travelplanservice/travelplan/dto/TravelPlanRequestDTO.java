@@ -3,7 +3,6 @@ package com.traplaner.travelplanservice.travelplan.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.traplaner.travelplanservice.travelplan.entity.Journey;
-import com.traplaner.travelplanservice.travelplan.entity.Travel;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -63,7 +62,7 @@ public class TravelPlanRequestDTO {
         @JsonProperty("budget")
         private int budget;
 
-        public Journey toEntity(Travel travel) {
+        public Journey toEntity(int travelId) {
             // 날짜 문자열을 OffsetDateTime으로 파싱 후 LocalDate로 변환
             OffsetDateTime offsetDateTime = OffsetDateTime.parse(date);
             LocalDate localDate = offsetDateTime.toLocalDate();
@@ -75,7 +74,7 @@ public class TravelPlanRequestDTO {
             LocalDateTime s = LocalDateTime.of(localDate, localStartTime);
             LocalDateTime e = LocalDateTime.of(localDate, localEndTime);
             return Journey.builder()
-                    .travel(travel)
+                    .travelId(travelId)
                     .journeyName(journeyName)
                     .accommodationRoadAddressName(accommodationRoadAddressName)
                     .accommodationName(location)
@@ -86,7 +85,7 @@ public class TravelPlanRequestDTO {
                     .build();
         }
 
-        public Journey toEntity(Travel travel, String savePath) {
+        public Journey toEntity(int travelId, String savePath) {
             // 날짜 문자열을 OffsetDateTime으로 파싱 후 LocalDate로 변환
             OffsetDateTime offsetDateTime = OffsetDateTime.parse(date);
             LocalDate localDate = offsetDateTime.toLocalDate();
@@ -98,7 +97,7 @@ public class TravelPlanRequestDTO {
             LocalDateTime s = LocalDateTime.of(localDate, localStartTime);
             LocalDateTime e = LocalDateTime.of(localDate, localEndTime);
             return Journey.builder()
-                    .travel(travel)
+                    .travelId(travelId)
                     .journeyName(journeyName)
                     .accommodationRoadAddressName(accommodationRoadAddressName)
                     .accommodationName(location)

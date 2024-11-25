@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class KakaoUserResponseDTO {
 
-    private long id;
+    private int id;
 
     @JsonProperty("connected_at")
     private LocalDateTime connectedAt;

@@ -82,7 +82,7 @@ public class MemberService {
         return member;
     }
 
-    public Member findById(long id) {
+    public Member findById(int id) {
         return memberRepository.findById(id).orElseThrow(
                 ()->new EntityNotFoundException("Member not found")
         );

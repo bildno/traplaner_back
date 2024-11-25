@@ -136,25 +136,11 @@ public class MemberController {
     @Value("${sns.kakao.logout-redirect}")
     private String kakaoLogoutRedirectUri;
 
-    //    @Value("${sns.naver.Client-Id}")
-//    private  String naverClientId;
-//    @Value("${sns.naver.logout-redirect}")
-//    private String naverLogoutRedirectUri;
-//
-    //네이버 로그인 화면 요청
-    @GetMapping("/naver-sign-in")
-    public void naverSignIn() {
-
-        System.out.println("[dbg] naver-sign-in 진입!!!");
-        log.info("naver-sing-in 진입");
-
-    }
-
     // access token이 만료되어 새 토큰을 요청
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> id) {
         log.info("/members/refresh: POST, id: {}", id);
-        Member member = memberService.findById(Long.parseLong(id.get("id")));
+        Member member = memberService.findById(Integer.parseInt(id.get("id")));
         log.info("조회된 Member: {}", member);
 
         // email로 redis를 조회해서 refresh token을 가져오자
