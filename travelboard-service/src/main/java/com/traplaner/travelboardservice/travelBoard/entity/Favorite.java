@@ -19,7 +19,6 @@ public class Favorite {
     @JoinColumn
     private int memberId;                  // by jhjeong 11.21
 
-    @ManyToOne(fetch = FetchType.LAZY)      // by jhjeong 11.21
-    @JoinColumn(name = "travel_board_id", nullable = false)
-    private TravelBoard travelBoard;        // by jhjeong 11.21
+    @JoinColumn(nullable = false)
+    private int travelBoardId;      // by jhjeong 11.21
 }
