@@ -94,7 +94,7 @@ public class MemberController {
         log.info("type: {}", params.get("type"));
         log.info("keyword: {}", params.get("keyword"));
         //jpa로 다시해야함
-        boolean flag = true;
+        boolean flag = memberService.duplicateTest((String) params.get("type"), (String) params.get("keyword"));
         return ResponseEntity.ok()
                 .body(flag);
     }
@@ -175,7 +175,7 @@ public class MemberController {
     public ResponseEntity<?> mailCheck(@RequestBody String email) {
         log.info("이메일 인증 요청 들어옴!: {}", email);
         //여기도 중복검사 다시해야함
-        if(true){
+        if(memberService.duplicateTest("email", email)) {
             log.info("존재하지 않는 회원");
             CommonResDto resDto
                     = new CommonResDto(HttpStatus.BAD_REQUEST,"존재하지 않는 회원입니다.", "");

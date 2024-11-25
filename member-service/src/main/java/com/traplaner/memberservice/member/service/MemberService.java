@@ -87,4 +87,8 @@ public class MemberService {
                 ()->new EntityNotFoundException("Member not found")
         );
     }
+
+    public boolean duplicateTest(String type, String keyword) {
+        return memberRepository.duplicateTest(type,keyword);
+    }
 }
