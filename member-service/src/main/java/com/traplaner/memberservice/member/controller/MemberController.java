@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/members")
 @Slf4j
 @RequiredArgsConstructor
 public class MemberController {
@@ -39,6 +39,7 @@ public class MemberController {
     private final MemberService memberService;
     private final KakaoService kakaoService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final Environment env;
 
     @Qualifier("member-template")
     private final RedisTemplate redisTemplate;
@@ -205,6 +206,16 @@ public class MemberController {
             return new ResponseEntity<>(resDto, HttpStatus.BAD_REQUEST);
         }
 
+
+    }
+    @GetMapping("/health-check")
+    public String healthCheck() {
+        return String.format("It's Working in User Service"
+                + ", port(local.server.port)=" + env.getProperty("local.server.port")
+                + ", port(server.port)=" + env.getProperty("server.port")
+                + ", gateway ip=" + env.getProperty("gateway.ip")
+                + ", token secret=" + env.getProperty("token.secret")
+                + ", token expiration time=" + env.getProperty("token.expiration_time"));
 
     }
 

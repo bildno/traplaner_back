@@ -1,8 +1,7 @@
 package com.traplaner.travelplanservice.travelplan.entity;
 
-import com.traplaner.common.entity.BaseTimeEntity;
-import com.project.traplaner.member.entity.Member;
-import com.project.traplaner.travelBoard.entity.TravelBoard;
+
+import com.traplaner.travelplanservice.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,9 +21,8 @@ public class Travel extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn
+    private int memberId;
 
     private String title;
 
@@ -44,6 +42,6 @@ public class Travel extends BaseTimeEntity {
     private String travelImg;
 
     // by jhjeong 11.20
-    @OneToOne(mappedBy="travel", fetch = FetchType.LAZY)
-    private TravelBoard travelBoard;
+//    @OneToOne(mappedBy="travel", fetch = FetchType.LAZY)
+//    private TravelBoard travelBoard;
 }

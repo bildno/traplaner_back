@@ -1,5 +1,6 @@
 package com.traplaner.memberservice.common.util;
-import com.project.traplaner.member.dto.LoginUserResponseDTO;
+
+import com.traplaner.memberservice.member.dto.LoginUserResponseDTO;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,6 +1,6 @@
 
 server:
-  port: 8080
+  port: 8181
 
 spring:
   application:
@@ -23,7 +23,20 @@ spring:
             - RemoveRequestHeader=Cookie
             # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/member-service/(?<segment>.*), /$\{segment}
-#            - StripPrefix=1 -> 첫번째 접두어를 제거
+           # - StripPrefix=1
+            - AuthorizationHeaderFilter
+            -
+        - id: member-service
+          uri: lb://MEMBER-SERVICE
+          predicates:
+            - Path=/member-service/actuator/**
+            - Method=GET, POST
+          filters:
+            # 요청이 서비스로 전달되기 전 헤더에서 제거하고자 하는 값이 있을 때 사용하는 필터
+            - RemoveRequestHeader=Cookie
+            # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
+            - RewritePath=/member-service/(?<segment>.*), /$\{segment}
+            # - StripPrefix=1
             - AuthorizationHeaderFilter
 
 

@@ -1,8 +1,8 @@
 package com.traplaner.travelboardservice.travelBoard.controller;
 
-import com.traplaner.member.dto.LoginUserResponseDTO;
-import com.traplaner.travelBoard.dto.SearchDTO;
-import com.traplaner.travelBoard.service.TravelBoardService;
+import com.traplaner.travelboardservice.travelBoard.dto.LoginUserResponseDTO;
+import com.traplaner.travelboardservice.travelBoard.dto.SearchDTO;
+import com.traplaner.travelboardservice.travelBoard.service.TravelBoardService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

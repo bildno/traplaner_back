@@ -37,12 +37,11 @@ public class Journey {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
     @JoinColumn(name = "travel_id", nullable = false)
-    Travel travel;
+    int travl;
 
     @Column(name = "journey_name", nullable = false)
-    private String journeyName;
+    String journeyName;
 
     @Column(name = "accommodation_name", nullable = false)
     private String accommodationName;

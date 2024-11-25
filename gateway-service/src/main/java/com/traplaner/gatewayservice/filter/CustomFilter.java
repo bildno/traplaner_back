@@ -12,7 +12,6 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class CustomFilter extends AbstractGatewayFilterFactory {
 
-
     @Override
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {

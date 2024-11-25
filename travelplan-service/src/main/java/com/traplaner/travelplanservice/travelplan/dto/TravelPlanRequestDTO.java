@@ -2,8 +2,8 @@ package com.traplaner.travelplanservice.travelplan.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.traplaner.travelplan.entity.Journey;
-import com.project.traplaner.travelplan.entity.Travel;
+import com.traplaner.travelplanservice.travelplan.entity.Journey;
+import com.traplaner.travelplanservice.travelplan.entity.Travel;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 

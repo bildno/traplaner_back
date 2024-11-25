@@ -1,6 +1,5 @@
 package com.traplaner.travelboardservice.travelBoard.entity;
 
-import com.traplaner.travelplan.entity.Travel;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +34,8 @@ public class TravelBoard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(fetch = FetchType.LAZY)   // by jhjeong 11.21
-    @JoinColumn(name = "travel_id")
-    private Travel travel;              // by jhjeong 11.21
+    @JoinColumn
+    private int travelId;              // by jhjeong 11.21
 
     @Column(name = "member_nick_name")
     private String memberNickName;

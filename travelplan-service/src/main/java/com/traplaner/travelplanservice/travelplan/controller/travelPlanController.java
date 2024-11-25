@@ -2,11 +2,12 @@ package com.traplaner.travelplanservice.travelplan.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.traplaner.common.auth.TokenUserInfo;
-import com.project.traplaner.common.dto.CommonResDto;
-import com.project.traplaner.travelplan.dto.TravelPlanRequestDTO;
-import com.project.traplaner.travelplan.entity.Travel;
-import com.project.traplaner.travelplan.service.TravelService;
+
+import com.traplaner.travelplanservice.common.auth.TokenUserInfo;
+import com.traplaner.travelplanservice.common.dto.CommonResDto;
+import com.traplaner.travelplanservice.travelplan.dto.TravelPlanRequestDTO;
+import com.traplaner.travelplanservice.travelplan.entity.Travel;
+import com.traplaner.travelplanservice.travelplan.service.TravelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
