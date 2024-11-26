@@ -32,17 +32,6 @@ public class TravelBoardDetailResponseDTO {
         private String locationPin;
         private String journeyImg;
     }
-
-/*    public TravelBoardDetailResponseDTO(Member member, Travel travel, TravelBoard travelBoard, Journey journey, int likeCount) {
-        this.travelId = travel.getId();
-        this.title = travel.getTitle();
-        this.writer = member.getNickName();
-        this.writeDate = TravelBoardListResponseDTO.makePrettierDateString(travelBoard.getWriteDate());
-        this.img = travel.getTravelImg();
-        this.content = travelBoard.getContent();
-        this.likeCount = likeCount;
-    }*/
-
 }
 
 
