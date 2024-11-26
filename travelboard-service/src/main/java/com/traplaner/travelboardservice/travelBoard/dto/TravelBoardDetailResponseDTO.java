@@ -1,10 +1,9 @@
 package com.traplaner.travelboardservice.travelBoard.dto;
 
-import com.traplaner.member.entity.Member;
-import com.traplaner.travelBoard.entity.TravelBoard;
-import com.project.traplaner.travelplan.entity.Journey;
-import com.project.traplaner.travelplan.entity.Travel;
 import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @ToString
@@ -12,16 +11,29 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TravelBoardDetailResponseDTO {
-    private int travelId;
-    private int boardId;
+    private Integer travelId;
+    private Integer boardId;
     private String title;
     private String writer;
-    private String writeDate;
+    private LocalDateTime writeDate;
     private String img;
     private String content;
-    private int likeCount;
+    private Long likeCount;
+    private List<JourneyResponseDTO> journeys;
 
-    public TravelBoardDetailResponseDTO(Member member, Travel travel, TravelBoard travelBoard, Journey journey, int likeCount) {
+    @Getter @Setter @ToString
+    @NoArgsConstructor @AllArgsConstructor
+    @Builder
+    public static class JourneyResponseDTO {
+        private int day;
+        private String journeyName;
+        private String placeName;
+        private LocalDateTime journeyStartTime;
+        private String locationPin;
+        private String journeyImg;
+    }
+
+/*    public TravelBoardDetailResponseDTO(Member member, Travel travel, TravelBoard travelBoard, Journey journey, int likeCount) {
         this.travelId = travel.getId();
         this.title = travel.getTitle();
         this.writer = member.getNickName();
@@ -29,7 +41,7 @@ public class TravelBoardDetailResponseDTO {
         this.img = travel.getTravelImg();
         this.content = travelBoard.getContent();
         this.likeCount = likeCount;
-    }
+    }*/
 
 }
 

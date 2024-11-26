@@ -3,8 +3,6 @@ package com.traplaner.travelboardservice.travelBoard.dto;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 
 @Getter
 @ToString
@@ -12,23 +10,21 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TravelBoardListResponseDTO {
-    private int travelId;
-    private int boardId;
+    private Integer travelId;
+    private Integer boardId;
     private String img;
-    private String shortTitle;
+    private String title;
     private String writer;
-    private String writeDate;
-    private int likeCount;
+    private LocalDateTime writeDate;
+    private Long likeCount;
 
-    public TravelBoardListResponseDTO(TravelBoardDetailResponseDTO board) {
-        this.img = board.getImg();
-        this.shortTitle = makeShortTitle(board.getTitle());
-        this.writer = board.getWriter();
-        this.writeDate = board.getWriteDate();
+/*    public TravelBoardListResponseDTO(TravelBoardDetailResponseDTO detail) {
+        this.shortTitle = makeShortTitle(detail.getTitle());
+        this.writeDate = LocalDateTime.parse(makePrettierDateString(detail.getWriteDate()));
     }
 
     public static String makePrettierDateString(LocalDateTime writeDate) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy. MM. dd.");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm");
         return dtf.format(writeDate);
     }
 
@@ -40,5 +36,5 @@ public class TravelBoardListResponseDTO {
         return (target.length() > wishLength)
                 ? target.substring(0, wishLength) + "..."
                 : target;
-    }
+    }*/
 }
