@@ -5,6 +5,7 @@ import com.traplaner.travelplanservice.travelplan.dto.TravelPlanRequestDTO.Trave
 import com.traplaner.travelplanservice.travelplan.entity.Travel;
 import com.traplaner.travelplanservice.travelplan.repository.JourneyRepository;
 import com.traplaner.travelplanservice.travelplan.repository.TravelRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +55,13 @@ public class TravelService {
             }
         }
 
+    }
+
+    public String getImagePathByTravelId(int travelId) {
+       Travel travel = travelRepository.findById(travelId).orElseThrow(
+               ()-> new EntityNotFoundException("Travel with id" + travelId + "Not Found")
+       );
+       return travel.getTravelImg();
     }
 
 

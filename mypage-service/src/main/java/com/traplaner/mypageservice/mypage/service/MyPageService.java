@@ -1,31 +1,16 @@
 package com.traplaner.mypageservice.mypage.service;
 
-import com.traplaner.common.auth.TokenUserInfo;
-import com.traplaner.main.dto.MainTravelDto;
-import com.traplaner.member.entity.Member;
-import com.traplaner.member.mapper.MemberMapper;
-import com.traplaner.member.repository.MemberRepository;
-import com.traplaner.mypage.dto.TravelBoardDto;
-import com.traplaner.mypage.dto.response.FavoriteListResponseDTO;
-import com.traplaner.mypage.dto.response.TravelBoardResponseDTO;
-import com.traplaner.mypage.dto.response.TravelListResponseDTO;
-import com.traplaner.mypage.mapper.MyPageBoardMapper;
-import com.traplaner.mypage.repository.MyPageRepository;
-import com.project.traplaner.mypage.repository.MyPageTravelBoardRepository;
-import com.project.traplaner.mypage.repository.MyPageTravelRepository;
-import com.project.traplaner.travelBoard.dto.PageDTO;
-import com.project.traplaner.travelBoard.entity.TravelBoard;
-import com.project.traplaner.travelBoard.mapper.FavoriteMapper;
-import com.project.traplaner.travelBoard.service.PageMaker;
-import com.project.traplaner.travelplan.entity.Journey;
-import com.project.traplaner.travelplan.entity.Travel;
-import com.project.traplaner.travelplan.repository.JourneyRepository;
-import com.project.traplaner.travelplan.repository.TravelRepository;
+
+import com.traplaner.mypageservice.mypage.dto.TravelBoardDto;
+import com.traplaner.mypageservice.mypage.dto.response.FavoriteListResponseDTO;
+import com.traplaner.mypageservice.mypage.dto.response.TravelBoardResponseDTO;
+import com.traplaner.mypageservice.mypage.dto.response.TravelListResponseDTO;
+import com.traplaner.mypageservice.mypage.entity.TravelBoard;
+import com.traplaner.mypageservice.mypage.mapper.MyPageBoardMapper;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -201,4 +186,3 @@ public class MyPageService {
         return Math.toIntExact(travel);
     }
 }
-

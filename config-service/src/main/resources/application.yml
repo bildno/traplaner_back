@@ -1,13 +1,17 @@
 server:
   port: 8888
 spring:
+  profiles:
+    active: native
   application:
     name: config-service
   cloud:
     config:
       server:
-        git:
-          uri: C:\Users\playdata2\Desktop\develop\git-local-repo
+        native:
+          search-locations: C:\Users\playdata2\Desktop\develop\git-local-repo
+#        git:
+#          uri: C:\Users\playdata2\Desktop\develop\git-local-repo
 management:
   endpoints:
     web:

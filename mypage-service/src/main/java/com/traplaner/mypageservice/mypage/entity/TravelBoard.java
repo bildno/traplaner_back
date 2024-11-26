@@ -1,4 +1,4 @@
-package com.traplaner.travelboardservice.travelBoard.entity;
+package com.traplaner.mypageservice.mypage.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,6 +48,6 @@ public class TravelBoard {
     private String content;
 
     // by jhjeong 11.20
-    @OneToMany(mappedBy = "travelBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Favorite> favorites;
+//    @OneToMany(mappedBy = "travelBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Favorite> favorites;
 }

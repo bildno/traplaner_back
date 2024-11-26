@@ -1,17 +1,12 @@
 package com.traplaner.travelboardservice.travelBoard.service;
 
-import com.traplaner.member.dto.LoginUserResponseDTO;
-import com.project.traplaner.travelBoard.dto.JourneyResponseDTO;
-import com.project.traplaner.travelBoard.dto.PageDTO;
-import com.project.traplaner.travelBoard.dto.TravelBoardDetailResponseDTO;
-import com.project.traplaner.travelBoard.dto.TravelBoardListResponseDTO;
-import com.project.traplaner.travelBoard.mapper.TravelBoardMapper;
+import com.traplaner.travelboardservice.travelBoard.dto.*;
+import com.traplaner.travelboardservice.travelBoard.mapper.TravelBoardMapper;
 import jakarta.servlet.http.HttpSession;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;

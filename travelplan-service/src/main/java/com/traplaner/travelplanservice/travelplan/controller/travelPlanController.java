@@ -65,4 +65,24 @@ public class travelPlanController {
 
         return new ResponseEntity<>(resDto, HttpStatus.CREATED);
     }
+
+    //사용자 아이디로 여행 리스트 조회
+    @GetMapping("/getTravelsByMemberId")
+    public ResponseEntity<?> getTravelsByMemberId(@PathVariable("memberId") int memberId) {
+        return null;
+    }
+    //여행 아이디로 여정 조회
+    @GetMapping("/getJourneysByTravelId")
+    public ResponseEntity<?> getJourneysByTravelId(@PathVariable("travelId") int travelId) {
+        return null;
+    }
+    //여행 아이디로 이미지 조회하기
+    @GetMapping("/getImagePathByTravelId")
+    public ResponseEntity<?> getImageByTravelId(@PathVariable("travelId") int travelId) {
+        String imagePathByTravelId = travelService.getImagePathByTravelId(travelId);
+        log.info("imagePathByTravelId: {}", imagePathByTravelId);
+        CommonResDto resDto =
+                new CommonResDto(HttpStatus.OK, "이미지 path 조회 완료", imagePathByTravelId);
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
 }

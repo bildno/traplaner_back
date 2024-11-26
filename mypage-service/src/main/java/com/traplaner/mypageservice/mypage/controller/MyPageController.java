@@ -1,29 +1,18 @@
 package com.traplaner.mypageservice.mypage.controller;
 
-import com.traplaner.common.auth.TokenUserInfo;
-import com.traplaner.common.util.FileUtils;
-import com.traplaner.member.entity.Member;
-import com.traplaner.member.repository.MemberRepository;
-import com.traplaner.member.service.MemberService;
-import com.traplaner.mypage.dto.ModifyMemberInfoDTO;
-import com.traplaner.mypage.dto.response.TravelBoardCreateDto;
-import com.traplaner.mypage.dto.response.TravelBoardResponseDTO;
-import com.traplaner.mypage.dto.response.TravelListResponseDTO;
-import com.traplaner.mypage.service.MyPageService;
-import com.traplaner.travelBoard.dto.PageDTO;
-import com.traplaner.travelBoard.entity.TravelBoard;
-import com.traplaner.travelplan.entity.Travel;
-import com.traplaner.travelplan.service.TravelService;
+import com.traplaner.mypageservice.mypage.dto.ModifyMemberInfoDTO;
+import com.traplaner.mypageservice.mypage.dto.response.TravelBoardCreateDto;
+import com.traplaner.mypageservice.mypage.dto.response.TravelBoardResponseDTO;
+import com.traplaner.mypageservice.mypage.dto.response.TravelListResponseDTO;
+import com.traplaner.mypageservice.mypage.entity.TravelBoard;
+import com.traplaner.mypageservice.mypage.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -222,16 +211,16 @@ public class MyPageController {
 //        return "redirect:/my-page/mytravel/" + id;
 //    }
 
-   @PostMapping("/my-page/insert-board")
-   public ResponseEntity<?> insertBoard(TravelBoardCreateDto dto){
+    @PostMapping("/my-page/insert-board")
+    public ResponseEntity<?> insertBoard(TravelBoardCreateDto dto){
 
-       TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-       String email = userinfo.getEmail();
-       Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NullPointerException("없는 사람"));
-       String nickName = member.getNickName();
+        TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = userinfo.getEmail();
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NullPointerException("없는 사람"));
+        String nickName = member.getNickName();
 
 
-       if (StringUtils.hasText(dto.getTravelImg().getOriginalFilename())) {
+        if (StringUtils.hasText(dto.getTravelImg().getOriginalFilename())) {
 
             String savePath = FileUtils.uploadFile(dto.getTravelImg(), rootPath);
 
@@ -240,24 +229,21 @@ public class MyPageController {
         }
 
 
-       int byTravelId = myPageService.findByTravelId(dto.getTravelId());
+        int byTravelId = myPageService.findByTravelId(dto.getTravelId());
 
-       if(byTravelId == 0) {
-           TravelBoard board = myPageService.createBoard(dto.getTravelId(), nickName, LocalDateTime.now(), dto.getContent());
-       }
+        if(byTravelId == 0) {
+            TravelBoard board = myPageService.createBoard(dto.getTravelId(), nickName, LocalDateTime.now(), dto.getContent());
+        }
 
-       if (!dto.getJourneyImage().isEmpty()) {
+        if (!dto.getJourneyImage().isEmpty()) {
             for (int i = 0, j = dto.getJourneyId().size(); i < j; i++ ) {
                 String save = FileUtils.uploadFile(dto.getJourneyImage().get(i), rootPath);
                 if (save != null )myPageService.updateJourneyImg(Long.valueOf(dto.getJourneyId().get(i)), save);
             }
         }
 
-     return new ResponseEntity<>("등록성공",HttpStatus.OK);
+        return new ResponseEntity<>("등록성공", HttpStatus.OK);
 
-   }
+    }
 
 }
-
-
-
