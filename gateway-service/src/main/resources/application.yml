@@ -1,4 +1,3 @@
-
 server:
   port: 8181
 
@@ -128,7 +127,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, busrefresh, beans, httpexchanges,
+        include: refresh, health, busrefresh, beans, httpexchanges
 
 
 
