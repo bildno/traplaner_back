@@ -58,6 +58,20 @@ public class MemberController {
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "비밀번호 변경 완료!",flag);
         return new ResponseEntity<>(commonResDto,HttpStatus.OK);
     }
+    // 멤버 아이디와 변경된 비밀번호로 비밀번호 변경
+    @Transactional
+    @PutMapping("pwChangeById")
+    @ResponseBody
+    public ResponseEntity<?> pwChangeById(@RequestBody Map<String, String> map)
+    {
+        String id = map.get("id");
+        String password = map.get("password");
+        String flag = memberService.changePasswordById(id, password)?"성공!":"실패!";
+        log.info(id);
+        log.info("변경 비밀번호: {}", password);
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "비밀번호 변경 완료!",flag);
+        return new ResponseEntity<>(commonResDto,HttpStatus.OK);
+    }
 
 
     // 회원 가입 요청
