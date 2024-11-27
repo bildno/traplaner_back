@@ -1,6 +1,6 @@
-package com.traplaner.travelboardservice.travelBoard.repository;
+package com.traplaner.mypageservice.mypage.repository;
 
-import com.traplaner.travelboardservice.travelBoard.entity.TravelBoard;
+import com.traplaner.mypageservice.mypage.entity.TravelBoard;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
