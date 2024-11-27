@@ -62,7 +62,10 @@ public class SecurityConfig {
                                     "/sign-in",
                                     "static/**",
                                     "/error",
-                                    "/main/top3-favorite")
+                                    "/main/top3-favorite",
+                                    "/pw-change",
+                                    "/pwChangeById"
+                            )
                             .permitAll()
                             .requestMatchers("/**").access(
                                     new WebExpressionAuthorizationManager("hasIpAddress('localhost') or hasIpAddress('::1') or hasIpAddress('127.0.0.1')  or hasIpAddress('172.30.67.125')")

@@ -43,7 +43,11 @@ public class SecurityConfig {
                             .requestMatchers(
                                     "/",
                                     "/error",
-                                    "/main/top3-favorite")
+                                    "travelsListByMemberId/**",
+                                    "journeysByTravelId/**",
+                                    "changeShare/**",
+                                    "/putTravelJourneyImages/**"
+                                    )
                             .permitAll()
                             .anyRequest().authenticated();
                 })

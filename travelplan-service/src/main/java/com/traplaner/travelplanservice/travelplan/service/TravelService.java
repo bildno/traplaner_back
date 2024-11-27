@@ -2,6 +2,7 @@ package com.traplaner.travelplanservice.travelplan.service;
 
 import com.traplaner.travelplanservice.common.util.FileUtils;
 import com.traplaner.travelplanservice.travelplan.dto.TravelPlanRequestDTO.TravelInfo;
+import com.traplaner.travelplanservice.travelplan.dto.TravelResponseDTO;
 import com.traplaner.travelplanservice.travelplan.entity.Travel;
 import com.traplaner.travelplanservice.travelplan.repository.JourneyRepository;
 import com.traplaner.travelplanservice.travelplan.repository.TravelRepository;
@@ -9,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -26,6 +28,17 @@ public class TravelService {
     private final JourneyRepository journeyRepository;
     @Value("${file.upload.root-path}")
     private String rootPath;
+
+    public boolean changeShare(int travelId) {
+        Travel travel = travelRepository.findById(travelId).orElseThrow(
+                () -> {
+                    throw new EntityNotFoundException("Travel not found");
+                }
+        );
+        travel.setShare(!travel.isShare());
+        travelRepository.save(travel);
+        return travel.isShare();
+    }
 
     public Travel saveTravel(TravelInfo travelInfo, int memberId) {
 
@@ -57,11 +70,11 @@ public class TravelService {
 
     }
 
-    public String getImagePathByTravelId(int travelId) {
-       Travel travel = travelRepository.findById(travelId).orElseThrow(
-               ()-> new EntityNotFoundException("Travel with id" + travelId + "Not Found")
-       );
-       return travel.getTravelImg();
+    public List<Travel> getTravelsByMemberId(int memberId) {
+        return travelRepository.findAllByMemberId(memberId);
+    }
+    public List<Travel> getTravelsByMemberId(int memberId, Pageable pageable) {
+        return travelRepository.findAllByMemberId(memberId, pageable);
     }
 
 
