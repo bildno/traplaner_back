@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/traplaner_back.iml" filepath="$PROJECT_DIR$/traplaner_back.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/travelboard-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/travelboard-service.main.iml" />
     </modules>
   </component>
 </project>
