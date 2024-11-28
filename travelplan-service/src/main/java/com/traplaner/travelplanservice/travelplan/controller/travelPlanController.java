@@ -27,6 +27,7 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+//이상한부분있으면 말해주세용
 public class travelPlanController {
     private final TravelService travelService;
     private final JourneyRepository journeyRepository;
