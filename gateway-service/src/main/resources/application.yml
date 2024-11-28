@@ -24,7 +24,7 @@ spring:
             # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/member-service/(?<segment>.*), /$\{segment}
            # - StripPrefix=1
-            - AuthorizationHeaderFilter
+#            - AuthorizationHeaderFilter
 
 
         - id: member-service
@@ -38,7 +38,7 @@ spring:
             # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/member-service/(?<segment>.*), /$\{segment}
             # - StripPrefix=1
-            - AuthorizationHeaderFilter
+#            - AuthorizationHeaderFilter
 
         - id: travelplan-service
           uri: lb://TRAVELPLAN-SERVICE
@@ -50,7 +50,7 @@ spring:
             # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/travelplan-service/(?<segment>.*), /$\{segment}
             # - StripPrefix=1
-            - AuthorizationHeaderFilter
+#            - AuthorizationHeaderFilter
 
         - id: main-service
           uri: lb://MAIN-SERVICE
@@ -62,7 +62,7 @@ spring:
             # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/main-service/(?<segment>.*), /$\{segment}
             # - StripPrefix=1
-            - AuthorizationHeaderFilter
+#            - AuthorizationHeaderFilter
 
         - id: mypage-service
           uri: lb://MYPAGE-SERVICE
@@ -74,7 +74,7 @@ spring:
             # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/mypage-service/(?<segment>.*), /$\{segment}
             # - StripPrefix=1
-            - AuthorizationHeaderFilter
+#            - AuthorizationHeaderFilter
 
         - id: travelboard-service
           uri: lb://TRAVELBOARD-SERVICE
@@ -86,7 +86,7 @@ spring:
             # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/travelboard-service/(?<segment>.*), /$\{segment}
             # - StripPrefix=1
-            - AuthorizationHeaderFilter
+#            - AuthorizationHeaderFilter
 
 eureka:
   client:

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.traplaner.travelplanservice.common.auth.TokenUserInfo;
 import com.traplaner.travelplanservice.common.dto.CommonResDto;
+import com.traplaner.travelplanservice.travelplan.dto.TravelImgRequestDto;
 import com.traplaner.travelplanservice.travelplan.dto.TravelPlanRequestDTO;
 import com.traplaner.travelplanservice.travelplan.entity.Journey;
 import com.traplaner.travelplanservice.travelplan.entity.Travel;
@@ -95,7 +96,7 @@ public class travelPlanController {
         return null;
     }
     @GetMapping("/travelListsByMemberId")
-    // 페이징이 필요합니다.
+    // 페이징이 필요합니다.(주의할 점! 첫번째 페이지는 0페이지이다!)
     // 컨트롤러 파라미터로 Pageable 선언하면, 페이징 파라미터 처리를 쉽게 진행할 수 있음.
     // /list?page=1&size=10&sort=name,desc 요런 식으로.
     // 요청 시 쿼리스트링이 전달되지 않으면 기본값 0, 20, unsorted
@@ -104,6 +105,8 @@ public class travelPlanController {
         log.info("/travelListsByMember : GET, memberId: {}", memberId);
         log.info("/travelListsByMember: GET, pageable={}", pageable);
         List<Travel> travels = travelService.getTravelsByMemberId(memberId, pageable);
+        log.info("travels={}", travels);
+
         CommonResDto resDto
                 = new CommonResDto(HttpStatus.OK, "여행리스트 정상조회 완료", travels);
         return new ResponseEntity<>(resDto, HttpStatus.OK);
@@ -116,9 +119,13 @@ public class travelPlanController {
                 new CommonResDto(HttpStatus.OK,"share 변경 성공", isShare);
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
-    //여행 아이디로 여행 여정 이미지 수정 이거 어카냐....
-    @PostMapping("/putTravelJourneyImages/{journeyId}")
-    public ResponseEntity<?> putTravelJourneyImages(@PathVariable("journeyId") int journeyId) {
-        return null;
+    //여행 아이디로 여행 여정 이미지 수정
+    @PostMapping("/putTravelJourneyImages")
+    public ResponseEntity<?> putTravelJourneyImages(@RequestBody TravelImgRequestDto dto) {
+        log.info("dto: {}", dto);
+        travelService.putTravelJouneyImages(dto);
+        CommonResDto resDto =
+                new CommonResDto(HttpStatus.OK,"이미지 등록 성공","");
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
 }

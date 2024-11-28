@@ -41,11 +41,11 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
                     auth
                             .requestMatchers(
-                                    "/",
                                     "/error",
-                                    "travelsListByMemberId/**",
-                                    "journeysByTravelId/**",
-                                    "changeShare/**",
+                                    "/travelsByMemberId/**",
+                                    "/travelListsByMemberId/**",
+                                    "/journeysByTravelId/**",
+                                    "/changeShare/**",
                                     "/putTravelJourneyImages/**"
                                     )
                             .permitAll()
