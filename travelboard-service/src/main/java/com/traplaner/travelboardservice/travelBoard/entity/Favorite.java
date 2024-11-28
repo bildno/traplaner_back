@@ -14,11 +14,11 @@ import lombok.*;
 public class Favorite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @JoinColumn
-    private int memberId;                  // by jhjeong 11.21
+    private Integer memberId;
 
     @JoinColumn(nullable = false)
-    private int travelBoardId;      // by jhjeong 11.21
+    private Integer travelBoardId;
 }

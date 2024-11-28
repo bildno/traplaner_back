@@ -46,7 +46,7 @@ public class Journey {
     @Column(name = "accommodation_name", nullable = false)
     private String accommodationName;
 
-    @Column(name = "accomodation_road_address_name", nullable = false)
+    @Column(name = "accommodation_road_address_name", nullable = false)
     private String accommodationRoadAddressName;
 
     @Column(nullable = false)
