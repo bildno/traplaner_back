@@ -4,6 +4,7 @@ package com.traplaner.travelplanservice.travelplan.entity;
 import com.traplaner.travelplanservice.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -36,6 +37,7 @@ public class Travel extends BaseTimeEntity {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
+    @Column(columnDefinition = "boolean default false")
     private boolean share;
 
     @Column(name = "travel_img")

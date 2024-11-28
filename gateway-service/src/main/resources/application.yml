@@ -27,8 +27,10 @@ spring:
             - RemoveRequestHeader=Cookie
             # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/member-service/(?<segment>.*), /$\{segment}
-           # - StripPrefix=1 -> 첫번째 접두어를 제거
-            - AuthorizationHeaderFilter
+
+           # - StripPrefix=1
+#            - AuthorizationHeaderFilter
+
 
         - id: member-service
           uri: lb://MEMBER-SERVICE
@@ -37,7 +39,12 @@ spring:
             - Method=GET, POST
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+            # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
+            - RewritePath=/member-service/(?<segment>.*), /$\{segment}
+            # - StripPrefix=1
+#            - AuthorizationHeaderFilter
+
 
         - id: travelplan-service
           uri: lb://TRAVELPLAN-SERVICE
@@ -46,7 +53,9 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/travelplan-service/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter
+
+            # - StripPrefix=1
+#            - AuthorizationHeaderFilter
 
         - id: travelplan-service
           uri: lb://TRAVELPLAN-SERVICE
@@ -64,7 +73,10 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/main-service/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter
+
+            # - StripPrefix=1
+#            - AuthorizationHeaderFilter
+
 
         - id: main-service
           uri: lb://MAIN-SERVICE
@@ -82,7 +94,9 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/mypage-service/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter
+
+            # - StripPrefix=1
+#            - AuthorizationHeaderFilter
 
         - id: mypage-service
           uri: lb://MYPAGE-SERVICE
@@ -100,7 +114,9 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/travelboard-service/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter
+
+            # - StripPrefix=1
+#            - AuthorizationHeaderFilter
 
         - id: travelboard-service
           uri: lb://TRAVELBOARD-SERVICE
