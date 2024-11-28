@@ -29,7 +29,8 @@ public class AuthorizationHeaderFilter
     private String secretKey;
 
     private final List<String> allowUrl = Arrays.asList(
-            "/sign-up", "/sign-in", "/refresh", "/prod-list"
+            "/sign-up", "/sign-in", "/refresh", "/top3-favorite", "/prod-list","/pw-change"
+
     );
 
     public AuthorizationHeaderFilter() {
@@ -56,7 +57,9 @@ public class AuthorizationHeaderFilter
 
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
                 // 토큰이 존재하지 않거나, Bearer로 시작하지 않는다면
-                return onError(exchange, "Authorization header is missing or invalid", HttpStatus.UNAUTHORIZED);
+                return onError(exchange,
+                        "Authorization header is missing or invalid",
+                        HttpStatus.UNAUTHORIZED);
             }
 
             // Bearer 떼기

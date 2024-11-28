@@ -41,9 +41,13 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
                     auth
                             .requestMatchers(
-                                    "/",
                                     "/error",
-                                    "/main/top3-favorite")
+                                    "/travelsByMemberId/**",
+                                    "/travelListsByMemberId/**",
+                                    "/journeysByTravelId/**",
+                                    "/changeShare/**",
+                                    "/putTravelJourneyImages/**"
+                                    )
                             .permitAll()
                             .anyRequest().authenticated();
                 })
