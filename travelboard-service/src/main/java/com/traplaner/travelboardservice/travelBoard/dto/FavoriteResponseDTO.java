@@ -6,7 +6,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LoginUserResponseDTO {
+public class FavoriteResponseDTO {
     private Integer id;
-    private String nickName;
+    private Integer memberId;
+    private Integer travelBoardId;
 }
