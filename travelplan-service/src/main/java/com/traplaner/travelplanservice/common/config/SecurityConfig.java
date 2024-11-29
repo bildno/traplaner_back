@@ -46,7 +46,8 @@ public class SecurityConfig {
                                     "/travelListsByMemberId/**",
                                     "/journeysByTravelId/**",
                                     "/changeShare/**",
-                                    "/putTravelJourneyImages/**"
+                                    "/putJourneyImages/**",
+                                    "/putTravelImage/**"
                                     )
                             .permitAll()
                             .anyRequest().authenticated();

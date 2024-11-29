@@ -64,7 +64,8 @@ public class SecurityConfig {
                                     "/error",
                                     "/main/top3-favorite",
                                     "/pw-change",
-                                    "/pwChangeById"
+                                    "/pwChangeById",
+                                    "/getMemberById/**"
                             )
                             .permitAll()
                             .requestMatchers("/**").access(

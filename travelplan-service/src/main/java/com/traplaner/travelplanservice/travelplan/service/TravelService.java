@@ -84,9 +84,8 @@ public class TravelService {
 
     }
 
-    public void putTravelJouneyImages(TravelImgRequestDto dto) {
-        Map<String,String > TravelMap = dto.getTravelInfo();
-        Map<String,String > JourneyMap = dto.getJourneyInfos();
+    public void putTravelImage(Map<String, String> map) {
+        Map<String,String > TravelMap = map;
 
         for (Map.Entry<String, String> element : TravelMap.entrySet()) {
             int key = Integer.parseInt(element.getKey());
@@ -95,6 +94,11 @@ public class TravelService {
             travel.setTravelImg(value);
             travelRepository.save(travel);
         }
+
+    }
+    public void putJouneyImages(Map<String, String> map) {
+        Map<String,String > JourneyMap = map;
+
         for (Map.Entry<String, String> element : JourneyMap.entrySet()) {
             int key = Integer.parseInt(element.getKey());
             String value = element.getValue();
@@ -104,7 +108,6 @@ public class TravelService {
             journeyRepository.save(journey);
         }
     }
-
 
 
 }

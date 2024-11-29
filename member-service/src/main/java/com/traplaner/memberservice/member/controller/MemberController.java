@@ -208,6 +208,17 @@ public class MemberController {
 
 
     }
+    @GetMapping("/getMemberById/{id}")
+    public ResponseEntity<?> getMemberById(@PathVariable("id") int id) {
+       Member member = memberService.findById(id);
+       CommonResDto resDto
+               = new CommonResDto(HttpStatus.OK,"멤버 찾았음",member);
+       return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+
+
+
+
     @GetMapping("/health-check")
     public String healthCheck() {
         return String.format("It's Working in User Service"

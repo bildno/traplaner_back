@@ -121,10 +121,18 @@ public class travelPlanController {
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
     //여행 아이디로 여행 여정 이미지 수정
-    @PostMapping("/putTravelJourneyImages")
-    public ResponseEntity<?> putTravelJourneyImages(@RequestBody TravelImgRequestDto dto) {
-        log.info("dto: {}", dto);
-        travelService.putTravelJouneyImages(dto);
+    @PostMapping("/putJourneyImages")
+    public ResponseEntity<?> putlJourneyImages(@RequestBody Map<String,String> map) {
+        log.info("JourneyMap: {}", map);
+        travelService.putJouneyImages(map);
+        CommonResDto resDto =
+                new CommonResDto(HttpStatus.OK,"이미지 등록 성공","");
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+    @PostMapping("/putTravelImage")
+    public ResponseEntity<?> putTravelImage(@RequestBody Map<String,String> map) {
+        log.info("TravelMap: {}", map);
+                        travelService.putTravelImage(map);
         CommonResDto resDto =
                 new CommonResDto(HttpStatus.OK,"이미지 등록 성공","");
         return new ResponseEntity<>(resDto, HttpStatus.OK);
