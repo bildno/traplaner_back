@@ -1,6 +1,5 @@
 package com.traplaner.mypageservice.mypage.common.auth;
 
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -42,9 +41,9 @@ public class JwtTokenProvider {
                 == 서명
             }
      */
-    public String createToken(Integer id) {
+    public String createToken(String email) {
         // Claims: 페이로드에 들어갈 사용자 정보
-        Claims claims = Jwts.claims().setSubject(id.toString());
+        Claims claims = Jwts.claims().setSubject(email);
         Date date = new Date();
 
         return Jwts.builder()
@@ -82,6 +81,8 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, secreKeyRt)
                 .compact();
     }
+
+
     /**
      * 클라이언트가 전송한 토큰을 디코딩하여 토큰의 위조 여부를 확인
      * 토큰을 json으로 파싱해서 클레임(토큰 정보)을 리턴
@@ -102,7 +103,7 @@ public class JwtTokenProvider {
         log.info("claims : {}", claims);
 
         return TokenUserInfo.builder()
-                .email(claims.getSubject())
+                .id(claims.getSubject())
                 .build();
 
     }

@@ -14,7 +14,7 @@ import com.traplaner.mypageservice.mypage.dto.response.TravelListResponseDTO;
 import com.traplaner.mypageservice.mypage.dto.response.travelPlanResDto;
 import com.traplaner.mypageservice.mypage.entity.TravelBoard;
 import com.traplaner.mypageservice.mypage.repository.MyPageTravelBoardRepository;
-import jakarta.servlet.http.HttpSession;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,14 +46,9 @@ public class MyPageService {
     public List<TravelListResponseDTO> myPage() {
 
         TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email = userinfo.getEmail();
+        int id = Integer.parseInt(userinfo.getId());
 
-        CommonResDto<MemberResDto> byEmail = memberServiceClient.findByEmail(email);
-
-        MemberResDto memberResDto = byEmail.getResult();
-
-        CommonResDto<List<travelPlanResDto>> byMemberId = travelServiceClient.findByMemberId(memberResDto.getId());
-
+        CommonResDto<List<travelPlanResDto>> byMemberId = travelServiceClient.findByMemberId(id);
 
         List<TravelListResponseDTO> dtoList = byMemberId.getResult().stream().map(travel -> new TravelListResponseDTO(travel)).collect(Collectors.toList());
 
@@ -64,22 +59,18 @@ public class MyPageService {
     public Page<TravelBoardResponseDTO> findBoardAll(Pageable pageable) {
 
         TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email = userinfo.getEmail();
-        CommonResDto<MemberResDto> byEmail = memberServiceClient.findByEmail(email);
+        int id = Integer.parseInt(userinfo.getId());
+        CommonResDto<MemberResDto> byEmail = memberServiceClient.findById(id);
         MemberResDto memberResDto = byEmail.getResult();
         String nickName = memberResDto.getNickName();
 
         return myPageTravelBoardRepository.findByMemberNickName(nickName, pageable);
     }
 
-    public Page<travelPlanResDto> myTravel(Pageable pageable) {
+    public CommonResDto<Page<travelPlanResDto>> myTravel(Pageable pageable) {
         TokenUserInfo user = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        CommonResDto<MemberResDto> byEmail = memberServiceClient.findByEmail(user.getEmail());
-        MemberResDto memberResDto = byEmail.getResult();
-
-
-        return travelServiceClient.findByMemberId(memberResDto.getId(), pageable);
+        return travelServiceClient.findByMemberId(Integer.valueOf(user.getId()), pageable.getPageNumber(), pageable.getPageSize());
     }
 
 
@@ -88,7 +79,7 @@ public class MyPageService {
         travelServiceClient.updateShareById(id);
     }
 
-    public void deleteBoard(int boardId, HttpSession session) {
+    public void deleteBoard(int boardId) {
 
         myPageTravelBoardRepository.deleteById(boardId);
     }
@@ -97,10 +88,9 @@ public class MyPageService {
         HashMap<String, Object> map = new HashMap<>();
 
         TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        CommonResDto<MemberResDto> byEmail = memberServiceClient.findByEmail(userinfo.getEmail());
 
-        MemberResDto result = byEmail.getResult();
-        List<FavoriteRes> byMemberId = favoriteClient.findByMemberId(result.getId(), pageable);
+        List<FavoriteRes> byMemberId = favoriteClient.findByMemberId(Integer.parseInt(userinfo.getId()), pageable.getPageNumber(), pageable.getPageSize());
+
 
         List<TravelBoard> travelBoards = byMemberId.stream()
                 .map(favoriteRes -> myPageTravelBoardRepository.findById(favoriteRes.getId()).get())
@@ -109,7 +99,6 @@ public class MyPageService {
         List<travelPlanResDto> travels =
                 travelBoards.stream().map(travel ->
                         travelServiceClient.findById((long) travel.getTravelId())).collect(Collectors.toList());
-
 
 
         map.put("favorites", byMemberId);
@@ -121,13 +110,13 @@ public class MyPageService {
     }
 
 
-    public void updateTravelImg(Long travelId, String savePath) {
-        travelServiceClient.updateTravelImagesById(Math.toIntExact(travelId), savePath);
+    public void updateTravelImg(HashMap<String, String> map) {
+        travelServiceClient.updateTravelImagesById(map);
     }
 
 
-    public void updateJourneyImg(Long journeyId, String save) {
-        travelServiceClient.updateJourneyImagesById(Math.toIntExact(journeyId), save);
+    public void updateJourneyImg(HashMap<String, String> map) {
+        travelServiceClient.updateJourneyImagesById(map);
     }
 
     public TravelBoard createBoard(Integer travelId, String memberNickName, LocalDateTime writeDate, String content) {
@@ -150,12 +139,18 @@ public class MyPageService {
         return Math.toIntExact(travel);
     }
 
-    public List<TravelJourneyRes> boardInfo(int travelNo) {
+    public HashMap<String, Object> boardInfo(int travelNo) {
+        HashMap<String, Object> map = new HashMap<>();
+
         List<TravelJourneyRes> travelJourneyResDtos
                 = travelServiceClient.findTravelById(travelNo);
 
+        TravelBoardResponseDTO travelBoardResponseDTO = myPageTravelBoardRepository.findByTravelId(travelNo).orElseThrow(() -> new EntityNotFoundException("없는 글"));
 
-        return travelJourneyResDtos;
+
+        map.put("travelJourneyResDtos", travelJourneyResDtos);
+        map.put("travelBoardResponseDTO", travelBoardResponseDTO);
+        return map;
 
     }
 }

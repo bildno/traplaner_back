@@ -6,25 +6,35 @@ import com.traplaner.mypageservice.mypage.dto.response.travelPlanResDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @FeignClient(name = "travelplan-service")
 public interface TravelPlanServiceClient {
 
 
-    CommonResDto<List<travelPlanResDto>> findByMemberId(Integer id);
+    @GetMapping("/travelsByMemberId/{id}")
+    CommonResDto<List<travelPlanResDto>> findByMemberId(@PathVariable Integer id);
+
+    @GetMapping("journeysByTravelId/{travelId}")
+    travelPlanResDto findById(@PathVariable Long travelId);
+
+    @GetMapping("/travelListsByMemberId?memberId={memberId}&page={page}&size={size}")
+    CommonResDto<Page<travelPlanResDto>> findByMemberId(@PathVariable Integer memberId, @PathVariable int page, @PathVariable int size);
+
+    @GetMapping("journeysByTravelId/{travelId}")
+    List<TravelJourneyRes> findTravelById(@PathVariable int travelId);
 
 
-    travelPlanResDto findById(Long travelId);
+    @PostMapping("/putTravelImage")
+    void updateTravelImagesById(@RequestBody HashMap<String, String> map);
 
-    Page<travelPlanResDto> findByMemberId(Integer id, Pageable pageable);
 
-    List<TravelJourneyRes> findTravelById(int travelNo);
+    @PostMapping("/putJourneyImages")
+    void updateJourneyImagesById(@RequestBody HashMap<String, String> map);
 
-    void updateTravelImagesById(int travelId, String savePath);
-
-    void updateJourneyImagesById(int journeyId, String save);
-
-    void updateShareById(int id);
+    @GetMapping("/changeShare/{id}")
+    void updateShareById(@PathVariable int id);
 }
