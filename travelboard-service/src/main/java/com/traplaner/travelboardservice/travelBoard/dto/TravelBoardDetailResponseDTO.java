@@ -11,15 +11,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TravelBoardDetailResponseDTO {
-    private Integer travelId;
-    private Integer boardId;
-    private String title;
-    private String writer;
-    private LocalDateTime writeDate;
-    private String img;
-    private String content;
-    private Long likeCount;
-    private List<JourneyResponseDTO> journeys;
+    private Integer travelId; // t
+    private Integer boardId; // tb
+    private String title; // t
+    private String writer; // m
+    private LocalDateTime writeDate; // tb
+    private String img; // t
+    private String content; // tb
+    private Long likeCount; // f
+    private List<JourneyResponseDTO> journeys; // j
 
     @Getter @Setter @ToString
     @NoArgsConstructor @AllArgsConstructor

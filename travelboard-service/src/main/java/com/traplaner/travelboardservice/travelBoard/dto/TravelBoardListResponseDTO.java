@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TravelBoardListResponseDTO {
-    private Integer travelId;
-    private Integer boardId;
-    private String img;
-    private String title;
-    private String writer;
-    private LocalDateTime writeDate;
-    private Long likeCount;
+    private Integer travelId; // t
+    private Integer boardId; // tb
+    private String img; // t
+    private String title; // t
+    private String writer; // m
+    private LocalDateTime writeDate; // tb
+    private Long likeCount; // f
 }
