@@ -2,6 +2,6 @@ package com.traplaner.travelboardservice.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 
-@FeignClient(name = "mypage-service")
-public class mypageServiceClient {
+@FeignClient(name = "member-service")
+public interface MemberServiceClient {
 }
