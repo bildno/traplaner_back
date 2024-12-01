@@ -100,4 +100,13 @@ public class MemberService {
     public boolean duplicateTest(String type, String keyword) {
         return memberRepository.duplicateTest(type,keyword);
     }
+
+    public boolean changeNickNameById(int id, String nickName) {
+        Member member = memberRepository.findById(id).orElseThrow(() -> {
+            return new EntityNotFoundException("닉네임 변경 실패");
+        });
+        member.setNickName(nickName);
+        memberRepository.save(member);
+        return true;
+    }
 }

@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.traplaner.travelplanservice.common.auth.TokenUserInfo;
 import com.traplaner.travelplanservice.common.dto.CommonResDto;
-import com.traplaner.travelplanservice.travelplan.dto.TravelImgRequestDto;
 import com.traplaner.travelplanservice.travelplan.dto.TravelPlanRequestDTO;
+import com.traplaner.travelplanservice.travelplan.dto.TravelResponseDTO;
 import com.traplaner.travelplanservice.travelplan.entity.Journey;
 import com.traplaner.travelplanservice.travelplan.entity.Travel;
 import com.traplaner.travelplanservice.travelplan.repository.JourneyRepository;
@@ -18,16 +18,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-//이상한부분있으면 말해주세용
+//이상한 부분 있으면 말해주세용
 public class travelPlanController {
     private final TravelService travelService;
     private final JourneyRepository journeyRepository;
@@ -57,14 +58,10 @@ public class travelPlanController {
             requestDTO.getJourneys().get(journeyId).setReservationConfirmImagePath(file);
         }
 
-
         //서비스 로직으로 전환된 json 데이터 전달
 
         Travel savedTravel = travelService.saveTravel(requestDTO.getTravel(), Integer.parseInt(userInfo.getId()));
         travelService.saveJourneys(requestDTO.getJourneys());
-
-        //이거 뭐임...? 기억에 없는데엽...? 내가 쓴건가? 강사님이 고쳐주신건가보당 ㅎㅎ;;; 근데 왜 있어야하는거지ㅠ......?
-        //진규님한테 물어봐야겠당.
 //        travelService.refreshLoginUserTravel(LoginDto.getEmail(), session);
 
         CommonResDto resDto =
@@ -106,7 +103,8 @@ public class travelPlanController {
         log.info("/travelListsByMember : GET, memberId: {}", memberId);
         log.info("/travelListsByMember: GET, pageable={}", pageable);
         List<Travel> travels = travelService.getTravelsByMemberId(memberId, pageable);
-        log.info("travels={}", travels);
+        List<TravelResponseDTO> travelResDtoList = travels.stream().map(TravelResponseDTO::new).toList();
+        log.info("travels={}", travelResDtoList);
 
         CommonResDto resDto
                 = new CommonResDto(HttpStatus.OK, "여행리스트 정상조회 완료", travels);

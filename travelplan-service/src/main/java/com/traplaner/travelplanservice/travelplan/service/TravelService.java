@@ -1,15 +1,12 @@
 package com.traplaner.travelplanservice.travelplan.service;
 
 import com.traplaner.travelplanservice.common.util.FileUtils;
-import com.traplaner.travelplanservice.travelplan.dto.TravelImgRequestDto;
 import com.traplaner.travelplanservice.travelplan.dto.TravelPlanRequestDTO.TravelInfo;
-import com.traplaner.travelplanservice.travelplan.dto.TravelResponseDTO;
 import com.traplaner.travelplanservice.travelplan.entity.Journey;
 import com.traplaner.travelplanservice.travelplan.entity.Travel;
 import com.traplaner.travelplanservice.travelplan.repository.JourneyRepository;
 import com.traplaner.travelplanservice.travelplan.repository.TravelRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
