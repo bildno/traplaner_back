@@ -1,8 +1,11 @@
 package com.traplaner.travelboardservice.travelBoard.repository;
 
 import com.traplaner.travelboardservice.travelBoard.entity.Favorite;
+import feign.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.print.Pageable;
 import java.util.List;
@@ -15,4 +18,21 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
             "ORDER BY COUNT(f.memberId) DESC " +
             "LIMIT 3")
     List<Map<String, Object>> findTopThreeTravelBoards();
+
+    @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END FROM Favorite f WHERE f.travelBoardId = :#{#travelBoardId['travelBoardId']} AND f.memberId = :#{#travelBoardId['memberId']}")
+    boolean isLikedByMember(@Param("travelBoardId") Map<String, Integer> travelBoardId);
+
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Favorite f WHERE f.travelBoardId = :#{#travelBoardId['travelBoardId']} AND f.memberId = :#{#travelBoardId['memberId']}")
+    void removeLike(@Param("travelBoardId") Map<String, Integer> travelBoardId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO tbl_favorite (travel_board_id, member_id) VALUES (:#{#travelBoardId['travelBoardId']}, :#{#travelBoardId['memberId']})", nativeQuery = true)
+    void addLike(@Param("travelBoardId") Map<String, Integer> travelBoardId);
+
+    @Query("SELECT COUNT(f.memberId) FROM Favorite f WHERE f.travelBoardId = :travelBoardId")
+    int getLikeCount(@Param("travelBoardId") int travelBoardId);
 }

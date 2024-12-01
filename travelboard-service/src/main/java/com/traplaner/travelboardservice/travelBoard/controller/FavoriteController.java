@@ -2,6 +2,7 @@ package com.traplaner.travelboardservice.travelBoard.controller;
 
 import com.traplaner.travelboardservice.travelBoard.dto.FavoriteDTO;
 import com.traplaner.travelboardservice.travelBoard.service.FavoriteService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,5 +22,15 @@ public class FavoriteController {
     public ResponseEntity<List<FavoriteDTO>> getTopThreeFavorites() {
         List<FavoriteDTO> topThreeFavorites = favoriteService.getTopThree();
         return ResponseEntity.ok(topThreeFavorites);
+    }
+
+    @PostMapping("/{id}/toggle-like")
+    @ResponseBody
+    public ResponseEntity<Integer> toggleLike(@PathVariable int id, HttpSession session) {
+        LoginUserResponseDTO dto = (LoginUserResponseDTO) session.getAttribute("login");
+
+        int likeCount = favoriteService.toggleLike(id, dto.getId());
+
+        return ResponseEntity.ok(likeCount);
     }
 }

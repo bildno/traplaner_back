@@ -31,4 +31,16 @@ public class FavoriteService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    // 좋아요 상태 토글
+    @org.springframework.transaction.annotation.Transactional
+    public int toggleLike(int travelBoardId, int memberId) {
+        boolean isLiked = favoriteRepository.isLikedByMember(Map.of("travelBoardId", travelBoardId, "memberId", memberId));
+        if (isLiked) {
+            favoriteRepository.removeLike(Map.of("travelBoardId", travelBoardId, "memberId", memberId));
+        } else {
+            favoriteRepository.addLike(Map.of("travelBoardId", travelBoardId, "memberId", memberId));
+        }
+        return favoriteRepository.getLikeCount(travelBoardId);  // 현재 좋아요 수 반환
+    }
 }
