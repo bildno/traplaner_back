@@ -1,7 +1,7 @@
 package com.traplaner.mainservice.common.config;
 
-import com.project.traplaner.mainservice.common..auth.JwtAuthFilter;
-import com.project.traplaner.mainservice.common..dto.CustomAuthenticationEntryPoint;
+import com.traplaner.mainservice.common.auth.JwtAuthFilter;
+import com.traplaner.mainservice.common.dto.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
