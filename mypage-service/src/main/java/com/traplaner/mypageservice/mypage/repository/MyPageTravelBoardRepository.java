@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MyPageTravelBoardRepository extends JpaRepository<TravelBoard, Integer> {
@@ -15,8 +16,10 @@ public interface MyPageTravelBoardRepository extends JpaRepository<TravelBoard, 
     Page<TravelBoardResponseDTO> findByMemberNickName(String nickName, Pageable pageable);
 
 
-    Long countById(long travelId);
+    Long countById(int travelId);
 
 
     Optional<TravelBoardResponseDTO> findByTravelId(int travelNo);
+
+    List<TravelBoardResponseDTO> findByIdIn(List<Integer> boardIds);
 }
