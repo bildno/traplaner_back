@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.traplaner.travelplanservice.common.auth.TokenUserInfo;
 import com.traplaner.travelplanservice.common.dto.CommonResDto;
-import com.traplaner.travelplanservice.travelplan.dto.TravelImgRequestDto;
 import com.traplaner.travelplanservice.travelplan.dto.TravelPlanRequestDTO;
+import com.traplaner.travelplanservice.travelplan.dto.TravelResponseDTO;
 import com.traplaner.travelplanservice.travelplan.entity.Journey;
 import com.traplaner.travelplanservice.travelplan.entity.Travel;
 import com.traplaner.travelplanservice.travelplan.repository.JourneyRepository;
+import com.traplaner.travelplanservice.travelplan.repository.TravelRepository;
 import com.traplaner.travelplanservice.travelplan.service.TravelService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,19 +20,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-//이상한부분있으면 말해주세용
 public class travelPlanController {
     private final TravelService travelService;
     private final JourneyRepository journeyRepository;
+    private final TravelRepository travelRepository;
 
     @PostMapping("/create")
     @ResponseBody
@@ -57,14 +61,10 @@ public class travelPlanController {
             requestDTO.getJourneys().get(journeyId).setReservationConfirmImagePath(file);
         }
 
-
         //서비스 로직으로 전환된 json 데이터 전달
 
         Travel savedTravel = travelService.saveTravel(requestDTO.getTravel(), Integer.parseInt(userInfo.getId()));
         travelService.saveJourneys(requestDTO.getJourneys());
-
-        //이거 뭐임...? 기억에 없는데엽...? 내가 쓴건가? 강사님이 고쳐주신건가보당 ㅎㅎ;;; 근데 왜 있어야하는거지ㅠ......?
-        //진규님한테 물어봐야겠당.
 //        travelService.refreshLoginUserTravel(LoginDto.getEmail(), session);
 
         CommonResDto resDto =
@@ -83,19 +83,27 @@ public class travelPlanController {
                 new CommonResDto(HttpStatus.OK,"모든 여행 리스트 조회 완료",travels);
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
-    //여행 아이디로 여정 조회
-    @GetMapping("/journeysByTravelId/{travelId}")
-    public ResponseEntity<?> getJourneysByTravelId(@PathVariable("travelId") int travelId) {
-        List<Journey> journeys = journeyRepository.findAllByTravelId(travelId);
+    @GetMapping("/getTravelById/{travelId}")
+    public ResponseEntity<?> getTravelById(@PathVariable("travelId") int travelId) {
+        Travel travel = travelRepository.findById(travelId).orElseThrow(
+                () -> new EntityNotFoundException("그런 아이디의 여행 없음")
+        );
         CommonResDto resDto =
-                new CommonResDto(HttpStatus.OK,"모든 여정 조회 완료",journeys);
+                new CommonResDto(HttpStatus.OK,"여행 조회 완료",travel);
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
+
+    }
+
+    //여행 아이디로 여정 리스트 조회 ()
+    @GetMapping("/journeysByTravelId/{travelId}")
+        public ResponseEntity<?> getJourneysByTravelId(@PathVariable("travelId") int travelId) {
+            List<Journey> journeys = journeyRepository.findAllByTravelId(travelId);
+            log.info("journeys: {}", journeys);
+            CommonResDto resDto =
+                    new CommonResDto(HttpStatus.OK,"모든 여정 조회 완료",journeys);
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
-    //멤버 아이디와 페이저블로 여행 리스트 주기
-    @PostMapping("/travelListsByMemberId")
-    public ResponseEntity<?> travelListsByMemberId(@RequestParam("memberId") int memberId) {
-        return null;
-    }
+
     @GetMapping("/travelListsByMemberId")
     // 페이징이 필요합니다.(주의할 점! 첫번째 페이지는 0페이지이다!)
     // 컨트롤러 파라미터로 Pageable 선언하면, 페이징 파라미터 처리를 쉽게 진행할 수 있음.
@@ -106,10 +114,11 @@ public class travelPlanController {
         log.info("/travelListsByMember : GET, memberId: {}", memberId);
         log.info("/travelListsByMember: GET, pageable={}", pageable);
         List<Travel> travels = travelService.getTravelsByMemberId(memberId, pageable);
-        log.info("travels={}", travels);
+        List<TravelResponseDTO> travelResDtoList = travels.stream().map(TravelResponseDTO::new).toList();
+        log.info("travelResDtoList={}", travelResDtoList);
 
         CommonResDto resDto
-                = new CommonResDto(HttpStatus.OK, "여행리스트 정상조회 완료", travels);
+                = new CommonResDto(HttpStatus.OK, "여행리스트 정상조회 완료", travelResDtoList);
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
     //여행 id로 share 여부 바꾸기
@@ -121,12 +130,27 @@ public class travelPlanController {
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
     //여행 아이디로 여행 여정 이미지 수정
-    @PostMapping("/putTravelJourneyImages")
-    public ResponseEntity<?> putTravelJourneyImages(@RequestBody TravelImgRequestDto dto) {
-        log.info("dto: {}", dto);
-        travelService.putTravelJouneyImages(dto);
+    @PostMapping("/putJourneyImages")
+    public ResponseEntity<?> putJourneyImages(@RequestBody Map<String,String> map) {
+        log.info("JourneyMap: {}", map);
+        travelService.putJouneyImages(map);
         CommonResDto resDto =
                 new CommonResDto(HttpStatus.OK,"이미지 등록 성공","");
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+    @PostMapping("/putTravelImage")
+    public ResponseEntity<?> putTravelImage(@RequestBody Map<String,String> map) {
+        log.info("TravelMap: {}", map);
+                        travelService.putTravelImage(map);
+        CommonResDto resDto =
+                new CommonResDto(HttpStatus.OK,"이미지 등록 성공","");
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+    @PostMapping("/top3-travel")
+    public ResponseEntity<?> getTop3Travel(@RequestBody List<Integer> travelIds){
+        List<TravelResponseDTO> travelsByIds = travelService.getTravelsByIds(travelIds);
+        CommonResDto resDto =
+                new CommonResDto(HttpStatus.OK,"top3 여행 조회 완료",travelsByIds);
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
 }
