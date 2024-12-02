@@ -3,7 +3,6 @@ package com.traplaner.travelboardservice.travelBoard.controller;
 import com.traplaner.travelboardservice.travelBoard.dto.TravelBoardInfoDTO;
 import com.traplaner.travelboardservice.travelBoard.dto.TravelBoardListDTO;
 import com.traplaner.travelboardservice.travelBoard.dto.response.MemberDTO;
-import com.traplaner.travelboardservice.travelBoard.repository.FavoriteRepository;
 import com.traplaner.travelboardservice.travelBoard.service.FavoriteService;
 import com.traplaner.travelboardservice.travelBoard.service.TravelBoardService;
 import jakarta.servlet.http.HttpSession;
