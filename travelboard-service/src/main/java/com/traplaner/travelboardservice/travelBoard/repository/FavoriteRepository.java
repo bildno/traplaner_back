@@ -34,5 +34,5 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
     void addLike(@Param("travelBoardId") Map<String, Integer> travelBoardId);
 
     @Query("SELECT COUNT(f.memberId) FROM Favorite f WHERE f.travelBoardId = :travelBoardId")
-    int getLikeCount(@Param("travelBoardId") int travelBoardId);
+    int getLikeCount(@Param("travelBoardId") Integer travelBoardId);
 }

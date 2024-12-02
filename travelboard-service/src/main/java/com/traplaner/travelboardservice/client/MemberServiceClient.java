@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "member-service")
 public interface MemberServiceClient {
     @GetMapping("/getMemberById/{memberId}")
-    CommonResDto<MemberDTO> findById(@PathVariable("memberId") Integer id);
+    MemberDTO findById(@PathVariable("memberId") Integer id);
 }

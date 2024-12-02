@@ -20,8 +20,7 @@ public class TravelBoardController {
     private final TravelBoardService travelBoardService;
 
     @GetMapping("/list")
-    public ResponseEntity<Page<TravelBoardListDTO>> getTravelBoardList(
-            @PageableDefault(size = 6, sort = "writeDate", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<Page<TravelBoardListDTO>> getTravelBoardList(Pageable pageable) {
         return ResponseEntity.ok(travelBoardService.getTravelBoardList(pageable));
     }
 
