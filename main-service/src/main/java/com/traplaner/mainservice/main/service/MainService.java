@@ -1,11 +1,13 @@
 package com.traplaner.mainservice.main.service;
 
+import com.traplaner.mainservice.client.MypageServiceClient;
+import com.traplaner.mainservice.client.TravelboardServiceClient;
+import com.traplaner.mainservice.client.TravelplanServiceClient;
 import com.traplaner.mainservice.common.auth.TokenUserInfo;
+import com.traplaner.mainservice.common.dto.CommonResDto;
+import com.traplaner.mainservice.main.dto.FavoriteResDto;
 import com.traplaner.mainservice.main.dto.MainTravelDto;
 import com.traplaner.mainservice.main.dto.TopThreeFavoriteTravelDto;
-import com.traplaner.mainservice.main.repository.MainTravelRepository;
-import com.traplaner.mainservice.common.auth.TokenUserInfo;
-import com.traplaner.mainservice.main.repository.MainTravelRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +23,10 @@ import java.util.List;
 @Slf4j
 public class MainService {
 
-    private final MainTravelRepository mainTravelRepository;
+    // Feign Client 주입
+    private final TravelboardServiceClient travelboardServiceClient;
+    private final TravelplanServiceClient travelplanServiceClient;
+    private final MypageServiceClient mypageServiceClient;
 
     public List<TopThreeFavoriteTravelDto> getTop3FavoriteTravels() {
 
@@ -30,10 +35,16 @@ public class MainService {
         PageRequest pageRequest = PageRequest.of(pageNumber, desiredFavoriteCount);
 
         // when
-        List<TopThreeFavoriteTravelDto> topThreeFavoriteTravel
-                = mainTravelRepository.findTopThreeFavoriteTravel(pageRequest);
+//        List<TopThreeFavoriteTravelDto> topThreeFavoriteTravel
+//                = mainTravelRepository.findTopThreeFavoriteTravel(pageRequest);
 
-        return topThreeFavoriteTravel;
+
+        CommonResDto<List<FavoriteResDto>> top3Favorite = travelboardServiceClient.getTop3Favorite();
+//        CommonResDto<List<FavoriteResDto>> getTop3Favorite();
+
+
+//        return topThreeFavoriteTravel;
+        return null;
     }
 
     public List<MainTravelDto> getMyTravelList() {
@@ -42,9 +53,11 @@ public class MainService {
                 = (TokenUserInfo) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
 
-        List<MainTravelDto> dtoList
-                = mainTravelRepository.findAllTravelByMemberEmail(userInfo.getEmail());
+//        List<MainTravelDto> dtoList
+//                = mainTravelRepository.findAllTravelByMemberEmail(userInfo.getEmail());
 
-        return dtoList;
+//        return dtoList;
+        return null;
+
     }
 }

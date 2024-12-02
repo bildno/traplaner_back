@@ -20,16 +20,18 @@ spring:
         git:
           # 호스트 키는 SSH 프로토콜을 통해 Git 저장소에 접근할 때 Git 서버의 신뢰성을 검증하기 위한
           # 호스트 키를 제공해야 합니다.
-          uri: git@github.com:githubid/cloud-config-settings.git
+          uri: git@github.com:github-id/cloud-config-settings.git
           default-label: main
           host-key: "ssh-rsa host-key"
           host-key-algorithm: "ssh-rsa"
           private-key: |
-            -----BEGIN EC PRIVATE KEY-----
-            생성된 프라이빗 키를 넣으세요!
-            -----END EC PRIVATE KEY-----
+            ${GIT_PRIVATE_KEY}
 
+# Actuator 설정
 management:
+  endpoint:
+    health:
+      show-details: always
   endpoints:
     web:
       exposure:
