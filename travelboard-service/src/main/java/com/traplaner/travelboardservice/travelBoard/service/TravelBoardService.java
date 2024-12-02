@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,13 +37,12 @@ public class TravelBoardService {
      */
     public Page<TravelBoardListDTO> getTravelBoardList(Pageable pageable) {
         // Feign 클라이언트를 통해 다른 서버에서 페이징 데이터 가져오기
-        Page<TravelBoardDTO> boards = mypageServiceClient.getTravelBoards(
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
-                pageable.getSort().toString()
-        );
+        ResponseEntity<?> boards = mypageServiceClient.myBoard(pageable);
+        Page<TravelBoardListDTO> list = (Page<TravelBoardListDTO>) boards;
 
-        // 데이터를 가공하여 DTO로 변환
+        return list;
+
+/*        // 데이터를 가공하여 DTO로 변환
         return boards.map(board -> {
             TravelDTO travel = travelplanServiceClient.getTravelById(board.getTravelId());
             MemberDTO member = memberServiceClient.findById(travel.getMemberId());
@@ -55,7 +55,7 @@ public class TravelBoardService {
                     board.getWriteDate(),
                     (long) favoriteRepository.getLikeCount(board.getId())
             );
-        });
+        });*/
     }
 
     /**
@@ -63,9 +63,10 @@ public class TravelBoardService {
      */
     public TravelBoardInfoDTO getTravelBoardInfo(Integer id) {
         // Feign 클라이언트를 통해 다른 서버에서 게시글 데이터 가져오기
-        TravelBoardDTO board = mypageServiceClient.getTravelBoardById(id);
+        ResponseEntity<?> board = mypageServiceClient.getBoardInfo(id);
+        return (TravelBoardInfoDTO) board.getBody();
 
-        // 다른 서비스에서 추가 데이터 가져오기
+/*        // 다른 서비스에서 추가 데이터 가져오기
         TravelDTO travel = travelplanServiceClient.getTravelById(board.getTravelId());
         MemberDTO member = memberServiceClient.findById(travel.getMemberId());
         List<JourneyDTO> journeys = travelplanServiceClient.getJourneysByTravelId(board.getTravelId());
@@ -91,6 +92,6 @@ public class TravelBoardService {
                 board.getContent(),
                 favoriteRepository.getLikeCount(board.getId()),
                 journeyDetails
-        );
+        );*/
     }
 }
