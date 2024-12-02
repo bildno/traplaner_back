@@ -2,6 +2,7 @@ package com.traplaner.travelplanservice.travelplan.service;
 
 import com.traplaner.travelplanservice.common.util.FileUtils;
 import com.traplaner.travelplanservice.travelplan.dto.TravelPlanRequestDTO.TravelInfo;
+import com.traplaner.travelplanservice.travelplan.dto.TravelResponseDTO;
 import com.traplaner.travelplanservice.travelplan.entity.Journey;
 import com.traplaner.travelplanservice.travelplan.entity.Travel;
 import com.traplaner.travelplanservice.travelplan.repository.JourneyRepository;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +83,7 @@ public class TravelService {
 
     }
 
+
     public void putTravelImage(Map<String, String> map) {
         Map<String,String > TravelMap = map;
 
@@ -107,4 +110,13 @@ public class TravelService {
     }
 
 
+        public List<TravelResponseDTO> getTravelsByIds(List<Integer> travelIds) {
+        List<TravelResponseDTO> dtos = new ArrayList<>();
+        for (Integer travelId : travelIds) {
+            Travel travel = travelRepository.findById(travelId).orElseThrow(() -> new EntityNotFoundException("Travel not found"));
+            TravelResponseDTO dto = new TravelResponseDTO(travel);
+            dtos.add(dto);
+        }
+        return dtos;
+    }
 }

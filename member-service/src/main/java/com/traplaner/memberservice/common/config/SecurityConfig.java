@@ -62,10 +62,10 @@ public class SecurityConfig {
                                     "/sign-in",
                                     "static/**",
                                     "/error",
-                                    "/main/top3-favorite",
                                     "/pw-change",
-                                    "/pwChangeById",
-                                    "/getMemberById/**"
+                                    "/changeInfoById",
+                                    "/getMemberById/**",
+                                    "duplicateTest"
                             )
                             .permitAll()
                             .requestMatchers("/**").access(
