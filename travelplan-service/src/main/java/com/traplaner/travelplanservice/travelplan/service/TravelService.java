@@ -11,6 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -76,8 +77,8 @@ public class TravelService {
     public List<Travel> getTravelsByMemberId(int memberId) {
         return travelRepository.findAllByMemberId(memberId);
     }
-    public List<Travel> getTravelsByMemberId(int memberId, Pageable pageable) {
-        List<Travel> allByMemberId = travelRepository.findAllByMemberId(memberId, pageable);
+    public Page<Travel> getTravelsByMemberId(int memberId, Pageable pageable) {
+        Page<Travel> allByMemberId = travelRepository.findAllByMemberId(memberId, pageable);
         log.info("allByMemberId: {}", allByMemberId);
         return allByMemberId;
 

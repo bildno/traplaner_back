@@ -29,7 +29,7 @@ public class AuthorizationHeaderFilter
     private String secretKey;
 
     private final List<String> allowUrl = Arrays.asList(
-            "/sign-up", "/sign-in", "/refresh", "/top3-favorite", "/pw-change"
+            "/sign-up", "/sign-in", "/refresh", "/top3-favorite", "/pw-change","/duplicateTest"
 
     );
 
@@ -43,9 +43,12 @@ public class AuthorizationHeaderFilter
             String path = exchange.getRequest().getURI().getPath();
             AntPathMatcher antPathMatcher = new AntPathMatcher();
 
+            log.info("Request Path: {}", path);
+            log.info("Allow URLs: {}", allowUrl);
             // 허용 url 리스트를 순회하면서 지금 들어온 요청 url과 하나라도 일치하면 true 리턴
             boolean isAllowed
                     = allowUrl.stream().anyMatch(url -> antPathMatcher.match(url, path));
+            log.info("isAllowed: {}", isAllowed);
             if (isAllowed) {
                 // 허용 url이 맞다면 그냥 통과~
                 return chain.filter(exchange);

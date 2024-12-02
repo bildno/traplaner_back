@@ -1,6 +1,7 @@
 package com.traplaner.travelplanservice.travelplan.repository;
 
 import com.traplaner.travelplanservice.travelplan.entity.Travel;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,5 +13,5 @@ public interface TravelRepository extends JpaRepository<Travel, Integer> {
 
     List<Travel> findAllByMemberId(int memberId);
 
-    List<Travel> findAllByMemberId(int memberId, Pageable pageable);
+   Page<Travel> findAllByMemberId(int memberId, Pageable pageable);
 }
