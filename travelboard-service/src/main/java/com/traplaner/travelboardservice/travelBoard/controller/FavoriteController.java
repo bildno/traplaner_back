@@ -1,5 +1,5 @@
 package com.traplaner.travelboardservice.travelBoard.controller;
-
+import com.traplaner.travelboardservice.common.auth.TokenUserInfo;
 import com.traplaner.travelboardservice.common.dto.CommonResDto;
 import com.traplaner.travelboardservice.travelBoard.dto.response.FavoriteResDTO;
 import com.traplaner.travelboardservice.travelBoard.service.FavoriteService;
@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,9 +28,11 @@ public class FavoriteController {
 
     @PostMapping("/toggle-like/{boardId}")
     @ResponseBody
-    public ResponseEntity<?> toggleLike(@PathVariable Integer boardId) {
+    public ResponseEntity<?> toggleLike(@AuthenticationPrincipal TokenUserInfo userInfo,
+                                        @PathVariable Integer boardId) {
 
-        Long likeCount = favoriteService.toggleLike(boardId);
+        int memberId = Integer.parseInt(userInfo.getId());
+        Long likeCount = favoriteService.toggleLike(boardId,memberId);
 
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "좋아요를 눌렀습니다.", likeCount);
 

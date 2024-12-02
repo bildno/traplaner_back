@@ -61,7 +61,7 @@ public class TravelBoardService {
     /**
      * 특정 게시글 상세 조회
      */
-    public TravelBoardInfoDTO getTravelBoardInfo(Integer id) {
+    public TravelBoardInfoDTO getTravelBoardInfo(int id) {
         // Feign 클라이언트를 통해 다른 서버에서 게시글 데이터 가져오기
         ResponseEntity<?> board = mypageServiceClient.getBoardInfo(id);
         return (TravelBoardInfoDTO) board.getBody();
