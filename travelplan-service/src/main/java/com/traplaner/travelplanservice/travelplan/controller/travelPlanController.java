@@ -104,11 +104,13 @@ public class travelPlanController {
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
 
+    //page로 리턴하게 만들자!
     @GetMapping("/travelListsByMemberId")
     // 페이징이 필요합니다.(주의할 점! 첫번째 페이지는 0페이지이다!)
     // 컨트롤러 파라미터로 Pageable 선언하면, 페이징 파라미터 처리를 쉽게 진행할 수 있음.
     // /list?page=1&size=10&sort=name,desc 요런 식으로.
     // 요청 시 쿼리스트링이 전달되지 않으면 기본값 0, 20, unsorted
+
     public ResponseEntity<?> travelListsByMemberId(@RequestParam("memberId") int memberId,
                                                   Pageable pageable) {
         log.info("/travelListsByMember : GET, memberId: {}", memberId);
