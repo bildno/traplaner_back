@@ -42,14 +42,11 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
                     auth
                             .requestMatchers(
-                                    "/",
-                                    "/members/**",
-                                    "/WEB-INF/views/**",
-                                    "static/**",
-                                    "assets/img/*",
-                                    "/favicon.ico",
                                     "/error",
-                                    "/main/top3-favorite")
+                                    "/list",
+                                    "/info/**",
+                                    "/top3-favorite"
+                                    )
                             .permitAll()
                             .anyRequest().authenticated();
                 })

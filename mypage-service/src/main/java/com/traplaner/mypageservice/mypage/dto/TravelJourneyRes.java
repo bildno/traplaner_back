@@ -6,8 +6,6 @@ public interface TravelJourneyRes {
 
      LocalDateTime getStartDate();
      LocalDateTime getEndDate();
-     String getTitle();
-     String getTravelImg();
      String getJourneyImg();
      String getJourneyName();
 

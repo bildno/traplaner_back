@@ -18,8 +18,8 @@ public interface TravelPlanServiceClient {
     @GetMapping("/travelsByMemberId/{id}")
     CommonResDto<List<travelPlanResDto>> findByMemberId(@PathVariable Integer id);
 
-    @GetMapping("journeysByTravelId/{travelId}")
-    travelPlanResDto findById(@PathVariable Long travelId);
+    @GetMapping("getTravelById/{travelId}")
+    travelPlanResDto findById(@PathVariable int travelId);
 
     @GetMapping("/travelListsByMemberId?memberId={memberId}&page={page}&size={size}")
     CommonResDto<Page<travelPlanResDto>> findByMemberId(@PathVariable Integer memberId, @PathVariable int page, @PathVariable int size);
