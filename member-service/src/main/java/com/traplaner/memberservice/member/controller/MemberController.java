@@ -60,6 +60,7 @@ public class MemberController {
         return new ResponseEntity<>(commonResDto,HttpStatus.OK);
     }
     // 멤버 아이디와 변경된 비밀번호로 비밀번호 변경
+    // dto로 바꿔서 받기
     @Transactional
     @PutMapping("changeInfoById")
     @ResponseBody
@@ -146,6 +147,8 @@ public class MemberController {
         Map<String, Object> logInfo = new HashMap<>();
         logInfo.put("token", token);
         logInfo.put("id", member.getId());
+        logInfo.put("nickName", member.getNickName());
+        logInfo.put("profile", member.getProfileImg());
 
         CommonResDto resDto
                 = new CommonResDto(HttpStatus.OK, "로그인 성공!", logInfo);
@@ -223,7 +226,7 @@ public class MemberController {
                = new CommonResDto(HttpStatus.OK,"멤버 찾았음",member);
        return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
-
+    // dto 변경
 
 
 

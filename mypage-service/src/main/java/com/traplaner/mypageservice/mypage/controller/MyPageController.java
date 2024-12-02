@@ -56,11 +56,11 @@ public class MyPageController {
 
     // 마이페이지 내 게시물
     @GetMapping("/my-page/mytravelboard")
-    @ResponseBody
-    public ResponseEntity<?> myBoard(Pageable pageable) {
+        @ResponseBody
+        public ResponseEntity<?> myBoard(Pageable pageable) {
 
-        Page<TravelBoardResponseDTO> map = myPageService.findBoardAll(pageable);
-        List<TravelBoardResponseDTO> content = map.getContent();
+            Page<TravelBoardResponseDTO> map = myPageService.findBoardAll(pageable);
+            List<TravelBoardResponseDTO> content = map.getContent();
 
         return new ResponseEntity<>(content, HttpStatus.OK);
     }
