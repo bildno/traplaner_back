@@ -98,7 +98,7 @@ public class MyPageService {
 
         List<travelPlanResDto> travels =
                 travelBoards.stream().map(travel ->
-                        travelServiceClient.findById((long) travel.getTravelId())).collect(Collectors.toList());
+                        travelServiceClient.findById(travel.getTravelId())).collect(Collectors.toList());
 
 
         map.put("favorites", byMemberId);
@@ -133,11 +133,12 @@ public class MyPageService {
     }
 
 
-    public int findByTravelId(Long travelId) {
+    public int findByTravelId(int travelId) {
         Long travel = myPageTravelBoardRepository.countById(travelId);
 
         return Math.toIntExact(travel);
     }
+
 
     public HashMap<String, Object> boardInfo(int travelNo) {
         HashMap<String, Object> map = new HashMap<>();
@@ -152,6 +153,19 @@ public class MyPageService {
         map.put("travelBoardResponseDTO", travelBoardResponseDTO);
         return map;
 
+    }
+
+    public Page<TravelBoard> getBoardAll(Pageable pageable) {
+        Page<TravelBoard> all = myPageTravelBoardRepository.findAll(pageable);
+
+        return all;
+    }
+
+    public List<TravelBoardResponseDTO> getBoardIn(List<Integer> boardIds) {
+
+        List<TravelBoardResponseDTO> byIdIn = myPageTravelBoardRepository.findByIdIn(boardIds);
+
+        return byIdIn;
     }
 }
 
