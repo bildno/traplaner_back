@@ -34,13 +34,13 @@ public class FavoriteService {
 
     // 좋아요 상태 토글
     @Transactional
-    public int toggleLike(Integer travelBoardId, Integer memberId) {
-        boolean isLiked = favoriteRepository.isLikedByMember(Map.of("travelBoardId", travelBoardId, "memberId", memberId));
+    public Long toggleLike(Integer travelBoardId) {
+        boolean isLiked = favoriteRepository.isLikedByMember(Map.of("travelBoardId", travelBoardId));
         if (isLiked) {
-            favoriteRepository.removeLike(Map.of("travelBoardId", travelBoardId, "memberId", memberId));
+            favoriteRepository.removeLike(Map.of("travelBoardId", travelBoardId));
         } else {
-            favoriteRepository.addLike(Map.of("travelBoardId", travelBoardId, "memberId", memberId));
+            favoriteRepository.addLike(Map.of("travelBoardId", travelBoardId));
         }
-        return favoriteRepository.getLikeCount(travelBoardId);  // 현재 좋아요 수
+        return (long) favoriteRepository.getLikeCount(travelBoardId);  // 현재 좋아요 수
     }
 }
