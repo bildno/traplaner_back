@@ -2,9 +2,7 @@ package com.traplaner.travelboardservice.travelBoard.controller;
 
 import com.traplaner.travelboardservice.common.dto.CommonResDto;
 import com.traplaner.travelboardservice.travelBoard.dto.response.FavoriteResDTO;
-import com.traplaner.travelboardservice.travelBoard.dto.response.MemberDTO;
 import com.traplaner.travelboardservice.travelBoard.service.FavoriteService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
