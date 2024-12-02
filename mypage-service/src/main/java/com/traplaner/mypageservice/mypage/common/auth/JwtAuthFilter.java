@@ -1,3 +1,5 @@
+package com.traplaner.mypageservice.mypage.common.auth;
+
 import com.traplaner.mypageservice.mypage.common.auth.JwtTokenProvider;
 import com.traplaner.mypageservice.mypage.common.auth.TokenUserInfo;
 import jakarta.servlet.FilterChain;

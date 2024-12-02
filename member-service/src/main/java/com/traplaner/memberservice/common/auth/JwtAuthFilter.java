@@ -1,3 +1,5 @@
+package com.traplaner.memberservice.common.auth;
+
 import com.traplaner.memberservice.common.auth.JwtTokenProvider;
 import com.traplaner.memberservice.common.auth.TokenUserInfo;
 import jakarta.servlet.FilterChain;
