@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "mypage-service")
 public interface MypageServiceClient {
 
-    @GetMapping("/getTravelBoard")
+    @GetMapping("/my-page/mytravelboard")
     Page<TravelBoardDTO> getTravelBoards(@RequestParam("page") int page,
                                          @RequestParam("size") int size,
                                          @RequestParam("sort") String sort);
 
-    @GetMapping("/getTravelBoard/{boardId}")
-    TravelBoardDTO getTravelBoardById(@PathVariable("boardId") Integer id);
+    @GetMapping("/my-page/board-info/{travelNo}")
+    TravelBoardDTO getTravelBoardById(@PathVariable("travelNo") Integer id);
 }
