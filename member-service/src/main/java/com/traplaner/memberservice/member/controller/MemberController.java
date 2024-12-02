@@ -47,7 +47,7 @@ public class MemberController {
 
     //비밀번호 변경로직
     @Transactional
-    @PutMapping("pw-change")
+    @PutMapping("/pw-change")
     @ResponseBody
     public ResponseEntity<?> pwChange(@RequestBody Map<String, String> map)
     {
@@ -62,7 +62,7 @@ public class MemberController {
     // 멤버 아이디와 변경된 비밀번호로 비밀번호 변경
     // dto로 바꿔서 받기
     @Transactional
-    @PutMapping("changeInfoById")
+    @PutMapping("/changeInfoById")
     @ResponseBody
     public ResponseEntity<?> pwChangeById(@RequestBody Map<String, String> map)
     {

@@ -40,15 +40,14 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
                     auth
                             .requestMatchers(
-                                    "/error",
-                                    "/travelsByMemberId/**",
-                                    "/travelListsByMemberId/**",
-                                    "/getTravelById/**",
-                                    "/journeysByTravelId/**",
-                                    "/changeShare/**",
-                                    "/putJourneyImages",
-                                    "/putTravelImage",
-                                    "/top3-travel"
+                                    "/sign-in",
+                                    "/sign-up",
+                                    "/pw-change",
+                                    "/refresh",
+                                    "/duplicateTest",
+                                    "/email",
+                                    "/changeInfoById",
+                                    "/getMemberById/**"
                             )
                             .permitAll()
                             .anyRequest().authenticated();
