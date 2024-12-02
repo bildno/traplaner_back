@@ -1,3 +1,5 @@
+package com.traplaner.travelboardservice.common.auth;
+
 import com.traplaner.travelboardservice.common.auth.JwtTokenProvider;
 import com.traplaner.travelboardservice.common.auth.TokenUserInfo;
 import jakarta.servlet.FilterChain;
