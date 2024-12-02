@@ -25,13 +25,4 @@ public class FavoriteController {
         return ResponseEntity.ok(topThreeFavorites);
     }
 
-    @PostMapping("/{memberId}/toggle-like")
-    @ResponseBody
-    public ResponseEntity<Integer> toggleLike(@PathVariable("memberId") Integer id, HttpSession session) {
-        MemberDTO dto = (MemberDTO) session.getAttribute("login");
-
-        int likeCount = favoriteService.toggleLike(id, dto.getId());
-
-        return ResponseEntity.ok(likeCount);
-    }
 }
