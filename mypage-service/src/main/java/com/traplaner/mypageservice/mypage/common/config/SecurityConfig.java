@@ -41,14 +41,9 @@ public class SecurityConfig {
                     auth
                             .requestMatchers(
                                     "/error",
-                                    "/travelsByMemberId/**",
-                                    "/travelListsByMemberId/**",
-                                    "/getTravelById/**",
-                                    "/journeysByTravelId/**",
-                                    "/changeShare/**",
-                                    "/putJourneyImages",
-                                    "/putTravelImage",
-                                    "/top3-travel"
+                                    "/favoriteTop",
+                                    "/getTravelBoard",
+                                    "/boardInfo/**"
                             )
                             .permitAll()
                             .anyRequest().authenticated();
