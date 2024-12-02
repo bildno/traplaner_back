@@ -1,6 +1,6 @@
 package com.traplaner.travelplanservice.travelplan.dto;
 
-
+import com.traplaner.travelplanservice.travelplan.entity.Travel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,12 +13,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TravelResponseDTO {
-
     private Integer id;
-    private int memberId;
     private String title;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private boolean share;
     private String travelImg;
+
+    public TravelResponseDTO(Travel travel) {
+        travelImg = travel.getTravelImg();
+        title = travel.getTitle();
+        id = travel.getId();
+    }
 }

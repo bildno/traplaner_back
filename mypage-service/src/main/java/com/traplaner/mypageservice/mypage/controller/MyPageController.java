@@ -1,14 +1,24 @@
 package com.traplaner.mypageservice.mypage.controller;
 
+import com.traplaner.mypageservice.mypage.client.MemberServiceClient;
+import com.traplaner.mypageservice.mypage.common.auth.TokenUserInfo;
+import com.traplaner.mypageservice.mypage.common.dto.CommonResDto;
+import com.traplaner.mypageservice.mypage.common.util.FileUtils;
+import com.traplaner.mypageservice.mypage.dto.FavoriteRes;
 import com.traplaner.mypageservice.mypage.dto.ModifyMemberInfoDTO;
+import com.traplaner.mypageservice.mypage.dto.TravelJourneyRes;
+import com.traplaner.mypageservice.mypage.dto.response.*;
+import com.traplaner.mypageservice.mypage.service.MyPageService;
 import com.traplaner.mypageservice.mypage.dto.response.TravelBoardCreateDto;
 import com.traplaner.mypageservice.mypage.dto.response.TravelBoardResponseDTO;
 import com.traplaner.mypageservice.mypage.dto.response.TravelListResponseDTO;
 import com.traplaner.mypageservice.mypage.entity.TravelBoard;
-import com.traplaner.mypageservice.mypage.service.MyPageService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +28,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,9 +38,7 @@ import java.util.Map;
 public class MyPageController {
 
     private final MyPageService myPageService;
-    private final MemberService memberService;
-    private final TravelService travelService;
-    private final MemberRepository memberRepository;
+    private final MemberServiceClient memberServiceClient;
 
 
 
@@ -37,31 +46,19 @@ public class MyPageController {
     // 달력에 일정 띄워주는 작업 해야댐
     // 계정관리 페이지 작성 필요
     @GetMapping("/my-page")
+    @ResponseBody
     public ResponseEntity<?> myPage() {
 
         List<TravelListResponseDTO> travelListResponseDTOS = myPageService.myPage();
-
 
         return new ResponseEntity<>(travelListResponseDTOS, HttpStatus.OK);
     }
 
 
-    // 마이 페이지 내 게시물
-    // db연동 아직 x
-//    @GetMapping("/my-page/mytravelboard/{nickName}")
-//    public String myBoard(@PathVariable String nickName, Model model,
-//                          @ModelAttribute("s") PageDTO page) {
-//
-//        Map<String, Object> map = myPageBoardService.findBoardAll(nickName, page);
-//
-//        model.addAttribute("dtoList", map.get("boardAll"));
-//        model.addAttribute("maker", map.get("pm"));
-//
-//        return "member/my-board";
-//    }
 
     // 마이페이지 내 게시물
     @GetMapping("/my-page/mytravelboard")
+    @ResponseBody
     public ResponseEntity<?> myBoard(Pageable pageable) {
 
         Page<TravelBoardResponseDTO> map = myPageService.findBoardAll(pageable);
@@ -74,12 +71,14 @@ public class MyPageController {
     // 마이페이지 나의 여행
     @GetMapping("/my-page/my-travel")
     public ResponseEntity<?> myTravel(Pageable pageable) {
-        Page<Travel> travels = myPageService.myTravel(pageable);
-        List<Travel> content = travels.getContent();
+        CommonResDto<Page<travelPlanResDto>> travels = myPageService.myTravel(pageable);
+        Page<travelPlanResDto> result = travels.getResult();
+        List<travelPlanResDto> content = result.getContent();
 
         return new ResponseEntity<>(content, HttpStatus.OK);
     }
 
+    // 공유여부 변경
     @PostMapping("/my-page/shareIs/{boardId}")
     @ResponseBody
     public ResponseEntity<?> shareIs(@PathVariable int boardId) {
@@ -88,34 +87,31 @@ public class MyPageController {
         return ResponseEntity.ok().body("success");
     }
 
-//    @PostMapping("/my-page/delete/{boardId}/{memberId}")
-//    @ResponseBody
-//    public ResponseEntity<?> deleteBoard(@PathVariable int boardId,
-//                                         @PathVariable int memberId,
-//                                         Model model,
-//                                         HttpSession session) {
-//
-//        List<TravelListResponseDTO> dtoList = myPageBoardService.getList(memberId);
-//
-//        model.addAttribute("list", dtoList);
-//
-//        myPageBoardService.deleteBoard(boardId, session);
-//
-//        return ResponseEntity.ok().body("success");
-//    }
+    //글 삭제
+    @PostMapping("/my-page/delete/{boardId}")
+    @ResponseBody
+    public ResponseEntity<?> deleteBoard(@PathVariable int boardId
+                                        ) {
+        
+        myPageService.deleteBoard(boardId);
 
-    @GetMapping("/my-page/favorite/{memberId}")
-    public String favorite(@PathVariable int memberId,
-                           @ModelAttribute("s") PageDTO page,
-                           Model model) {
-        Map<String, Object> map = myPageService.favorite(memberId, page);
-
-        model.addAttribute("list", map.get("favorite"));
-        model.addAttribute("maker", map.get("pm"));
-
-        return "member/favorite";
+        return ResponseEntity.ok().body("success");
     }
 
+
+    // 좋아요 리스트
+    @GetMapping("/my-page/favorite")
+    @ResponseBody
+    public ResponseEntity<?> favorite(Pageable pageable) {
+        HashMap<String, Object> favorite = myPageService.favorite(pageable);
+
+
+
+        return new ResponseEntity<>(favorite, HttpStatus.OK);
+    }
+
+
+    // 비밀번호 변경
     @GetMapping("/my-page/pwChange")
     public String pwChange() {
 
@@ -124,9 +120,11 @@ public class MyPageController {
     }
 
     @PostMapping("/my-page/changeConfirm")
+    @ResponseBody
     public ResponseEntity<?> changeConfirm(@Validated @RequestBody ModifyMemberInfoDTO dto) {
 
-        boolean b = memberService.updateInfo(dto);
+
+        boolean b = memberServiceClient.updateInfo(dto);
 
 
         if (b) {
@@ -138,12 +136,16 @@ public class MyPageController {
 
     }
 
-
+    // 닉네임 중복체크
     @PostMapping("/my-page/nickNameChk/{newNick}")
+    @ResponseBody
     public ResponseEntity<?> nickNameChk(@PathVariable String newNick) {
         String type = "nickname";
 
-        boolean b = memberService.duplicateTest(type, newNick);
+        HashMap<String, String> map = new HashMap<>();
+        map.put("type", type);
+        map.put("newNick", newNick);
+        boolean b = memberServiceClient.duplicateTest(map);
         System.out.println(b);
         if (!b) {
             return ResponseEntity.ok().body("success");
@@ -153,97 +155,67 @@ public class MyPageController {
 
     }
 
+
+    // 게시글
     @GetMapping("my-page/board-info/{travelNo}")
-    public String boardInfo(@PathVariable int travelNo, Model model) {
-        Map<String, Object> travel = myPageService.travel(travelNo);
+    @ResponseBody
+    public ResponseEntity<?> boardInfo(@PathVariable int travelNo) {
+        HashMap<String, Object> map = myPageService.boardInfo(travelNo);
 
-        model.addAttribute("travel", travel.get("travels"));
-        model.addAttribute("journey", travel.get("journeys"));
-
-        return "member/my-board-info";
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
+
 
     @Value("${file.upload.root-path}")
     private String rootPath;
 
-//    @PostMapping("/my-page/insert-board")
-//    public String insertTravelJourney(@RequestParam int travelId,
-//                                      @RequestParam MultipartFile travelImg,
-//                                      @RequestParam List<MultipartFile> journeyImage,
-//                                      @RequestParam String content,
-//                                      @RequestParam List<Integer> journeyId,
-//                                      RedirectAttributes ra,
-//                                      HttpSession session) {
-//
-//
-//        LoginUserResponseDTO login = (LoginUserResponseDTO) session.getAttribute("login");
-//        String nickName = login.getNickName();
-//        int id = login.getId();
-//
-//
-//        if (StringUtils.hasText(travelImg.getOriginalFilename())) {
-//
-//            String savePath = FileUtils.uploadFile(travelImg, rootPath);
-//
-//            myPageBoardService.updateTravelImg(travelId, savePath);
-//
-//        }
-//
-//        int byTravelId = myPageBoardService.findByTravelId(travelId);
-//
-//
-//        if(byTravelId == 0) {
-//            myPageBoardService.createBoard(travelId, nickName, LocalDate.now(), content);
-//        }
-//
-//        if (!journeyImage.isEmpty()) {
-//            for (int i = 0, j = journeyId.size(); i < j; i++ ) {
-//                String save = FileUtils.uploadFile(journeyImage.get(i), rootPath);
-//                if (save != null )myPageBoardService.updateJourneyImg(journeyId.get(i), save);
-//            }
-//        }
-//
-//        travelService.refreshLoginUserTravel(login.getEmail(), session);
-//
-//        ra.addFlashAttribute("msg", "저장되었습니다!!!");
-//
-//
-//        return "redirect:/my-page/mytravel/" + id;
-//    }
+    // 게시글 작성
+   @PostMapping("/my-page/insert-board")
+   @ResponseBody
+   public ResponseEntity<?> insertBoard(TravelBoardCreateDto dto){
 
-    @PostMapping("/my-page/insert-board")
-    public ResponseEntity<?> insertBoard(TravelBoardCreateDto dto){
+       TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       String id = userinfo.getId();
+       CommonResDto<MemberResDto> byEmail = memberServiceClient.findById(Integer.parseInt(id));
+       MemberResDto result = byEmail.getResult();
+       String nickName = result.getNickName();
 
-        TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email = userinfo.getEmail();
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NullPointerException("없는 사람"));
-        String nickName = member.getNickName();
+       HashMap<String, String> jourenyMap = new HashMap<>();
+       HashMap<String, String> travelMap = new HashMap<>();
 
-
-        if (StringUtils.hasText(dto.getTravelImg().getOriginalFilename())) {
+       if (StringUtils.hasText(dto.getTravelImg().getOriginalFilename())) {
 
             String savePath = FileUtils.uploadFile(dto.getTravelImg(), rootPath);
 
-            myPageService.updateTravelImg(dto.getTravelId(), savePath);
+           travelMap.put(String.valueOf(dto.getTravelId()), savePath);
+            myPageService.updateTravelImg(travelMap);
 
         }
 
+       int byTravelId = myPageService.findByTravelId(dto.getTravelId());
 
-        int byTravelId = myPageService.findByTravelId(dto.getTravelId());
+       if(byTravelId == 0) {
+           TravelBoard board = myPageService.createBoard(Math.toIntExact(dto.getTravelId()), nickName, LocalDateTime.now(), dto.getContent());
+       }
 
-        if(byTravelId == 0) {
-            TravelBoard board = myPageService.createBoard(dto.getTravelId(), nickName, LocalDateTime.now(), dto.getContent());
-        }
-
-        if (!dto.getJourneyImage().isEmpty()) {
+       if (!dto.getJourneyImage().isEmpty()) {
             for (int i = 0, j = dto.getJourneyId().size(); i < j; i++ ) {
                 String save = FileUtils.uploadFile(dto.getJourneyImage().get(i), rootPath);
-                if (save != null )myPageService.updateJourneyImg(Long.valueOf(dto.getJourneyId().get(i)), save);
+                if(save != null){
+                    jourenyMap.put(dto.getJourneyId().toString(), save);
+                }
+
+
+
             }
+           myPageService.updateJourneyImg(jourenyMap);
         }
 
-        return new ResponseEntity<>("등록성공", HttpStatus.OK);
+     return new ResponseEntity<>("등록성공",HttpStatus.OK);
 
-    }
+   }
 
 }
+
+
+

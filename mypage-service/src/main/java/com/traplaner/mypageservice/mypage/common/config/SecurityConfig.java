@@ -1,7 +1,9 @@
-package com.traplaner.memberservice.common.config;
+package com.traplaner.mypageservice.mypage.common.config;
 
-import com.traplaner.memberservice.common.auth.JwtAuthFilter;
-import com.traplaner.memberservice.common.dto.CustomAuthenticationEntryPoint;
+
+
+import com.traplaner.mypageservice.mypage.common.auth.JwtAuthFilter;
+import com.traplaner.mypageservice.mypage.common.dto.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -62,11 +64,7 @@ public class SecurityConfig {
                                     "/sign-in",
                                     "static/**",
                                     "/error",
-                                    "/pw-change",
-                                    "/changeInfoById",
-                                    "/getMemberById/**",
-                                    "duplicateTest"
-                            )
+                                    "/main/top3-favorite")
                             .permitAll()
                             .requestMatchers("/**").access(
                                     new WebExpressionAuthorizationManager("hasIpAddress('localhost') or hasIpAddress('::1') or hasIpAddress('127.0.0.1')  or hasIpAddress('172.30.67.125')")
