@@ -18,10 +18,13 @@ public class FavoriteController {
 
     private final FavoriteService favoriteService;
 
+//    @GetMapping("travelboard-service/top3-favorite")
+//    CommonResDto<List<FavoriteResDto>> getTop3Favorite();
+
     @GetMapping("/top3-favorite")
-    public ResponseEntity<List<FavoriteResDTO>> getTopThreeFavorites() {
-        List<FavoriteResDTO> topThreeFavorites = favoriteService.getTopThree();
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "top3 좋아요 조회 완료!", topThreeFavorites);
+    public ResponseEntity<List<FavoriteResDTO>> getTop3Favorites() {
+        List<FavoriteResDTO> top3Favorites = favoriteService.getTopThree();
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "top3 좋아요 조회 완료!", top3Favorites);
         return new ResponseEntity(commonResDto, HttpStatus.OK);
     }
 
