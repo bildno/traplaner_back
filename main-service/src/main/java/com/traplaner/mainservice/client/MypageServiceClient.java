@@ -1,7 +1,7 @@
 package com.traplaner.mainservice.client;
 
 import com.traplaner.mainservice.common.dto.CommonResDto;
-import com.traplaner.mainservice.main.dto.TravelBoardResDto;
+import com.traplaner.mainservice.main.dto.TravelBoardResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,8 +11,9 @@ import java.util.List;
 @FeignClient(name = "mypage-service")
 public interface MypageServiceClient {
 
-    @PostMapping("/mypage-service/top3-travelBoard")
-    CommonResDto<List<TravelBoardResDto>> getTop3TravelBoard(@RequestBody List<Integer> travelBoardIds);
+//    @PostMapping("/mypage-service/top3-travelBoard")
+    @PostMapping("/mypage-service/favoriteTop")
+    CommonResDto<List<TravelBoardResponseDTO>> getTop3TravelBoard(@RequestBody List<Integer> travelBoardIds);
 
 }
 

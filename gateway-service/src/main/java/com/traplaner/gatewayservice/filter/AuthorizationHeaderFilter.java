@@ -29,7 +29,7 @@ public class AuthorizationHeaderFilter
     private String secretKey;
 
     private final List<String> allowUrl = Arrays.asList(
-            "/sign-up", "/sign-in", "/refresh", "/top3-favorite", "/prod-list","/pw-change"
+            "/sign-up", "/sign-in", "/refresh", "/top3-favorite", "/pw-change"
 
     );
 
@@ -74,8 +74,9 @@ public class AuthorizationHeaderFilter
             // 사용자 정보를 클레임에서 꺼내서 헤더에 담자.
             ServerHttpRequest request = exchange.getRequest()
                     .mutate()
-                    .header("X-User-Email", claims.getSubject())
-                    .header("X-User-Role", claims.get("role", String.class))
+                    .header("X-Member-Id", claims.getSubject())
+//                    .header("X-User-Email", claims.getSubject())
+//                    .header("X-User-Role", claims.get("role", String.class))
                     .build();
 
             // 새롭게 만든(토큰 정보를 헤더에 담은) request를 exchange에 갈아끼워서 보내자.

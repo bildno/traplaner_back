@@ -1,7 +1,7 @@
 package com.traplaner.mainservice.client;
 
 import com.traplaner.mainservice.common.dto.CommonResDto;
-import com.traplaner.mainservice.main.dto.TravelResDto;
+import com.traplaner.mainservice.main.dto.TravelResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,9 +14,9 @@ import java.util.List;
 public interface TravelplanServiceClient {
 
     @PostMapping("/top3-travel")
-    CommonResDto<List<TravelResDto>> getTop3Travel(@RequestBody List<Integer> travelIds);
+    CommonResDto<List<TravelResponseDTO>> getTop3Travel(@RequestBody List<Integer> travelIds);
 
     @GetMapping("/travelsByMemberId/{memberId}")
-    CommonResDto<List<TravelResDto>> findById(@PathVariable Integer memberId);
+    CommonResDto<List<TravelResponseDTO>> findById(@PathVariable Integer memberId);
 
 }

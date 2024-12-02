@@ -25,7 +25,7 @@ public class MainController {
 
     @GetMapping("/top3-favorite")
     public ResponseEntity<?> listTop3FavoriteTravel() {
-        log.info("listTop3FavoriteTravel");
+        log.info("===============> listTop3FavoriteTravel");
         List<TopThreeFavoriteTravelDto> top3FavoriteTravels
                 = mainService.getTop3FavoriteTravels();
 

@@ -4,12 +4,12 @@ import lombok.*;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class FavoriteResDto {
-    private int id;
-    private int memberId;
-    private int travelBoardId;
+//    private Integer id;
+//    private Integer memberId;
+    private Integer travelBoardId;
+    private Long likeCount;
 }

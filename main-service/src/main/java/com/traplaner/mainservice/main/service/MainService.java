@@ -23,7 +23,6 @@ import java.util.List;
 @Slf4j
 public class MainService {
 
-
     // Feign Client 주입
     private final TravelboardServiceClient travelboardServiceClient;
     private final TravelplanServiceClient travelplanServiceClient;
