@@ -3,7 +3,6 @@ package com.traplaner.travelboardservice.travelBoard.service;
 import com.traplaner.travelboardservice.client.MemberServiceClient;
 import com.traplaner.travelboardservice.client.MypageServiceClient;
 import com.traplaner.travelboardservice.client.TravelplanServiceClient;
-import com.traplaner.travelboardservice.common.dto.CommonResDto;
 import com.traplaner.travelboardservice.travelBoard.dto.*;
 import com.traplaner.travelboardservice.travelBoard.dto.response.JourneyDTO;
 import com.traplaner.travelboardservice.travelBoard.dto.response.MemberDTO;
