@@ -18,7 +18,7 @@ public class TravelBoardResponseDTO {
     private String memberNickName;
     private String writeDate;
     private String content;
-    private String title;
+
 
     private String formatDate;
 

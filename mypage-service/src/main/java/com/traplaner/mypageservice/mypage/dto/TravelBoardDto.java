@@ -1,7 +1,6 @@
 package com.traplaner.mypageservice.mypage.dto;
 
-import com.traplaner.travelBoard.entity.TravelBoard;
-import com.traplaner.travelplan.entity.Travel;
+import com.traplaner.mypageservice.mypage.entity.TravelBoard;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 public class TravelBoardDto {
     
-    private Travel travel;
+    private Integer travelId;
     private String memberNickName;
     private LocalDateTime writeDate;
     private String content;
@@ -21,7 +20,7 @@ public class TravelBoardDto {
 
     public TravelBoard toEntity() {
         return TravelBoard.builder()
-                .travel(travel)
+                .travelId(travelId)
                 .memberNickName(memberNickName)
                 .writeDate(writeDate).content(content).build();
     }
