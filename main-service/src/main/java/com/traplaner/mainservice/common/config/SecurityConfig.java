@@ -1,7 +1,6 @@
 package com.traplaner.mainservice.common.config;
 
-import com.project.traplaner.mainservice.common..auth.JwtAuthFilter;
-import com.project.traplaner.mainservice.common..dto.CustomAuthenticationEntryPoint;
+import com.traplaner.mainservice.common.auth.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
-    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     // 시큐리티 기본 설정 (권한 처리, 초기 로그인 화면 없애기 등등...)
     @Bean
@@ -41,14 +39,16 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
                     auth
                             .requestMatchers(
-                                    "/",
-                                    "/members/**",
-                                    "/WEB-INF/views/**",
-                                    "static/**",
-                                    "assets/img/*",
-                                    "/favicon.ico",
                                     "/error",
-                                    "/main/top3-favorite")
+                                    "/travelsByMemberId/**",
+                                    "/travelListsByMemberId/**",
+                                    "/getTravelById/**",
+                                    "/journeysByTravelId/**",
+                                    "/changeShare/**",
+                                    "/putJourneyImages",
+                                    "/putTravelImage",
+                                    "/top3-travel"
+                            )
                             .permitAll()
                             .anyRequest().authenticated();
                 })
@@ -56,11 +56,6 @@ public class SecurityConfig {
                 // 시큐리티에서 기본으로 인증, 인가 처리를 해 주는 UsernamePasswordAuthenticationFilter 전에 내 필터 add
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-        http
-                .exceptionHandling(exception -> {
-                    // 인증 과정에서 예외가 발생한 경우 그 예외를 핸들링 할 객체를 등록.
-                    exception.authenticationEntryPoint(customAuthenticationEntryPoint);
-                });
 
 
         return http.build();
