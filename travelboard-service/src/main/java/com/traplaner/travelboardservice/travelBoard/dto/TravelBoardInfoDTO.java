@@ -10,7 +10,7 @@ import java.util.List;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-public class TravelBoardDetailResponseDTO {
+public class TravelBoardInfoDTO {
     private Integer travelId; // t
     private Integer boardId; // tb
     private String title; // t

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class TravelBoardListResponseDTO {
+public class TravelBoardListDTO {
     private Integer travelId; // t
     private Integer boardId; // tb
     private String img; // t
