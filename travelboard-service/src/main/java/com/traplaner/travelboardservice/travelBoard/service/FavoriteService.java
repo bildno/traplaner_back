@@ -33,7 +33,7 @@ public class FavoriteService {
     }
 
     // 좋아요 상태 토글
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public int toggleLike(Integer travelBoardId, Integer memberId) {
         boolean isLiked = favoriteRepository.isLikedByMember(Map.of("travelBoardId", travelBoardId, "memberId", memberId));
         if (isLiked) {

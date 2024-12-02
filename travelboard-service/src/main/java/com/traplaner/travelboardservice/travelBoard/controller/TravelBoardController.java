@@ -36,13 +36,4 @@ public class TravelBoardController {
         return new ResponseEntity(commonResDto, HttpStatus.OK);
     }
 
-    @PostMapping("/{boardId}/toggle-like")
-    @ResponseBody
-    public ResponseEntity<Integer> toggleLike(@PathVariable("boardId") Integer id, HttpSession session) {
-        MemberDTO dto = (MemberDTO) session.getAttribute("login");
-
-        int likeCount = favoriteService.toggleLike(id, dto.getId());
-
-        return ResponseEntity.ok(likeCount);
-    }
 }
