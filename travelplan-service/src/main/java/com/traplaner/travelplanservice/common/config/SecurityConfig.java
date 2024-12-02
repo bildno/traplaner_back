@@ -44,9 +44,12 @@ public class SecurityConfig {
                                     "/error",
                                     "/travelsByMemberId/**",
                                     "/travelListsByMemberId/**",
+                                    "/getTravelById/**",
                                     "/journeysByTravelId/**",
                                     "/changeShare/**",
-                                    "/putTravelJourneyImages/**"
+                                    "/putJourneyImages",
+                                    "/putTravelImage",
+                                    "/top3-travel"
                                     )
                             .permitAll()
                             .anyRequest().authenticated();

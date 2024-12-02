@@ -6,6 +6,7 @@ import com.traplaner.memberservice.common.dto.CommonResDto;
 import com.traplaner.memberservice.common.util.FileUtils;
 import com.traplaner.memberservice.common.util.MailSenderService;
 import com.traplaner.memberservice.member.dto.LoginRequestDto;
+import com.traplaner.memberservice.member.dto.LoginUserResponseDTO;
 import com.traplaner.memberservice.member.dto.SignUpRequestDto;
 import com.traplaner.memberservice.member.entity.Member;
 import com.traplaner.memberservice.member.service.KakaoService;
@@ -60,16 +61,22 @@ public class MemberController {
     }
     // 멤버 아이디와 변경된 비밀번호로 비밀번호 변경
     @Transactional
-    @PutMapping("pwChangeById")
+    @PutMapping("changeInfoById")
     @ResponseBody
     public ResponseEntity<?> pwChangeById(@RequestBody Map<String, String> map)
     {
         String id = map.get("id");
         String password = map.get("password");
-        String flag = memberService.changePasswordById(id, password)?"성공!":"실패!";
-        log.info(id);
-        log.info("변경 비밀번호: {}", password);
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "비밀번호 변경 완료!",flag);
+
+        boolean flag1 = memberService.changePasswordById(id, password);
+        boolean flag2 = false;
+        if(map.containsKey("nickName")){
+           flag2 = memberService.changeNickNameById(Integer.parseInt(id), map.get("nickName"));
+        }
+        else {
+            flag2 = true;
+        }
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 정보 변경 완료!",(flag1 && flag2) ? "변경 성공":"변경 실패");
         return new ResponseEntity<>(commonResDto,HttpStatus.OK);
     }
 
@@ -208,6 +215,19 @@ public class MemberController {
 
 
     }
+    @GetMapping("/getMemberById/{id}")
+    public ResponseEntity<?> getMemberById(@PathVariable("id") int id) {
+       Member member = memberService.findById(id);
+       LoginUserResponseDTO dto = new LoginUserResponseDTO(member);
+       CommonResDto resDto
+               = new CommonResDto(HttpStatus.OK,"멤버 찾았음",member);
+       return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+
+
+
+
+
     @GetMapping("/health-check")
     public String healthCheck() {
         return String.format("It's Working in User Service"
