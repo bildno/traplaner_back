@@ -3,7 +3,6 @@ package com.traplaner.travelboardservice.travelBoard.dto.response;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Data
 public class JourneyDTO {
