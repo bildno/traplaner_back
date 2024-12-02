@@ -1,4 +1,4 @@
-package com.traplaner.travelboardservice.travelBoard.dto;
+package com.traplaner.travelboardservice.travelBoard.dto.response;
 
 import lombok.*;
 
