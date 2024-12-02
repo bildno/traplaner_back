@@ -2,12 +2,12 @@ package com.traplaner.travelboardservice.travelBoard.dto;
 
 import lombok.*;
 
-@Getter
-@Setter
-@AllArgsConstructor
+@Getter @Setter @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class FavoriteDTO {
+    private Integer id;
+    private Integer memberId;
     private Integer travelBoardId;
-    private Long likeCount;
 }

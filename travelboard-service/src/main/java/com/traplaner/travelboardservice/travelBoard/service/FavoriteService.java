@@ -1,6 +1,6 @@
 package com.traplaner.travelboardservice.travelBoard.service;
 
-import com.traplaner.travelboardservice.travelBoard.dto.FavoriteDTO;
+import com.traplaner.travelboardservice.travelBoard.dto.response.FavoriteResDTO;
 import com.traplaner.travelboardservice.travelBoard.repository.FavoriteRepository;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
 
-    public List<FavoriteDTO> getTopThree() {
+    public List<FavoriteResDTO> getTopThree() {
         List<Map<String, Object>> result = favoriteRepository.findTopThreeTravelBoards();
 
         // 결과를 DTO로 변환
         return result.stream()
-                .map(row -> FavoriteDTO.builder()
+                .map(row -> FavoriteResDTO.builder()
                         .travelBoardId((Integer) row.get("travelBoardId"))
                         .likeCount((Long) row.get("likeCount"))
                         .build())
@@ -34,13 +34,13 @@ public class FavoriteService {
 
     // 좋아요 상태 토글
     @org.springframework.transaction.annotation.Transactional
-    public int toggleLike(int travelBoardId, int memberId) {
+    public int toggleLike(Integer travelBoardId, Integer memberId) {
         boolean isLiked = favoriteRepository.isLikedByMember(Map.of("travelBoardId", travelBoardId, "memberId", memberId));
         if (isLiked) {
             favoriteRepository.removeLike(Map.of("travelBoardId", travelBoardId, "memberId", memberId));
         } else {
             favoriteRepository.addLike(Map.of("travelBoardId", travelBoardId, "memberId", memberId));
         }
-        return favoriteRepository.getLikeCount(travelBoardId);  // 현재 좋아요 수 반환
+        return favoriteRepository.getLikeCount(travelBoardId);  // 현재 좋아요 수
     }
 }

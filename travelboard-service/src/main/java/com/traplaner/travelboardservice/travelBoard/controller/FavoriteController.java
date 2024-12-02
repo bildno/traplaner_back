@@ -1,6 +1,6 @@
 package com.traplaner.travelboardservice.travelBoard.controller;
 
-import com.traplaner.travelboardservice.travelBoard.dto.FavoriteDTO;
+import com.traplaner.travelboardservice.travelBoard.dto.response.FavoriteResDTO;
 import com.traplaner.travelboardservice.travelBoard.dto.response.MemberDTO;
 import com.traplaner.travelboardservice.travelBoard.service.FavoriteService;
 import jakarta.servlet.http.HttpSession;
@@ -20,14 +20,14 @@ public class FavoriteController {
     private final FavoriteService favoriteService;
 
     @GetMapping("/topThree")
-    public ResponseEntity<List<FavoriteDTO>> getTopThreeFavorites() {
-        List<FavoriteDTO> topThreeFavorites = favoriteService.getTopThree();
+    public ResponseEntity<List<FavoriteResDTO>> getTopThreeFavorites() {
+        List<FavoriteResDTO> topThreeFavorites = favoriteService.getTopThree();
         return ResponseEntity.ok(topThreeFavorites);
     }
 
-    @PostMapping("/{id}/toggle-like")
+    @PostMapping("/{memberId}/toggle-like")
     @ResponseBody
-    public ResponseEntity<Integer> toggleLike(@PathVariable int id, HttpSession session) {
+    public ResponseEntity<Integer> toggleLike(@PathVariable("memberId") Integer id, HttpSession session) {
         MemberDTO dto = (MemberDTO) session.getAttribute("login");
 
         int likeCount = favoriteService.toggleLike(id, dto.getId());
