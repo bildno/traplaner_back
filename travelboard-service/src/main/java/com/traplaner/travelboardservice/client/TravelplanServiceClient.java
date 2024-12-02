@@ -1,5 +1,6 @@
 package com.traplaner.travelboardservice.client;
 
+import com.traplaner.travelboardservice.common.dto.CommonResDto;
 import com.traplaner.travelboardservice.travelBoard.dto.response.JourneyDTO;
 import com.traplaner.travelboardservice.travelBoard.dto.response.TravelDTO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -10,9 +11,9 @@ import java.util.List;
 
 @FeignClient(name = "travelplan-service")
 public interface TravelplanServiceClient {
-    @GetMapping("/getTravel/{travelId}")
-    TravelDTO getTravelById(@PathVariable("travelId") Integer id);
+    @GetMapping("/getTravelById/{travelId}")
+    CommonResDto<TravelDTO> getTravelById(@PathVariable("travelId") Integer id);
 
-    @GetMapping("/getJourney/{travelId}")
-    List<JourneyDTO> getJourneysByTravelId(@PathVariable("travelId") Integer travelId);
+    @GetMapping("/journeysByTravelId/{travelId}")
+    CommonResDto<List<JourneyDTO>> getJourneysByTravelId(@PathVariable("travelId") Integer travelId);
 }
