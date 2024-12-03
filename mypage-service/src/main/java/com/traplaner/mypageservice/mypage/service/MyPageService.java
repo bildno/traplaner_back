@@ -148,7 +148,6 @@ public class MyPageService {
 
         TravelBoardResponseDTO travelBoardResponseDTO = myPageTravelBoardRepository.findByTravelId(travelNo).orElseThrow(() -> new EntityNotFoundException("없는 글"));
 
-
         map.put("travelJourneyResDtos", travelJourneyResDtos);
         map.put("travelBoardResponseDTO", travelBoardResponseDTO);
         return map;

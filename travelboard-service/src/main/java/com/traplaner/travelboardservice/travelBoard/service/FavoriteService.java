@@ -1,6 +1,7 @@
 package com.traplaner.travelboardservice.travelBoard.service;
 
 import com.traplaner.travelboardservice.travelBoard.dto.response.FavoriteResDTO;
+import com.traplaner.travelboardservice.travelBoard.entity.Favorite;
 import com.traplaner.travelboardservice.travelBoard.repository.FavoriteRepository;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,12 +36,16 @@ public class FavoriteService {
 
     // 좋아요 상태 토글
     @Transactional
-    public Long toggleLike(Integer travelBoardId) {
-        boolean isLiked = favoriteRepository.isLikedByMember(Map.of("travelBoardId", travelBoardId));
+    public Long toggleLike(Integer travelBoardId, int memberId) {
+        boolean isLiked = favoriteRepository.isLikedByMember(travelBoardId, memberId);
         if (isLiked) {
-            favoriteRepository.removeLike(Map.of("travelBoardId", travelBoardId));
+            favoriteRepository.removeLike(travelBoardId,memberId);
         } else {
-            favoriteRepository.addLike(Map.of("travelBoardId", travelBoardId));
+            Favorite favorite = Favorite.builder()
+                    .memberId(memberId)
+                    .travelBoardId(travelBoardId)
+                    .build();
+            favoriteRepository.save(favorite);
         }
         return (long) favoriteRepository.getLikeCount(travelBoardId);  // 현재 좋아요 수
     }

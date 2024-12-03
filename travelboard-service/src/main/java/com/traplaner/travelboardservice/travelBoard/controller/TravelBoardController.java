@@ -18,13 +18,14 @@ import org.springframework.web.bind.annotation.*;
 public class TravelBoardController {
     private final TravelBoardService travelBoardService;
 
+    //이거는 마이페이지에서 준비 해둔 로직인 안돌아가는 거에용. 기다려주세용
     @GetMapping("/list")
     public ResponseEntity<Page<TravelBoardListDTO>> getTravelBoardList(Pageable pageable) {
         Page<TravelBoardListDTO> list = travelBoardService.getTravelBoardList(pageable);
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "보드 리스트 조회 완료!", list);
         return new ResponseEntity(commonResDto, HttpStatus.OK);
     }
-
+    //
     @GetMapping("/info/{boardId}")
     public ResponseEntity<TravelBoardInfoDTO> getTravelBoardInfo(@PathVariable("boardId") Integer boardId) {
         TravelBoardInfoDTO info = travelBoardService.getTravelBoardInfo(boardId);

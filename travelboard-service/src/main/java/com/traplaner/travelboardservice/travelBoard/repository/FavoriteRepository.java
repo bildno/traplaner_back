@@ -18,14 +18,15 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
             "LIMIT 3")
     List<Map<String, Object>> findTopThreeTravelBoards();
 
-    @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END FROM Favorite f WHERE f.travelBoardId = :#{#travelBoardId['travelBoardId']} AND f.memberId = :#{#travelBoardId['memberId']}")
-    boolean isLikedByMember(@Param("travelBoardId") Map<String, Integer> travelBoardId);
+    @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END FROM Favorite f WHERE f.travelBoardId = :travelBoardId AND f.memberId = :memberId")
+    boolean isLikedByMember(@Param("travelBoardId") int travelBoardId, @Param("memberId") int memberId);
 
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM Favorite f WHERE f.travelBoardId = :#{#travelBoardId['travelBoardId']} AND f.memberId = :#{#travelBoardId['memberId']}")
-    void removeLike(@Param("travelBoardId") Map<String, Integer> travelBoardId);
+    @Query("DELETE FROM Favorite f WHERE f.travelBoardId = :travelBoardId AND f.memberId = :memberId")
+    void removeLike(@Param("travelBoardId") int travelBoardId, @Param("memberId") int memberId);
+
 
     @Modifying
     @Transactional
