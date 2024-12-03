@@ -3,6 +3,7 @@ package com.traplaner.travelboardservice.travelBoard.service;
 import com.traplaner.travelboardservice.client.MemberServiceClient;
 import com.traplaner.travelboardservice.client.MypageServiceClient;
 import com.traplaner.travelboardservice.client.TravelplanServiceClient;
+import com.traplaner.travelboardservice.common.dto.CommonResDto;
 import com.traplaner.travelboardservice.travelBoard.dto.*;
 import com.traplaner.travelboardservice.travelBoard.dto.response.JourneyDTO;
 import com.traplaner.travelboardservice.travelBoard.dto.response.MemberDTO;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,13 +65,22 @@ public class TravelBoardService {
      */
     public TravelBoardInfoDTO getTravelBoardInfo(int id) {
         // Feign 클라이언트를 통해 다른 서버에서 게시글 데이터 가져오기
-        ResponseEntity<?> board = mypageServiceClient.getBoardInfo(id);
-        return (TravelBoardInfoDTO) board.getBody();
+//        TravelBoardDTO board = (TravelBoardDTO) mypageServiceClient.getBoardInfo(id).getBody();
+//        log.info("board:{}", board);
 
-/*        // 다른 서비스에서 추가 데이터 가져오기
-        TravelDTO travel = travelplanServiceClient.getTravelById(board.getTravelId());
-        MemberDTO member = memberServiceClient.findById(travel.getMemberId());
-        List<JourneyDTO> journeys = travelplanServiceClient.getJourneysByTravelId(board.getTravelId());
+        //travel 가져오기
+        CommonResDto<TravelDTO> travelResDto = travelplanServiceClient.getTravelById(/*board.getTravelId()*/44);
+        log.info("travelResDto: {}", travelResDto);
+        TravelDTO travel = travelResDto.getResult();
+        log.info("travel:{}", travel);
+        //member 가져오기
+        CommonResDto<MemberDTO> memberResDto = memberServiceClient.findById(Integer.valueOf(travel.getMemberId()));
+        MemberDTO member =  memberResDto.getResult();
+        log.info("member:{}", member);
+        //journey 가져오기
+        CommonResDto<List<JourneyDTO>> journeysResDto = travelplanServiceClient.getJourneysByTravelId(/*board.getTravelId()*/44);
+        List<JourneyDTO> journeys = journeysResDto.getResult();
+        log.info("journeys:{}", journeys);
 
         List<TravelBoardInfoDTO.JourneyInfoDTO> journeyDetails = journeys.stream()
                 .map(journey -> new TravelBoardInfoDTO.JourneyInfoDTO(
@@ -84,14 +95,14 @@ public class TravelBoardService {
 
         // 데이터 조합 후 반환
         return new TravelBoardInfoDTO(
-                board.getId(),
+                /*board.getId()*/44,
                 travel.getTitle(),
                 member.getNickName(),
-                board.getWriteDate(),
+                /*board.getWriteDate()*/LocalDateTime.now(),
                 travel.getTravelImg(),
-                board.getContent(),
-                favoriteRepository.getLikeCount(board.getId()),
+                /*board.getContent()*/"둠두두둠둠둠 베잉스",
+                favoriteRepository.getLikeCount(/*board.getId()*/44),
                 journeyDetails
-        );*/
+        );
     }
 }
