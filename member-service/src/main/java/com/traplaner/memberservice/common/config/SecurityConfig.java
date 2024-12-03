@@ -40,6 +40,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
                     auth
                             .requestMatchers(
+                                    "/error",
                                     "/sign-in",
                                     "/sign-up",
                                     "/pw-change",

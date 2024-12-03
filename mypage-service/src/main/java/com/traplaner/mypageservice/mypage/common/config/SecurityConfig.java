@@ -41,8 +41,9 @@ public class SecurityConfig {
                     auth
                             .requestMatchers(
                                     "/error",
-                                    "/boardInfo/**",
-                                    "/my-page/mytravelboard/**"
+                                    "/favoriteTop",
+                                    "/getTravelBoard",
+                                    "/boardInfo/**"
                             )
                             .permitAll()
                             .anyRequest().authenticated();

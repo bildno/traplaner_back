@@ -1,4 +1,5 @@
 package com.traplaner.travelboardservice.travelBoard.controller;
+
 import com.traplaner.travelboardservice.common.auth.TokenUserInfo;
 import com.traplaner.travelboardservice.common.dto.CommonResDto;
 import com.traplaner.travelboardservice.travelBoard.dto.response.FavoriteResDTO;
