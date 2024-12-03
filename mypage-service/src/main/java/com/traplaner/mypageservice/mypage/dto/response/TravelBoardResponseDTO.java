@@ -20,7 +20,7 @@ public class TravelBoardResponseDTO {
     private String content;
 
 
-    private String formatDate;
+//    private String formatDate;
 
 
     public static String makeDateStringFomatter(LocalDateTime writeDate) {

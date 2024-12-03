@@ -1,13 +1,16 @@
 package com.traplaner.mypageservice.mypage.dto;
 
+import lombok.*;
+
 import java.time.LocalDateTime;
 
-public interface TravelJourneyRes {
+@Data
+public class TravelJourneyRes {
 
-     LocalDateTime getStartDate();
-     LocalDateTime getEndDate();
-     String getJourneyImg();
-     String getJourneyName();
+     LocalDateTime startTime;
+     LocalDateTime endTime;
+     String journeyImg;
+     String journeyName;
 
 
 }
