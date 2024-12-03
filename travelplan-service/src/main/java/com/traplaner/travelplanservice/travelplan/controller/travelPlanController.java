@@ -15,6 +15,7 @@ import com.traplaner.travelplanservice.travelplan.service.TravelService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -110,17 +111,14 @@ public class travelPlanController {
     // 컨트롤러 파라미터로 Pageable 선언하면, 페이징 파라미터 처리를 쉽게 진행할 수 있음.
     // /list?page=1&size=10&sort=name,desc 요런 식으로.
     // 요청 시 쿼리스트링이 전달되지 않으면 기본값 0, 20, unsorted
-
     public ResponseEntity<?> travelListsByMemberId(@RequestParam("memberId") int memberId,
                                                   Pageable pageable) {
         log.info("/travelListsByMember : GET, memberId: {}", memberId);
         log.info("/travelListsByMember: GET, pageable={}", pageable);
-        List<Travel> travels = travelService.getTravelsByMemberId(memberId, pageable);
-        List<TravelResponseDTO> travelResDtoList = travels.stream().map(TravelResponseDTO::new).toList();
-        log.info("travelResDtoList={}", travelResDtoList);
+        Page<Travel> travels = travelService.getTravelsByMemberId(memberId, pageable);
 
         CommonResDto resDto
-                = new CommonResDto(HttpStatus.OK, "여행리스트 정상조회 완료", travelResDtoList);
+                = new CommonResDto(HttpStatus.OK, "여행리스트 정상조회 완료",travels);
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
     //여행 id로 share 여부 바꾸기

@@ -42,12 +42,6 @@ public class SecurityConfig {
                     auth
                             .requestMatchers(
                                     "/",
-                                    "/members/**",
-                                    "/WEB-INF/views/**",
-                                    "static/**",
-                                    "assets/img/*",
-                                    "/favicon.ico",
-                                    "/error",
                                     "/top3-favorite")
                             .permitAll()
                             .anyRequest().authenticated();

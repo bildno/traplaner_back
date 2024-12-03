@@ -41,7 +41,7 @@ public class MyPageController {
     private final MemberServiceClient memberServiceClient;
 
 
-    // 마이페이지 메인 (달력 있는 곳)
+    // 마이페이지 메인 (달력 있는 곳)(작동 됨)
     // 달력에 일정 띄워주는 작업 해야댐
     // 계정관리 페이지 작성 필요
     @GetMapping("/my-page")
@@ -53,19 +53,18 @@ public class MyPageController {
     }
 
 
-    // 마이페이지 내 게시물
+    // 마이페이지 내 게시물(얘됨)
     @GetMapping("/my-page/mytravelboard")
 
     public ResponseEntity<?> myBoard(Pageable pageable) {
 
             Page<TravelBoardResponseDTO> map = myPageService.findBoardAll(pageable);
-            List<TravelBoardResponseDTO> content = map.getContent();
 
-        return new ResponseEntity<>(content, HttpStatus.OK);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
 
-    // 마이페이지 나의 여행
+    // 마이페이지 나의 여행(작동 댐)
     @GetMapping("/my-page/my-travel")
     public ResponseEntity<?> myTravel(Pageable pageable) {
         CommonResDto<Page<travelPlanResDto>> travels = myPageService.myTravel(pageable);
@@ -75,7 +74,7 @@ public class MyPageController {
         return new ResponseEntity<>(content, HttpStatus.OK);
     }
 
-    // 공유여부 변경
+    // 공유여부 변경(작동 됨)
     @PostMapping("/my-page/shareIs/{boardId}")
     public ResponseEntity<?> shareIs(@PathVariable int boardId) {
         myPageService.updateShare(boardId);
@@ -83,7 +82,7 @@ public class MyPageController {
         return ResponseEntity.ok().body("success");
     }
 
-    //글 삭제
+    //글 삭제(작동 됨)
     @PostMapping("/my-page/delete/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable int boardId
     ) {
@@ -94,7 +93,7 @@ public class MyPageController {
     }
 
 
-    // 좋아요 리스트
+    // 좋아요 리스트(작동 안됨: 아마 페이보릿 클라이언트 측이 완성이 안되서 생긴문제인듯)
     @GetMapping("/my-page/favorite")
     public ResponseEntity<?> favorite(Pageable pageable) {
         HashMap<String, Object> favorite = myPageService.favorite(pageable);
@@ -104,19 +103,12 @@ public class MyPageController {
     }
 
 
-    // 비밀번호 변경
-    @GetMapping("/my-page/pwChange")
-    public String pwChange() {
-
-
-        return "member/my-pw-change";
-    }
-
+    //멤버 정보 변경(작동 됨)
     @PostMapping("/my-page/changeConfirm")
     public ResponseEntity<?> changeConfirm(@Validated @RequestBody ModifyMemberInfoDTO dto) {
 
 
-        boolean b = memberServiceClient.updateInfo(dto);
+        boolean b = (boolean) memberServiceClient.updateInfo(dto).getResult();
 
 
         if (b) {
@@ -128,14 +120,14 @@ public class MyPageController {
 
     }
 
-    // 닉네임 중복체크
+    // 닉네임 중복체크(작동 됨)
     @PostMapping("/my-page/nickNameChk/{newNick}")
     public ResponseEntity<?> nickNameChk(@PathVariable String newNick) {
         String type = "nickname";
 
         HashMap<String, String> map = new HashMap<>();
         map.put("type", type);
-        map.put("newNick", newNick);
+        map.put("keyword", newNick);
         boolean b = memberServiceClient.duplicateTest(map);
         System.out.println(b);
         if (!b) {
@@ -146,8 +138,7 @@ public class MyPageController {
 
     }
 
-
-    // 게시글
+    // 게시글(작동 됨)
     @GetMapping("my-page/board-info/{travelNo}")
     public ResponseEntity<?> boardInfo(@PathVariable int travelNo) {
         HashMap<String, Object> map = myPageService.boardInfo(travelNo);
@@ -155,11 +146,10 @@ public class MyPageController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-
     @Value("${file.upload.root-path}")
     private String rootPath;
 
-    // 게시글 작성
+    // 게시글 작성(아마 안될듯 mutipart파일은 json으로 통신안댐)
     @PostMapping("/my-page/insert-board")
     public ResponseEntity<?> insertBoard(TravelBoardCreateDto dto) {
 
@@ -191,7 +181,7 @@ public class MyPageController {
             for (int i = 0, j = dto.getJourneyId().size(); i < j; i++) {
                 String save = FileUtils.uploadFile(dto.getJourneyImage().get(i), rootPath);
                 if (save != null) {
-                    jourenyMap.put(dto.getJourneyId().toString(), save);
+                    jourenyMap.put(String.valueOf(dto.getJourneyId().get(i)), save);
                 }
 
 
@@ -203,19 +193,15 @@ public class MyPageController {
 
     }
 
-
-
-
-
-
-
+    //뭔가 이상함 많이 이상함
     @GetMapping("/favoriteTop")
-    public ResponseEntity<?> favoriteTop(List<Integer> boardIds) {
+    public ResponseEntity<?> favoriteTop(@RequestBody List<Integer> boardIds) {
         List<TravelBoardResponseDTO> boardIn = myPageService.getBoardIn(boardIds);
 
         return new ResponseEntity<>(boardIn, HttpStatus.OK);
     }
 
+    //페이저블로 보드 페이지 뽑기(작동됨)
     @GetMapping("/getTravelBoard")
     public ResponseEntity<?> getTravelBoard(Pageable pageable) {
         Page<TravelBoard> boardAll = myPageService.getBoardAll(pageable);
@@ -223,6 +209,7 @@ public class MyPageController {
         return new ResponseEntity<>(boardAll, HttpStatus.OK);
     }
 
+    //작동안됨 dto가 못받음
     @GetMapping("/boardInfo/{boardId}")
     public ResponseEntity<?> getBoardInfo(@PathVariable int boardId) {
         HashMap<String, Object> map = myPageService.boardInfo(boardId);

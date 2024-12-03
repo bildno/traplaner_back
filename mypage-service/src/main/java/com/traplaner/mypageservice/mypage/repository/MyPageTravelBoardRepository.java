@@ -13,13 +13,15 @@ import java.util.Optional;
 
 public interface MyPageTravelBoardRepository extends JpaRepository<TravelBoard, Integer> {
 
-    Page<TravelBoardResponseDTO> findByMemberNickName(String nickName, Pageable pageable);
+
+    @Query(value = "select t from TravelBoard t where t.memberNickName = ?1")
+    Page<TravelBoard> findByMemberNickName(String nickName, Pageable pageable);
 
 
     Long countById(int travelId);
 
 
-    Optional<TravelBoardResponseDTO> findByTravelId(int travelNo);
+    Optional<TravelBoard> findByTravelId(int travelNo);
 
-    List<TravelBoardResponseDTO> findByIdIn(List<Integer> boardIds);
+    List<TravelBoard> findByIdIn(List<Integer> boardIds);
 }
