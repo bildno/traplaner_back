@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface MypageServiceClient {
 
     @GetMapping("/my-page/mytravelboard")
-    ResponseEntity<?> myBoard(Pageable pageable);
+    ResponseEntity<?> getBoards(Pageable pageable);
 
     @GetMapping("/boardInfo/{boardId}")
-    ResponseEntity<?> getBoardInfo(@PathVariable("boardId") Integer id);
+    ResponseEntity<?> getInfo(@PathVariable("boardId") Integer id);
 }
