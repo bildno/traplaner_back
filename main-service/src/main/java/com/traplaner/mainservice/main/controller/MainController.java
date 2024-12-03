@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/main")
+//@RequestMapping("/main")
 @RequiredArgsConstructor
 @Slf4j
 public class MainController {

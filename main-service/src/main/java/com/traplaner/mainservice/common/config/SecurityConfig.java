@@ -48,7 +48,7 @@ public class SecurityConfig {
                                     "assets/img/*",
                                     "/favicon.ico",
                                     "/error",
-                                    "/main-service/top3-favorite")
+                                    "/top3-favorite")
                             .permitAll()
                             .anyRequest().authenticated();
                 })
