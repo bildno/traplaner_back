@@ -64,7 +64,10 @@ public class MyPageService {
         MemberResDto memberResDto = byEmail.getResult();
         String nickName = memberResDto.getNickName();
 
-        return myPageTravelBoardRepository.findByMemberNickName(nickName, pageable);
+        Page<TravelBoard> byMemberNickName = myPageTravelBoardRepository.findByMemberNickName(nickName, pageable);
+        Page<TravelBoardResponseDTO> collect = byMemberNickName.map(travelBoard -> travelBoard.fromEntity());
+
+        return collect;
     }
 
     public CommonResDto<Page<travelPlanResDto>> myTravel(Pageable pageable) {
@@ -143,13 +146,14 @@ public class MyPageService {
     public HashMap<String, Object> boardInfo(int travelNo) {
         HashMap<String, Object> map = new HashMap<>();
 
-        List<TravelJourneyRes> travelJourneyResDtos
-                = travelServiceClient.findTravelById(travelNo);
+        CommonResDto<List<TravelJourneyRes>> travelById = travelServiceClient.findTravelById(travelNo);
+        List<TravelJourneyRes> result = travelById.getResult();
 
-        TravelBoardResponseDTO travelBoardResponseDTO = myPageTravelBoardRepository.findByTravelId(travelNo).orElseThrow(() -> new EntityNotFoundException("없는 글"));
+        TravelBoard travel = myPageTravelBoardRepository.findByTravelId(travelNo).orElseThrow(() -> new EntityNotFoundException("없는 글"));
+        TravelBoardResponseDTO travelBoardResponseDTO = travel.fromEntity();
 
 
-        map.put("travelJourneyResDtos", travelJourneyResDtos);
+        map.put("travelJourneyResDtos", result);
         map.put("travelBoardResponseDTO", travelBoardResponseDTO);
         return map;
 
@@ -163,9 +167,9 @@ public class MyPageService {
 
     public List<TravelBoardResponseDTO> getBoardIn(List<Integer> boardIds) {
 
-        List<TravelBoardResponseDTO> byIdIn = myPageTravelBoardRepository.findByIdIn(boardIds);
-
-        return byIdIn;
+        List<TravelBoard> byIdIn = myPageTravelBoardRepository.findByIdIn(boardIds);
+        List<TravelBoardResponseDTO> collect = byIdIn.stream().map(travelBoard -> travelBoard.fromEntity()).collect(Collectors.toList());
+        return collect;
     }
 }
 

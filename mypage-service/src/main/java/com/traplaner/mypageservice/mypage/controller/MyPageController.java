@@ -53,7 +53,7 @@ public class MyPageController {
     }
 
 
-    // 마이페이지 내 게시물(작동 안됨)
+    // 마이페이지 내 게시물(얘됨)
     @GetMapping("/my-page/mytravelboard")
 
     public ResponseEntity<?> myBoard(Pageable pageable) {
@@ -139,7 +139,7 @@ public class MyPageController {
 
     }
 
-    // 게시글(작동 안됨: dto가 못 받는듯)
+    // 게시글(작동 됨)
     @GetMapping("my-page/board-info/{travelNo}")
     public ResponseEntity<?> boardInfo(@PathVariable int travelNo) {
         HashMap<String, Object> map = myPageService.boardInfo(travelNo);
@@ -182,7 +182,7 @@ public class MyPageController {
             for (int i = 0, j = dto.getJourneyId().size(); i < j; i++) {
                 String save = FileUtils.uploadFile(dto.getJourneyImage().get(i), rootPath);
                 if (save != null) {
-                    jourenyMap.put(dto.getJourneyId().toString(), save);
+                    jourenyMap.put(String.valueOf(dto.getJourneyId().get(i)), save);
                 }
 
 
@@ -196,13 +196,13 @@ public class MyPageController {
 
     //뭔가 이상함 많이 이상함
     @GetMapping("/favoriteTop")
-    public ResponseEntity<?> favoriteTop(List<Integer> boardIds) {
+    public ResponseEntity<?> favoriteTop(@RequestBody List<Integer> boardIds) {
         List<TravelBoardResponseDTO> boardIn = myPageService.getBoardIn(boardIds);
 
         return new ResponseEntity<>(boardIn, HttpStatus.OK);
     }
 
-    //페이저블로 보트 페이지 뽑기(작동됨)
+    //페이저블로 보드 페이지 뽑기(작동됨)
     @GetMapping("/getTravelBoard")
     public ResponseEntity<?> getTravelBoard(Pageable pageable) {
         Page<TravelBoard> boardAll = myPageService.getBoardAll(pageable);
