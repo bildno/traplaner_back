@@ -9,6 +9,6 @@ import lombok.*;
 @Builder
 public class TokenUserInfo {
 
-    private String email;
+    private String id;
 
 }

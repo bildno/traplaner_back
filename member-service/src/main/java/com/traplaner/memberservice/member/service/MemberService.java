@@ -68,9 +68,9 @@ public class MemberService {
         memberRepository.save(foundMember);
         return true;
     }
-    public boolean changePasswordById(String id, String password) {
+    public boolean changePasswordById(int id, String password) {
 
-        Member foundMember = memberRepository.findById(Integer.parseInt(id)).orElseThrow(()->
+        Member foundMember = memberRepository.findById(id).orElseThrow(()->
                 new EntityNotFoundException("비밀번호 변경 실패!")
         );
         foundMember.setPassword(encoder.encode(password));
