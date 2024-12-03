@@ -12,7 +12,7 @@ import java.util.List;
 public interface MypageServiceClient {
 
 //    @PostMapping("/mypage-service/top3-travelBoard")
-    @PostMapping("/mypage-service/favoriteTop")
+    @PostMapping("/favoriteTop")
     CommonResDto<List<TravelBoardResponseDTO>> getTop3TravelBoard(@RequestBody List<Integer> travelBoardIds);
 
 }
