@@ -2,6 +2,7 @@ package com.traplaner.mainservice.main.controller;
 
 import com.traplaner.mainservice.main.dto.MainTravelDto;
 import com.traplaner.mainservice.main.dto.TopThreeFavoriteTravelDto;
+import com.traplaner.mainservice.main.dto.TravelResponseDTO;
 import com.traplaner.mainservice.main.service.MainService;
 import com.traplaner.mainservice.common.dto.CommonResDto;
 import com.traplaner.mainservice.main.dto.TopThreeFavoriteTravelDto;
@@ -26,7 +27,9 @@ public class MainController {
     @GetMapping("/top3-favorite")
     public ResponseEntity<?> listTop3FavoriteTravel() {
         log.info("===============> listTop3FavoriteTravel");
-        List<TopThreeFavoriteTravelDto> top3FavoriteTravels
+//        List<TopThreeFavoriteTravelDto> top3FavoriteTravels
+//                = mainService.getTop3FavoriteTravels();
+        List<TravelResponseDTO> top3FavoriteTravels
                 = mainService.getTop3FavoriteTravels();
 
         CommonResDto resDto
@@ -38,7 +41,7 @@ public class MainController {
 
     @GetMapping("/mytravel-list")
     public ResponseEntity<?> myTravelList(){
-        log.info("myTravelList");
+        log.info("===========> myTravelList");
         List<MainTravelDto> myTravelList = mainService.getMyTravelList();
 
         CommonResDto resDto
