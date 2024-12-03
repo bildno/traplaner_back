@@ -47,7 +47,7 @@ public class MemberController {
 
     //비밀번호 변경로직
     @Transactional
-    @PutMapping("pw-change")
+    @PutMapping("/pw-change")
     @ResponseBody
     public ResponseEntity<?> pwChange(@RequestBody Map<String, String> map)
     {
@@ -60,24 +60,24 @@ public class MemberController {
         return new ResponseEntity<>(commonResDto,HttpStatus.OK);
     }
     // 멤버 아이디와 변경된 비밀번호로 비밀번호 변경
-    // dto로 바꿔서 받기
+    // dto로 바꿔서 받기 왜 바꿔 똑같잖아
     @Transactional
-    @PutMapping("changeInfoById")
+    @PutMapping("/changeInfoById")
     @ResponseBody
     public ResponseEntity<?> pwChangeById(@RequestBody Map<String, String> map)
     {
-        String id = map.get("id");
-        String password = map.get("password");
+        int id = Integer.parseInt(map.get("id"));
+        boolean flag1 = true;
+        boolean flag2 = true;
 
-        boolean flag1 = memberService.changePasswordById(id, password);
-        boolean flag2 = false;
-        if(map.containsKey("nickName")){
-           flag2 = memberService.changeNickNameById(Integer.parseInt(id), map.get("nickName"));
+        if(map.containsKey("newPw")){
+            flag1 = memberService.changePasswordById(id, map.get("newPw"));
         }
-        else {
-            flag2 = true;
+        if(map.containsKey("newNick")){
+          flag2 = memberService.changeNickNameById(id, map.get("newNick"));
         }
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 정보 변경 완료!",(flag1 && flag2) ? "변경 성공":"변경 실패");
+
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 정보 변경 완료!", flag1 && flag2);
         return new ResponseEntity<>(commonResDto,HttpStatus.OK);
     }
 
