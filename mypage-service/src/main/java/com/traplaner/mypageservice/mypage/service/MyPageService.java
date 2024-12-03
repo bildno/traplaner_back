@@ -153,7 +153,10 @@ public class MyPageService {
         TravelBoardResponseDTO travelBoardResponseDTO = travel.fromEntity();
 
 
+
         map.put("travelJourneyResDtos", result);
+
+
         map.put("travelBoardResponseDTO", travelBoardResponseDTO);
         return map;
 

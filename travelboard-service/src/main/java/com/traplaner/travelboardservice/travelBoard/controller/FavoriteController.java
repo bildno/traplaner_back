@@ -29,10 +29,11 @@ public class FavoriteController {
 
     @PostMapping("/toggle-like/{boardId}")
     @ResponseBody
-    public ResponseEntity<?> toggleLike(@PathVariable Integer boardId,
-                                        @AuthenticationPrincipal TokenUserInfo userInfo) {
+    public ResponseEntity<?> toggleLike(@AuthenticationPrincipal TokenUserInfo userInfo,
+                                        @PathVariable Integer boardId) {
+
         int memberId = Integer.parseInt(userInfo.getId());
-        Long likeCount = favoriteService.toggleLike(boardId);
+        Long likeCount = favoriteService.toggleLike(boardId,memberId);
 
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "좋아요를 눌렀습니다.", likeCount);
 

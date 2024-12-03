@@ -59,9 +59,8 @@ public class MyPageController {
     public ResponseEntity<?> myBoard(Pageable pageable) {
 
             Page<TravelBoardResponseDTO> map = myPageService.findBoardAll(pageable);
-            List<TravelBoardResponseDTO> content = map.getContent();
 
-        return new ResponseEntity<>(content, HttpStatus.OK);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
 
