@@ -103,7 +103,7 @@ public class JwtTokenProvider {
         log.info("claims : {}", claims);
 
         return TokenUserInfo.builder()
-                .email(claims.getSubject())
+                .memberId(claims.getSubject())
                 .build();
 
     }
