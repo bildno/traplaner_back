@@ -1,10 +1,15 @@
 package com.traplaner.travelboardservice.travelBoard.dto.response;
 
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class JourneyDTO {
     private Integer travelId;
     private String journeyName;
