@@ -36,7 +36,7 @@ public class TravelBoard {
     private Integer id;
 
     @JoinColumn
-    private int travelId;              // by jhjeong 11.21
+    private Integer travelId;              // by jhjeong 11.21
 
     @Column(name = "member_nick_name")
     private String memberNickName;

@@ -13,8 +13,8 @@ import java.time.format.DateTimeFormatter;
 @Builder
 public class TravelBoardResponseDTO {
 
-    private int id;
-    private int travelId;
+    private Integer id;
+    private Integer travelId;
     private String memberNickName;
     private String writeDate;
     private String content;
