@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,35 +36,15 @@ public class TravelBoardService {
 
     // 게시판 목록 조회
     public Page<TravelBoardListDTO> getTravelBoardList(Pageable pageable) {
-        // 다른 서버에서 페이징된 TravelBoard 데이터 가져오기
-        Page<TravelBoardDTO> boards = mypageServiceClient.getBoards(pageable);
-
-        // 각 TravelBoard 데이터를 TravelBoardListDTO로 변환
-        return boards.map(board -> {
-            // Travel 데이터 조회
-            CommonResDto<TravelDTO> travelResDto = travelplanServiceClient.getTravelById(board.getTravelId());
-            TravelDTO travel = travelResDto.getResult();
-
-            // Member 데이터 조회
-            CommonResDto<MemberDTO> memberResDto = memberServiceClient.findById(Integer.valueOf(travel.getMemberId()));
-            MemberDTO member = memberResDto.getResult();
-
-            // DTO 생성
-            return new TravelBoardListDTO(
-                    board.getId(),
-                    board.getTravelId(),
-                    travel.getTravelImg(),
-                    travel.getTitle(),
-                    member.getNickName(),
-                    board.getWriteDate(),
-                    (long) favoriteRepository.getLikeCount(board.getId())
-            );
-        });
     }
 
 
      // 특정 게시글 상세 조회
     public TravelBoardInfoDTO getTravelBoardInfo(Integer boardId) {
+
+        //travelBoard 가져오기
+        HashMap<String, Object> boardResDto = mypageServiceClient.getInfo(boardId);
+        TravelBoardDTO board = boardResDto
 
         //travel 가져오기
         CommonResDto<TravelDTO> travelResDto = travelplanServiceClient.getTravelById(/*board.getTravelId()*/88);
