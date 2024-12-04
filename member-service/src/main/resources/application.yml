@@ -20,6 +20,13 @@ spring:
         timeout: 10000
         starttls:
           enable: true
+  cloud:
+    aws:
+
+      region:
+        static: ap-northeast-2
+      s3:
+        bucket: traplaner-images
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect

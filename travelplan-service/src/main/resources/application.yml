@@ -34,12 +34,22 @@ spring:
     multipart:
       enabled: true
       max-file-size: 10MB
+
+  cloud:
+    aws:
+
+
+      region:
+        static: ap-northeast-2
+      s3:
+        bucket: traplaner-images
 file:
   upload:
     root-path: C:/devlop/upload
     root-path-profile: C:/devlop/upload/profile
     root-path-travel: C:/devlop/upload/travel
     root-path-reservation: C:/develop/upload/reservation
+
 
 # log level setting
 logging:
@@ -67,6 +77,7 @@ jwt:
   expiration: 60
   expirationRt: 14400
   secretKeyRt: rI9KLc/nWq+0ehvbQXjST52lIHi+A4PurdKwAe0ZcN+0LE1QBv7p0qhFx8wzt8PaigtMXpJHdIl6p4ILsLDasA==
+
 
 eureka:
   client:

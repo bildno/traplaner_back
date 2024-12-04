@@ -20,6 +20,7 @@ spring:
         timeout: 10000
         starttls:
           enable: true
+
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
@@ -34,6 +35,14 @@ spring:
     multipart:
       enabled: true
       max-file-size: 10MB
+  cloud:
+    aws:
+
+
+      region:
+        static: ap-northeast-2
+      s3:
+        bucket: traplaner-images
 file:
   upload:
     root-path: C:/devlop/upload
