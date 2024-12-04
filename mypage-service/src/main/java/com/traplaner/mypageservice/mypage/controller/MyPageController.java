@@ -76,7 +76,7 @@ public class MyPageController {
 
     // 공유여부 변경(작동 됨)
     @PostMapping("/my-page/shareIs/{boardId}")
-    public ResponseEntity<?> shareIs(@PathVariable int boardId) {
+    public ResponseEntity<?> shareIs(@PathVariable Integer boardId) {
         myPageService.updateShare(boardId);
 
         return ResponseEntity.ok().body("success");
@@ -84,7 +84,7 @@ public class MyPageController {
 
     //글 삭제(작동 됨)
     @PostMapping("/my-page/delete/{boardId}")
-    public ResponseEntity<?> deleteBoard(@PathVariable int boardId
+    public ResponseEntity<?> deleteBoard(@PathVariable Integer boardId
     ) {
 
         myPageService.deleteBoard(boardId);
@@ -140,7 +140,7 @@ public class MyPageController {
 
     // 게시글(작동 됨)
     @GetMapping("my-page/board-info/{travelNo}")
-    public ResponseEntity<?> boardInfo(@PathVariable int travelNo) {
+    public ResponseEntity<?> boardInfo(@PathVariable Integer travelNo) {
         HashMap<String, Object> map = myPageService.boardInfo(travelNo);
 
         return new ResponseEntity<>(map, HttpStatus.OK);
@@ -211,7 +211,7 @@ public class MyPageController {
 
     //작동안됨 dto가 못받음
     @GetMapping("/boardInfo/{boardId}")
-    public ResponseEntity<?> getBoardInfo(@PathVariable int boardId) {
+    public ResponseEntity<?> getBoardInfo(@PathVariable Integer boardId) {
         HashMap<String, Object> map = myPageService.boardInfo(boardId);
 
         return new ResponseEntity<>(map, HttpStatus.OK);

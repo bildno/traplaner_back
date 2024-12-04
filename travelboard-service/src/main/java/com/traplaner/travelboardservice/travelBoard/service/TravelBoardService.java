@@ -1,5 +1,6 @@
 package com.traplaner.travelboardservice.travelBoard.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.traplaner.travelboardservice.client.MemberServiceClient;
 import com.traplaner.travelboardservice.client.MypageServiceClient;
 import com.traplaner.travelboardservice.client.TravelplanServiceClient;
@@ -16,11 +17,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,51 +34,63 @@ public class TravelBoardService {
     private final MypageServiceClient mypageServiceClient;
     private final FavoriteRepository favoriteRepository;
 
-    /**
-     * 게시판 목록 조회
-     */
-    public Page<TravelBoardListDTO> getTravelBoardList(Pageable pageable) {
-        // Feign 클라이언트를 통해 다른 서버에서 페이징 데이터 가져오기
-        ResponseEntity<?> boards = mypageServiceClient.myBoard(pageable);
-        Page<TravelBoardListDTO> list = (Page<TravelBoardListDTO>) boards;
+/*    public Page<TravelBoardListDTO> getListDto(Pageable pageable) {
+        // Feign Client로 다른 서버에서 TravelBoard 데이터를 가져옴
+        Page<TravelBoardListDTO> response = mypageServiceClient.getBoards(pageable);
 
-        return list;
+        // 응답에서 Page<TravelBoardDTO> 추출
+        Page<TravelBoardDTO> boards = responsee.getResult();
 
-/*        // 데이터를 가공하여 DTO로 변환
+        // TravelBoardDTO -> TravelBoardListDTO로 변환
         return boards.map(board -> {
-            TravelDTO travel = travelplanServiceClient.getTravelById(board.getTravelId());
-            MemberDTO member = memberServiceClient.findById(travel.getMemberId());
+            // Travel 데이터 가져오기
+            CommonResDto<TravelDTO> travelResDto = travelplanServiceClient.getTravelById(board.getTravelId());
+            TravelDTO travel = travelResDto.getResult();
 
+            // Member 데이터 가져오기
+            CommonResDto<MemberDTO> memberResDto = memberServiceClient.findById(Integer.valueOf(travel.getMemberId()));
+            MemberDTO member = memberResDto.getResult();
+
+            // TravelBoardListDTO 생성 및 반환
             return new TravelBoardListDTO(
-                    board.getId(),
+                    board.getTravelId(),
                     travel.getTravelImg(),
                     travel.getTitle(),
                     member.getNickName(),
                     board.getWriteDate(),
                     (long) favoriteRepository.getLikeCount(board.getId())
             );
-        });*/
+        });
+    }*/
+
+    // travelboard 매핑
+    public TravelBoardDTO boardResDto (Integer boardId) {
+        Map<String, Object> boardData = mypageServiceClient.getBoardInfo(boardId);
+
+        // ObjectMapper를 사용한 매핑
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(boardData, TravelBoardDTO.class);
     }
 
-    /**
-     * 특정 게시글 상세 조회
-     */
-    public TravelBoardInfoDTO getTravelBoardInfo(int id) {
-        // Feign 클라이언트를 통해 다른 서버에서 게시글 데이터 가져오기
-//        TravelBoardDTO board = (TravelBoardDTO) mypageServiceClient.getBoardInfo(id).getBody();
-//        log.info("board:{}", board);
+    // 특정 게시글 상세 조회
+    public TravelBoardInfoDTO getTravelBoardInfo(Integer boardId) {
+        //travelboard 가져오기
+        TravelBoardDTO board = boardResDto(boardId);
+        log.info("\n\n\n{}\n\n\n", boardId);
 
         //travel 가져오기
-        CommonResDto<TravelDTO> travelResDto = travelplanServiceClient.getTravelById(/*board.getTravelId()*/44);
+        CommonResDto<TravelDTO> travelResDto = travelplanServiceClient.getTravelById(board.getTravelId());
         log.info("travelResDto: {}", travelResDto);
         TravelDTO travel = travelResDto.getResult();
         log.info("travel:{}", travel);
+
         //member 가져오기
         CommonResDto<MemberDTO> memberResDto = memberServiceClient.findById(Integer.valueOf(travel.getMemberId()));
-        MemberDTO member =  memberResDto.getResult();
+        MemberDTO member = memberResDto.getResult();
         log.info("member:{}", member);
+
         //journey 가져오기
-        CommonResDto<List<JourneyDTO>> journeysResDto = travelplanServiceClient.getJourneysByTravelId(/*board.getTravelId()*/44);
+        CommonResDto<List<JourneyDTO>> journeysResDto = travelplanServiceClient.getJourneysByTravelId(board.getTravelId());
         List<JourneyDTO> journeys = journeysResDto.getResult();
         log.info("journeys:{}", journeys);
 
@@ -94,15 +106,19 @@ public class TravelBoardService {
                 .collect(Collectors.toList());
 
         // 데이터 조합 후 반환
-        return new TravelBoardInfoDTO(
-                /*board.getId()*/44,
+        TravelBoardInfoDTO infoDTO = new TravelBoardInfoDTO(
+                board.getTravelId(),
                 travel.getTitle(),
                 member.getNickName(),
-                /*board.getWriteDate()*/LocalDateTime.now(),
+                board.getWriteDate(),
                 travel.getTravelImg(),
-                /*board.getContent()*/"둠두두둠둠둠 베잉스",
-                favoriteRepository.getLikeCount(/*board.getId()*/44),
+                board.getContent(),
+                (long) favoriteRepository.getLikeCount(board.getId()),
                 journeyDetails
         );
+
+        log.info("\n\n\n{}\n\n\n", infoDTO);
+
+        return infoDTO;
     }
 }

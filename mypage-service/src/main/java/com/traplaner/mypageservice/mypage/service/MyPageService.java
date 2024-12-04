@@ -77,12 +77,12 @@ public class MyPageService {
     }
 
 
-    public void updateShare(int id) {
+    public void updateShare(Integer id) {
 
         travelServiceClient.updateShareById(id);
     }
 
-    public void deleteBoard(int boardId) {
+    public void deleteBoard(Integer boardId) {
 
         myPageTravelBoardRepository.deleteById(boardId);
     }
@@ -136,14 +136,14 @@ public class MyPageService {
     }
 
 
-    public int findByTravelId(int travelId) {
+    public Integer findByTravelId(Integer travelId) {
         Long travel = myPageTravelBoardRepository.countById(travelId);
 
         return Math.toIntExact(travel);
     }
 
 
-    public HashMap<String, Object> boardInfo(int travelNo) {
+    public HashMap<String, Object> boardInfo(Integer travelNo) {
         HashMap<String, Object> map = new HashMap<>();
 
         CommonResDto<List<TravelJourneyRes>> travelById = travelServiceClient.findTravelById(travelNo);
