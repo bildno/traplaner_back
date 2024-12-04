@@ -15,19 +15,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TravelBoardListDTO {
-    private Integer travelId; // t
     private Integer boardId; // tb
+    private Integer travelId; // tb
     private String travelImg; // t
     private String title; // t
     private String nickName; // m
 
-    @JsonFormat(pattern = "yyyy-MM-dd 'T'HH:mm")
+/*    @JsonFormat(pattern = "yyyy-MM-dd 'T'HH:mm")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime writeDate; // tb
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)*/
+    private String writeDate; // tb
     private Long likeCount; // f
 
-    public TravelBoardListDTO(Integer id, String travelImg, String title, String nickName, LocalDateTime writeDate, Long likeCount) {
+    public TravelBoardListDTO(Integer id, String travelImg, String title, String nickName, String writeDate, Long likeCount) {
         this.travelId = id;
         this.travelImg = travelImg;
         this.title = title;

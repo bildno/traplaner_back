@@ -16,21 +16,22 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TravelBoardInfoDTO {
-    private Integer travelId; // t
+
+    private Integer travelId; // tb
     private Integer boardId; // tb
     private String title; // t
     private String nickName; // m
 
-    @JsonFormat(pattern = "yyyy-MM-dd 'T'HH:mm")
+/*    @JsonFormat(pattern = "yyyy-MM-dd 'T'HH:mm")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime writeDate; // tb
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)*/
+    private String writeDate; // tb
     private String travelImg; // t
     private String content; // tb
     private Long likeCount; // f
     private List<JourneyInfoDTO> journeys; // j
 
-    public TravelBoardInfoDTO(Integer id, String title, String nickName, LocalDateTime writeDate, String travelImg, String content, long likeCount, List<JourneyInfoDTO> journeyDetails) {
+    public TravelBoardInfoDTO(Integer id, String title, String nickName, String writeDate, String travelImg, String content, long likeCount, List<JourneyInfoDTO> journeyDetails) {
         this.travelId = id;
         this.title = title;
         this.nickName = nickName;
