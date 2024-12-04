@@ -183,8 +183,6 @@ public class MyPageController {
                 if (save != null) {
                     jourenyMap.put(String.valueOf(dto.getJourneyId().get(i)), save);
                 }
-
-
             }
             myPageService.updateJourneyImg(jourenyMap);
         }
