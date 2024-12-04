@@ -143,23 +143,14 @@ public class MyPageService {
     }
 
 
-    public HashMap<String, Object> boardInfo(Integer travelNo) {
+    public HashMap<String, Object> boardInfo(Integer travelBoardNo) {
         HashMap<String, Object> map = new HashMap<>();
 
-        CommonResDto<List<TravelJourneyRes>> travelById = travelServiceClient.findTravelById(travelNo);
-        List<TravelJourneyRes> result = travelById.getResult();
-
-        TravelBoard travel = myPageTravelBoardRepository.findByTravelId(travelNo).orElseThrow(() -> new EntityNotFoundException("없는 글"));
+        TravelBoard travel = myPageTravelBoardRepository.findById(travelBoardNo).orElseThrow(() -> new EntityNotFoundException("없는 글"));
         TravelBoardResponseDTO travelBoardResponseDTO = travel.fromEntity();
-
-
-
-        map.put("travelJourneyResDtos", result);
-
 
         map.put("travelBoardResponseDTO", travelBoardResponseDTO);
         return map;
-
     }
 
     public Page<TravelBoard> getBoardAll(Pageable pageable) {
