@@ -1,5 +1,6 @@
 package com.traplaner.travelboardservice.travelBoard.repository;
 
+import com.traplaner.travelboardservice.travelBoard.dto.FavoriteDTO;
 import com.traplaner.travelboardservice.travelBoard.entity.Favorite;
 import feign.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,5 +35,8 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
     void addLike(@Param("travelBoardId") Map<String, Integer> travelBoardId);
 
     @Query("SELECT COUNT(f.memberId) FROM Favorite f WHERE f.travelBoardId = :travelBoardId")
-    int getLikeCount(@Param("travelBoardId") Integer travelBoardId);
+    Long getLikeCount(@Param("travelBoardId") Integer travelBoardId);
+
+    @Query("SELECT f.travelBoardId FROM Favorite f WHERE f.memberId = :memberId")
+    List<Map<String, Object>> getMyFavorites(@Param("memberId") Integer memberId);
 }

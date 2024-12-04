@@ -20,4 +20,5 @@ public class Favorite {
 
     @JoinColumn(nullable = false)
     private Integer travelBoardId;
+
 }

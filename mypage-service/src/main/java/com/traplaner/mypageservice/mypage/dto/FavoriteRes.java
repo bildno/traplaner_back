@@ -11,9 +11,9 @@ import lombok.*;
 @Builder
 public class FavoriteRes {
 
-        private int id;
-        private int memberId;
-        private int travelBoardId;
+        private Integer id;
+        private Integer memberId;
+        private Integer travelBoardId;
 
 
 }
