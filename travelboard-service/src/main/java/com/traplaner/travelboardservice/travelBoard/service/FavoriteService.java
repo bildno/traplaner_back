@@ -2,9 +2,8 @@ package com.traplaner.travelboardservice.travelBoard.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.traplaner.travelboardservice.client.MypageServiceClient;
-import com.traplaner.travelboardservice.travelBoard.dto.FavoriteDTO;
 import com.traplaner.travelboardservice.travelBoard.dto.response.FavoriteResDTO;
-import com.traplaner.travelboardservice.travelBoard.dto.response.TravelBoardDTO;
+import com.traplaner.travelboardservice.travelBoard.dto.request.TravelBoardDTO;
 import com.traplaner.travelboardservice.travelBoard.entity.Favorite;
 import com.traplaner.travelboardservice.travelBoard.repository.FavoriteRepository;
 import jakarta.transaction.Transactional;

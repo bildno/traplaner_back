@@ -145,7 +145,6 @@ public class MyPageController {
     public ResponseEntity<?> boardInfo(@PathVariable Integer travelNo) {
         HashMap<String, Object> map = new HashMap<>();
         CommonResDto<List<TravelJourneyRes>> dto = travelPlanServiceClient.findTravelById(travelNo);
-
         TravelBoardResponseDTO travelBoardResponseDTO = myPageService.boardInfoByTravelId(travelNo);
         List<TravelJourneyRes> Journeys = dto.getResult();
         map.put("TravelJouneyRes", Journeys);
@@ -191,6 +190,8 @@ public class MyPageController {
                 if (save != null) {
                     jourenyMap.put(String.valueOf(dto.getJourneyId().get(i)), save);
                 }
+
+
             }
             myPageService.updateJourneyImg(jourenyMap);
         }
@@ -200,14 +201,11 @@ public class MyPageController {
     }
 
     //뭔가 이상함 많이 이상함
-    @PostMapping("/favoriteTop")
+    @GetMapping("/favoriteTop")
     public ResponseEntity<?> favoriteTop(@RequestBody List<Integer> boardIds) {
         List<TravelBoardResponseDTO> boardIn = myPageService.getBoardIn(boardIds);
 
-        CommonResDto resDto =
-                new CommonResDto(HttpStatus.OK,"top3 TravelBoard 조회 완료", boardIn);
-
-        return new ResponseEntity<>(resDto, HttpStatus.OK);
+        return new ResponseEntity<>(boardIn, HttpStatus.OK);
     }
 
     //페이저블로 보드 페이지 뽑기(작동됨)
@@ -226,7 +224,6 @@ public class MyPageController {
                 = new CommonResDto<>(HttpStatus.OK,"TravelBoard 조회완료",dto);
         return new ResponseEntity<>(boardInfo, HttpStatus.OK);
     }
-
 
 }
 
