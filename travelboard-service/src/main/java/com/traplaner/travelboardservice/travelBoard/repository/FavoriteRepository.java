@@ -1,10 +1,8 @@
 package com.traplaner.travelboardservice.travelBoard.repository;
 
-import com.traplaner.travelboardservice.travelBoard.dto.FavoriteDTO;
 import com.traplaner.travelboardservice.travelBoard.entity.Favorite;
 import feign.Param;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
