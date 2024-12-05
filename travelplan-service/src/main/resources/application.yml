@@ -4,42 +4,6 @@ server:
 spring:
   application:
     name: travelplan-service
-#  datasource:
-#    url: jdbc:mysql://localhost:3306/traplaner?serverTimezone=Asia/Seoul
-#    username: root
-#    password: mysql
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#  mail:
-#    host: smtp.gmail.com
-#    port: 587
-#    username: 111returns1@gmail.com
-#    password:
-#    properties:
-#      smtp:
-#        auth: true
-#        timeout: 10000
-#        starttls:
-#          enable: true
-#  jpa:
-#    database: mysql
-#    database-platform: org.hibernate.dialect.MySQL8Dialect
-#    hibernate:
-#      ddl-auto: update
-#  data:
-#    redis:
-#      host: localhost
-#      port: 6379
-#
-#  servlet:
-#    multipart:
-#      enabled: true
-#      max-file-size: 10MB
-#file:
-#  upload:
-#    root-path: C:/devlop/upload
-#    root-path-profile: C:/devlop/upload/profile
-#    root-path-travel: C:/devlop/upload/travel
-#    root-path-reservation: C:/develop/upload/reservation
 
 # log level setting
 logging:
@@ -50,29 +14,3 @@ logging:
         SQL: debug
     com:
       project: debug
-
-##mybatis setting
-#mybatis:
-#  config-location: classpath:mybatis-config.xml
-#
-#sns:
-#  kakao:
-#    Client-Id: ed255593c893c0dfdf69726766e4c8d9
-#    redirect-uri: http://localhost:8181/auth/kakao
-#    logout-redirect: http://localhost:8181
-#
-#
-#jwt:
-#  secretKey: ICzihf230K36+z90UWHfOEJZCf/CYB2CJaeKvX06/2QxI//izqT7pIs5Yr5KrIetZcQmt2JF6AlxU5zAcc38KQ==
-#  expiration: 60
-#  expirationRt: 14400
-#  secretKeyRt: rI9KLc/nWq+0ehvbQXjST52lIHi+A4PurdKwAe0ZcN+0LE1QBv7p0qhFx8wzt8PaigtMXpJHdIl6p4ILsLDasA==
-#
-#eureka:
-#  client:
-#    register-with-eureka: true
-#    fetch-registry: true
-#    service-url:
-#      defaultZone: http://127.0.0.1:8761/eureka/
-#  instance:
-#    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
