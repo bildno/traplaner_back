@@ -5,7 +5,6 @@ import com.traplaner.mypageservice.mypage.dto.TravelJourneyRes;
 import com.traplaner.mypageservice.mypage.dto.response.travelPlanResDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
