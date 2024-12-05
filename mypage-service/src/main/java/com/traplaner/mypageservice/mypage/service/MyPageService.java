@@ -135,7 +135,14 @@ public class MyPageService {
         return myPageTravelBoardRepository.save(travelBoard);
     }
 
-
+    public TravelBoardResponseDTO boardInfoByTravelId(Integer travelNo) {
+        TravelBoard travelBoard = myPageTravelBoardRepository.findByTravelId(travelNo).orElseThrow(
+                ()->{
+                    throw new EntityNotFoundException("그런 여행아이디를 가진 게시판은 없어용!");
+                }
+        );
+        return travelBoard.fromEntity();
+    }
     public Integer findByTravelId(Integer travelId) {
         Long travel = myPageTravelBoardRepository.countById(travelId);
 
@@ -143,22 +150,11 @@ public class MyPageService {
     }
 
 
-    public HashMap<String, Object> boardInfo(Integer travelNo) {
+    public TravelBoardResponseDTO boardInfo(Integer travelBoardNo) {
         HashMap<String, Object> map = new HashMap<>();
 
-        CommonResDto<List<TravelJourneyRes>> travelById = travelServiceClient.findTravelById(travelNo);
-        List<TravelJourneyRes> result = travelById.getResult();
-
-        TravelBoard travel = myPageTravelBoardRepository.findByTravelId(travelNo).orElseThrow(() -> new EntityNotFoundException("없는 글"));
-        TravelBoardResponseDTO travelBoardResponseDTO = travel.fromEntity();
-
-
-
-        map.put("travelJourneyResDtos", result);
-
-
-        map.put("travelBoardResponseDTO", travelBoardResponseDTO);
-        return map;
+        TravelBoard travel = myPageTravelBoardRepository.findById(travelBoardNo).orElseThrow(() -> new EntityNotFoundException("없는 글"));
+        return travel.fromEntity();
 
     }
 
