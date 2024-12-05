@@ -1,5 +1,4 @@
 package com.traplaner.travelplanservice.travelplan.repository;
-
 import com.traplaner.travelplanservice.travelplan.entity.Journey;
 import com.traplaner.travelplanservice.travelplan.entity.Travel;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,7 +27,7 @@ class TravelRepositoryTest {
     @DisplayName("Test DB 테이블 데이터 생성")
     void makeTestTableData() {
 
-        int subscriberCount = 100;
+        int subscriberCount = 250;
         int randomPara = subscriberCount - 1;
         int favoriteCount = subscriberCount;
         int randomFavoritePara = (subscriberCount / 10) - 1;
