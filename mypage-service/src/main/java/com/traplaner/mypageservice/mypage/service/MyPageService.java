@@ -93,10 +93,10 @@ public class MyPageService {
 
         TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        List<FavoriteRes> byMemberId = favoriteClient.findByMemberId(Integer.parseInt(userinfo.getId()), pageable.getPageNumber(), pageable.getPageSize());
+        CommonResDto<Page<FavoriteRes>> favorites = favoriteClient.findByMemberId(Integer.parseInt(userinfo.getId()), pageable.getPageNumber(), pageable.getPageSize());
+        Page<FavoriteRes> result = favorites.getResult();
 
-
-        List<TravelBoard> travelBoards = byMemberId.stream()
+        List<TravelBoard> travelBoards = result.getContent().stream()
                 .map(favoriteRes -> myPageTravelBoardRepository.findById(favoriteRes.getId()).get())
                 .collect(Collectors.toList());
 
@@ -105,7 +105,7 @@ public class MyPageService {
                         travelServiceClient.findById(travel.getTravelId())).collect(Collectors.toList());
 
 
-        map.put("favorites", byMemberId);
+        map.put("favorites", result.getContent());
         map.put("travelBoards", travelBoards);
         map.put("travels", travels);
 

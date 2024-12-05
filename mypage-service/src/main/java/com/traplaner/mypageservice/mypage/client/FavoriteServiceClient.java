@@ -1,5 +1,6 @@
 package com.traplaner.mypageservice.mypage.client;
 
+import com.traplaner.mypageservice.mypage.common.dto.CommonResDto;
 import com.traplaner.mypageservice.mypage.dto.FavoriteRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
@@ -14,5 +15,5 @@ import java.util.List;
 public interface FavoriteServiceClient {
 
     @GetMapping("/my-favoriteList/{id}?page={page}&size={size}" )
-    List<FavoriteRes> findByMemberId(@PathVariable int id, @PathVariable int page, @PathVariable int size);
+    CommonResDto<Page<FavoriteRes>> findByMemberId(@PathVariable int id, @PathVariable int page, @PathVariable int size);
 }

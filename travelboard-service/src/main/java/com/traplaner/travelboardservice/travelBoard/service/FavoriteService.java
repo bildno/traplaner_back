@@ -1,15 +1,20 @@
 package com.traplaner.travelboardservice.travelBoard.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.traplaner.travelboardservice.client.MypageServiceClient;
+import com.traplaner.travelboardservice.travelBoard.dto.FavoriteDTO;
 import com.traplaner.travelboardservice.travelBoard.dto.response.FavoriteResDTO;
+import com.traplaner.travelboardservice.travelBoard.dto.response.TravelBoardDTO;
 import com.traplaner.travelboardservice.travelBoard.entity.Favorite;
 import com.traplaner.travelboardservice.travelBoard.repository.FavoriteRepository;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,6 +52,25 @@ public class FavoriteService {
                     .build();
             favoriteRepository.save(favorite);
         }
-        return (long) favoriteRepository.getLikeCount(travelBoardId);  // 현재 좋아요 수
+        return favoriteRepository.getLikeCount(travelBoardId);  // 현재 좋아요 수
+    }
+
+    // 내가 좋아요한 게시물
+
+    private final MypageServiceClient mypageServiceClient;
+
+    // travelboard 매핑
+    public TravelBoardDTO boardResDto (Integer boardId) {
+        Map<String, Object> boardData = mypageServiceClient.getBoardInfo(boardId);
+        log.info("boardData: {}", boardData);
+
+        // ObjectMapper를 사용한 매핑
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(boardData.get("travelBoardResponseDTO"), TravelBoardDTO.class);
+    }
+
+    public Page<Favorite> myFavorites(Integer memberId, Pageable pageable) {
+        Page<Favorite> favorites = favoriteRepository.findAllByMemberId(memberId, pageable);
+        return favorites;
     }
 }
