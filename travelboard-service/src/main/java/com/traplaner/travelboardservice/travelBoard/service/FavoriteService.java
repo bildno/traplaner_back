@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -52,16 +54,14 @@ public class FavoriteService {
     }
 
     // 내가 좋아요한 게시물
-    public List<FavoriteDTO> myFavorites(Integer memberId) {
-        List<Map<String, Object>> result = favoriteRepository.getMyFavorites(memberId);
+    public Page<FavoriteDTO> myFavorites(Integer memberId, Pageable pageable) {
+        Page<Map<String, Object>> result = favoriteRepository.getMyFavorites(memberId, pageable);
 
         // 결과를 DTO로 변환
-        return result.stream()
-                .map(row -> FavoriteDTO.builder()
+        return result.map(row -> FavoriteDTO.builder()
                         .id((Integer) row.get("id"))
                         .memberId((Integer) row.get("memberId"))
                         .travelBoardId((Integer) row.get("travelBoardId"))
-                        .build())
-                .collect(Collectors.toList());
+                        .build());
     }
 }
