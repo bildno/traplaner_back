@@ -3,9 +3,9 @@ package com.traplaner.mypageservice.mypage.controller;
 import com.traplaner.mypageservice.mypage.client.MemberServiceClient;
 import com.traplaner.mypageservice.mypage.client.TravelPlanServiceClient;
 import com.traplaner.mypageservice.mypage.common.auth.TokenUserInfo;
+import com.traplaner.mypageservice.mypage.common.config.AwsS3Config;
 import com.traplaner.mypageservice.mypage.common.dto.CommonResDto;
 import com.traplaner.mypageservice.mypage.common.util.FileUtils;
-import com.traplaner.mypageservice.mypage.dto.FavoriteRes;
 import com.traplaner.mypageservice.mypage.dto.ModifyMemberInfoDTO;
 import com.traplaner.mypageservice.mypage.dto.TravelJourneyRes;
 import com.traplaner.mypageservice.mypage.dto.response.*;
@@ -14,7 +14,6 @@ import com.traplaner.mypageservice.mypage.dto.response.TravelBoardCreateDto;
 import com.traplaner.mypageservice.mypage.dto.response.TravelBoardResponseDTO;
 import com.traplaner.mypageservice.mypage.dto.response.TravelListResponseDTO;
 import com.traplaner.mypageservice.mypage.entity.TravelBoard;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,15 +22,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -41,6 +41,7 @@ public class MyPageController {
     private final MyPageService myPageService;
     private final MemberServiceClient memberServiceClient;
     private final TravelPlanServiceClient travelPlanServiceClient;
+    private final AwsS3Config s3Config;
 
 
     // 마이페이지 메인 (달력 있는 곳)(작동 됨)
@@ -150,7 +151,6 @@ public class MyPageController {
         List<TravelJourneyRes> Journeys = dto.getResult();
         map.put("TravelJouneyRes", Journeys);
         map.put("TravelBoardResponseDTO", travelBoardResponseDTO);
-
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
@@ -159,7 +159,7 @@ public class MyPageController {
 
     // 게시글 작성(아마 안될듯 mutipart파일은 json으로 통신안댐)
     @PostMapping("/my-page/insert-board")
-    public ResponseEntity<?> insertBoard(TravelBoardCreateDto dto) {
+    public ResponseEntity<?> insertBoard(TravelBoardCreateDto dto) throws IOException {
 
         TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String id = userinfo.getId();
@@ -172,9 +172,15 @@ public class MyPageController {
 
         if (StringUtils.hasText(dto.getTravelImg().getOriginalFilename())) {
 
-            String savePath = FileUtils.uploadFile(dto.getTravelImg(), rootPath);
+            MultipartFile travelImage = dto.getTravelImg();
 
-            travelMap.put(String.valueOf(dto.getTravelId()), savePath);
+            String uniqueFileName
+                    = UUID.randomUUID() + "_" +     travelImage.getOriginalFilename();
+
+            String imageUrl
+                    = s3Config.uploadToS3Bucket(travelImage.getBytes(), uniqueFileName);
+
+            travelMap.put(String.valueOf(dto.getTravelId()), imageUrl);
             myPageService.updateTravelImg(travelMap);
 
         }
@@ -187,9 +193,15 @@ public class MyPageController {
 
         if (!dto.getJourneyImage().isEmpty()) {
             for (int i = 0, j = dto.getJourneyId().size(); i < j; i++) {
-                String save = FileUtils.uploadFile(dto.getJourneyImage().get(i), rootPath);
-                if (save != null) {
-                    jourenyMap.put(String.valueOf(dto.getJourneyId().get(i)), save);
+                MultipartFile journeyImage = dto.getJourneyImage().get(i);
+
+                String uniqueFileName
+                        = UUID.randomUUID() + "_" +     journeyImage.getOriginalFilename();
+                String imageUrl
+                        = s3Config.uploadToS3Bucket(journeyImage.getBytes(), uniqueFileName);
+//                String save = FileUtils.uploadFile(dto.getJourneyImage().get(i), rootPath);
+                if (imageUrl != null) {
+                    jourenyMap.put(String.valueOf(dto.getJourneyId().get(i)), imageUrl);
                 }
             }
             myPageService.updateJourneyImg(jourenyMap);

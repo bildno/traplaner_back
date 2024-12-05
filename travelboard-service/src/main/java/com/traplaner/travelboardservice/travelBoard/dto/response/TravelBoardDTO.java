@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 public class TravelBoardDTO {
     private Integer id;
     private Integer travelId;
+    private String memberNickname;
     private String writeDate;
     private String content;
 /*    private Integer id;
