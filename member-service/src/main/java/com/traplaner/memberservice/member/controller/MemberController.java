@@ -149,9 +149,10 @@ public class MemberController {
         logInfo.put("id", member.getId());
         logInfo.put("nickName", member.getNickName());
         logInfo.put("profile", member.getProfileImg());
+        logInfo.put("loginMethod", member.getLoginMethod());
 
         CommonResDto resDto
-                = new CommonResDto(HttpStatus.OK, "로그인 성공!", logInfo);
+                = new CommonResDto(HttpStatus.OK, "SUCCESS", logInfo);
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
 
