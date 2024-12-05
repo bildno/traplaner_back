@@ -25,7 +25,7 @@ public interface TravelPlanServiceClient {
     CommonResDto<Page<travelPlanResDto>> findByMemberId(@PathVariable Integer memberId, @PathVariable int page, @PathVariable int size);
 
     @GetMapping("journeysByTravelId/{travelId}")
-    CommonResDto<List<TravelJourneyRes>> findTravelById(@PathVariable int travelId);
+    CommonResDto<List<TravelJourneyRes>> findTravelById(@PathVariable Integer travelId);
 
 
     @PostMapping("/putTravelImage")

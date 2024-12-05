@@ -3,6 +3,7 @@ package com.traplaner.travelboardservice.travelBoard.dto;
 import lombok.*;
 
 @Getter
+@Setter
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor

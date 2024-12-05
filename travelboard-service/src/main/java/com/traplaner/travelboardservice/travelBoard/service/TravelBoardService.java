@@ -34,27 +34,61 @@ public class TravelBoardService {
     private final MypageServiceClient mypageServiceClient;
     private final FavoriteRepository favoriteRepository;
 
+    // travelboard 매핑
+    public TravelBoardDTO boardResDto (Integer boardId) {
+        Map<String, Object> boardData = mypageServiceClient.getBoardInfo(boardId);
+        log.info("boardData: {}", boardData);
+
+        // ObjectMapper를 사용한 매핑
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(boardData.get("travelBoardResponseDTO"), TravelBoardDTO.class);
+    }
+
+    private MemberDTO getMemberByMemberId(int memberId) {
+        //member 가져오기
+        CommonResDto<MemberDTO> memberResDto = memberServiceClient.findById(memberId);
+        MemberDTO member = memberResDto.getResult();
+        log.info("member:{}", member);
+        return member;
+    }
+
+    private TravelDTO getTravelByBoardId(int boardId) {
+        //travel 가져오기
+        CommonResDto<TravelDTO> travelResDto = travelplanServiceClient.getTravelById(boardId);
+        log.info("travelResDto: {}", travelResDto);
+        TravelDTO travel = travelResDto.getResult();
+        log.info("travel:{}", travel);
+        return travel;
+    }
+
     public Page<TravelBoardListDTO> getTravelBoardList(Pageable pageable) {
         Page<TravelBoardListDTO> result = mypageServiceClient.getTravelBoards(pageable);
+
+        for(TravelBoardListDTO travelBoardListDTO : result.getContent()) {
+            TravelDTO travel = getTravelByBoardId(travelBoardListDTO.getId());
+            MemberDTO member = getMemberByMemberId(Integer.parseInt(travel.getMemberId()));
+            travelBoardListDTO.setTravelId(travel.getId());
+            travelBoardListDTO.setTravelImg(travel.getTravelImg());
+            travelBoardListDTO.setTitle(travel.getTitle());
+            travelBoardListDTO.setNickName(member.getNickName());
+            travelBoardListDTO.setLikeCount(favoriteRepository.getLikeCount(travelBoardListDTO.getId()));
+
+        }
+
+        log.info("result: {}", result);
 
         return result;
     }
 
-    // travelboard 매핑
-    public TravelBoardDTO boardResDto (Integer boardId) {
-        Map<String, Object> boardData = mypageServiceClient.getBoardInfo(boardId);
 
-        // ObjectMapper를 사용한 매핑
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.convertValue(boardData, TravelBoardDTO.class);
-    }
+
 
     // 특정 게시글 상세 조회
     public TravelBoardInfoDTO getTravelBoardInfo(Integer boardId) {
 
         //travelboard 가져오기
         TravelBoardDTO board = boardResDto(boardId);
-        log.info("\n\n\n{}\n\n\n", boardId);
+        log.info("\n\n\n{}\n\n\n", board);
 
         //travel 가져오기
         CommonResDto<TravelDTO> travelResDto = travelplanServiceClient.getTravelById(board.getTravelId());
