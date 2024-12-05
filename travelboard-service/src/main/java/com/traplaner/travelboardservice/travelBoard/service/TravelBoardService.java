@@ -67,12 +67,12 @@ public class TravelBoardService {
         for(TravelBoardListDTO travelBoardListDTO : result.getContent()) {
             TravelDTO travel = getTravelByBoardId(travelBoardListDTO.getId());
             MemberDTO member = getMemberByMemberId(Integer.parseInt(travel.getMemberId()));
+
             travelBoardListDTO.setTravelId(travel.getId());
             travelBoardListDTO.setTravelImg(travel.getTravelImg());
             travelBoardListDTO.setTitle(travel.getTitle());
             travelBoardListDTO.setNickName(member.getNickName());
             travelBoardListDTO.setLikeCount(favoriteRepository.getLikeCount(travelBoardListDTO.getId()));
-
         }
 
         log.info("result: {}", result);
