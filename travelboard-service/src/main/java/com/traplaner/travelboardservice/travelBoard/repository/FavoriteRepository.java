@@ -29,15 +29,8 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
     @Query("DELETE FROM Favorite f WHERE f.travelBoardId = :travelBoardId AND f.memberId = :memberId")
     void removeLike(@Param("travelBoardId") int travelBoardId, @Param("memberId") int memberId);
 
-
-    @Modifying
-    @Transactional
-    @Query(value = "INSERT INTO tbl_favorite (travel_board_id, member_id) VALUES (:#{#travelBoardId['travelBoardId']}, :#{#travelBoardId['memberId']})", nativeQuery = true)
-    void addLike(@Param("travelBoardId") Map<String, Integer> travelBoardId);
-
     @Query("SELECT COUNT(f.memberId) FROM Favorite f WHERE f.travelBoardId = :travelBoardId")
     Long getLikeCount(@Param("travelBoardId") Integer travelBoardId);
 
-    @Query("SELECT f.travelBoardId FROM Favorite f WHERE f.memberId = :memberId")
-    Page<Map<String, Object>> getMyFavorites(@Param("memberId") Integer memberId, Pageable pageable);
+    Page<Favorite> findAllByMemberId(Integer memberId, Pageable pageable);
 }

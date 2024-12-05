@@ -4,6 +4,7 @@ import com.traplaner.travelboardservice.common.auth.TokenUserInfo;
 import com.traplaner.travelboardservice.common.dto.CommonResDto;
 import com.traplaner.travelboardservice.travelBoard.dto.FavoriteDTO;
 import com.traplaner.travelboardservice.travelBoard.dto.response.FavoriteResDTO;
+import com.traplaner.travelboardservice.travelBoard.entity.Favorite;
 import com.traplaner.travelboardservice.travelBoard.service.FavoriteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,10 +44,9 @@ public class FavoriteController {
         return new ResponseEntity(commonResDto, HttpStatus.OK);
     }
 
-    @GetMapping("/my-favoriteList")
-    public ResponseEntity<?> getMyFavorites(@AuthenticationPrincipal TokenUserInfo userInfo, Pageable pageable) {
-        int memberId = Integer.parseInt(userInfo.getId());
-        Page<FavoriteDTO> myFavorites = favoriteService.myFavorites(memberId, pageable);
+    @GetMapping("/my-favoriteList/{id}")
+    public ResponseEntity<?> getMyFavorites(@PathVariable int id, Pageable pageable) {
+        Page<Favorite> myFavorites = favoriteService.myFavorites(id, pageable);
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "내가 좋아요한 게시물 조회 완료!", myFavorites);
         return new ResponseEntity(commonResDto, HttpStatus.OK);
     }
