@@ -49,7 +49,7 @@ public class FavoriteService {
                     .build();
             favoriteRepository.save(favorite);
         }
-        return (long) favoriteRepository.getLikeCount(travelBoardId);  // 현재 좋아요 수
+        return favoriteRepository.getLikeCount(travelBoardId);  // 현재 좋아요 수
     }
 
     // 내가 좋아요한 게시물
