@@ -1,5 +1,6 @@
 package com.traplaner.travelboardservice.travelBoard.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.traplaner.travelboardservice.client.MemberServiceClient;
 import com.traplaner.travelboardservice.client.MypageServiceClient;
 import com.traplaner.travelboardservice.client.TravelplanServiceClient;
@@ -7,15 +8,19 @@ import com.traplaner.travelboardservice.common.dto.CommonResDto;
 import com.traplaner.travelboardservice.travelBoard.dto.*;
 import com.traplaner.travelboardservice.travelBoard.dto.response.JourneyDTO;
 import com.traplaner.travelboardservice.travelBoard.dto.response.MemberDTO;
+import com.traplaner.travelboardservice.travelBoard.dto.response.TravelBoardDTO;
 import com.traplaner.travelboardservice.travelBoard.dto.response.TravelDTO;
 import com.traplaner.travelboardservice.travelBoard.repository.FavoriteRepository;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,25 +34,30 @@ public class TravelBoardService {
     private final MypageServiceClient mypageServiceClient;
     private final FavoriteRepository favoriteRepository;
 
+    public Page<TravelBoardListDTO> getTravelBoardList(Pageable pageable) {
+        Page<TravelBoardListDTO> result = mypageServiceClient.getTravelBoards(pageable);
 
+        return result;
+    }
 
     // travelboard 매핑
-/*    public TravelBoardDTO boardResDto (Integer boardId) {
+    public TravelBoardDTO boardResDto (Integer boardId) {
         Map<String, Object> boardData = mypageServiceClient.getBoardInfo(boardId);
 
         // ObjectMapper를 사용한 매핑
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.convertValue(boardData, TravelBoardDTO.class);
-    }*/
+    }
 
     // 특정 게시글 상세 조회
     public TravelBoardInfoDTO getTravelBoardInfo(Integer boardId) {
-/*        //travelboard 가져오기
+
+        //travelboard 가져오기
         TravelBoardDTO board = boardResDto(boardId);
-        log.info("\n\n\n{}\n\n\n", boardId);*/
+        log.info("\n\n\n{}\n\n\n", boardId);
 
         //travel 가져오기
-        CommonResDto<TravelDTO> travelResDto = travelplanServiceClient.getTravelById(/*board.getTravelId()*/43);
+        CommonResDto<TravelDTO> travelResDto = travelplanServiceClient.getTravelById(board.getTravelId());
         log.info("travelResDto: {}", travelResDto);
         TravelDTO travel = travelResDto.getResult();
         log.info("travel:{}", travel);
@@ -58,10 +68,9 @@ public class TravelBoardService {
         log.info("member:{}", member);
 
         //journey 가져오기
-        CommonResDto<List<JourneyDTO>> journeysResDto = travelplanServiceClient.getJourneysByTravelId(/*board.getTravelId()*/43);
+        CommonResDto<List<JourneyDTO>> journeysResDto = travelplanServiceClient.getJourneysByTravelId(board.getTravelId());
         List<JourneyDTO> journeys = journeysResDto.getResult();
         log.info("journeys:{}", journeys);
-
         List<TravelBoardInfoDTO.JourneyInfoDTO> journeyDetails = journeys.stream()
                 .map(journey -> new TravelBoardInfoDTO.JourneyInfoDTO(
                         journey.getJourneyName(),
@@ -75,14 +84,14 @@ public class TravelBoardService {
 
         // 데이터 조합 후 반환
         TravelBoardInfoDTO infoDTO = new TravelBoardInfoDTO(
-                /*board.getTravelId()*/43,
-                /*board.getId()*/boardId,
+                board.getTravelId(),
+                board.getId(),
                 travel.getTitle(),
                 member.getNickName(),
-                /*board.getWriteDate()*/"2024-12-04",
+                board.getWriteDate(),
                 travel.getTravelImg(),
-                /*board.getContent()*/"룰루랄라",
-                (long) favoriteRepository.getLikeCount(/*board.getId()*/boardId),
+                board.getContent(),
+                favoriteRepository.getLikeCount(board.getId()),
                 journeyDetails
         );
 

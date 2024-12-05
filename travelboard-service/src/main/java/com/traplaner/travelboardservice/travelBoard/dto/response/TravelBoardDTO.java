@@ -22,12 +22,4 @@ public class TravelBoardDTO {
     private Integer travelId;
     private String writeDate;
     private String content;
-/*    private Integer id;
-    private Integer travelId;
-
-    @JsonFormat(pattern = "yyyy-MM-dd 'T'HH:mm")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime writeDate;
-    private String content;*/
 }

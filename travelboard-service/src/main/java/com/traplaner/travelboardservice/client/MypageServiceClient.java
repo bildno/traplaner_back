@@ -16,8 +16,8 @@ import java.util.Map;
 @FeignClient(name = "mypage-service")
 public interface MypageServiceClient {
 
-    @GetMapping("/my-page/mytravelboard")
-    Page<TravelBoardListDTO> getBoards(Pageable pageable);
+    @GetMapping("/getTravelBoard")
+    Page<TravelBoardListDTO> getTravelBoards(Pageable pageable);
 
     @GetMapping("/boardInfo/{boardId}")
     Map<String, Object> getBoardInfo(@PathVariable("boardId") Integer boardId);
