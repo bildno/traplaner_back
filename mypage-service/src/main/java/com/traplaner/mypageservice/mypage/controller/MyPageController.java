@@ -227,7 +227,6 @@ public class MyPageController {
         return new ResponseEntity<>(boardInfo, HttpStatus.OK);
     }
 
-
 }
 
 
