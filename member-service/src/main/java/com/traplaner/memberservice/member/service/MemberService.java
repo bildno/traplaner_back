@@ -80,12 +80,12 @@ public class MemberService {
 
     public Member login(LoginRequestDto dto) {
         Member member  = memberRepository.findByEmail(dto.getEmail()).orElseThrow(() ->
-                new EntityNotFoundException("User not found")
+                new EntityNotFoundException("NO_ACC")
         );
 
         // 비밀번호 확인하기 (암호화 되어있으니 encoder에게 부탁)
         if (!encoder.matches(dto.getPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new IllegalArgumentException("NO_PW");
         }
 
         return member;
