@@ -5,5 +5,5 @@ spring:
   cloud:
     config:
       uri: http://localhost:8888  # Local Config-server 주소
-      profile: default
 #      uri: http://config-service:8888  # Config-server 주소
+      profile: default

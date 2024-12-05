@@ -1,9 +1,9 @@
 # application.yml보다 우선순위가 높은 설정 파일과 읽을 설정 파일 등록
 spring:
   application:
-    name: member-service
+    name: travelboard-service
   cloud:
     config:
       uri: http://localhost:8888
-#      uri: http://member-service:8888
+#      uri: http://travelboard-service:8888
       profile: default

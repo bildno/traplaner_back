@@ -2,17 +2,15 @@ server:
   port: 8888
 
 spring:
-# 로컬 세팅을 사용하려면 아래 주석 풀고 사용하세요.
-  profiles:
+  profiles:         # 로컬 세팅 사용, 배포서버로 올릴 경우에는 주석처리하세요.
     active: native
   application:
     name: config-service
   cloud:
     config:
       server:
-# 로컬 세팅을 사용하려면 아래 주석 풀고 사용하세요.
-        native:
-          search-locations: file:///c:/projects/traplan-config
+        native:   # 로컬 세팅 사용, 배포서버로 올릴 경우에는 주석처리하세요.
+          search-locations: file:///c:/playdata.io_backend6/projects/traplan-config
         git:
           uri: git@github.com:jh080724/traplan-config.git
           default-label: main
