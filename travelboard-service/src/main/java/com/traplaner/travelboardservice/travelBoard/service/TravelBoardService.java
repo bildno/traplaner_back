@@ -36,12 +36,10 @@ public class TravelBoardService {
 
     // travelboard 매핑
     public TravelBoardDTO boardResDto (Integer boardId) {
-        Map<String, Object> boardData = mypageServiceClient.getBoardInfo(boardId);
+        CommonResDto<TravelBoardDTO> boardData = mypageServiceClient.getBoardInfo(boardId);
         log.info("boardData: {}", boardData);
 
-        // ObjectMapper를 사용한 매핑
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.convertValue(boardData.get("travelBoardResponseDTO"), TravelBoardDTO.class);
+        return boardData.getResult();
     }
 
     private MemberDTO getMemberByMemberId(int memberId) {

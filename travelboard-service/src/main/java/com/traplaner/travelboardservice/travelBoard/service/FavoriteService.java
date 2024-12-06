@@ -2,6 +2,7 @@ package com.traplaner.travelboardservice.travelBoard.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.traplaner.travelboardservice.client.MypageServiceClient;
+import com.traplaner.travelboardservice.common.dto.CommonResDto;
 import com.traplaner.travelboardservice.travelBoard.dto.response.FavoriteResDTO;
 import com.traplaner.travelboardservice.travelBoard.dto.request.TravelBoardDTO;
 import com.traplaner.travelboardservice.travelBoard.entity.Favorite;
@@ -55,19 +56,6 @@ public class FavoriteService {
     }
 
     // 내가 좋아요한 게시물
-
-    private final MypageServiceClient mypageServiceClient;
-
-    // travelboard 매핑
-    public TravelBoardDTO boardResDto (Integer boardId) {
-        Map<String, Object> boardData = mypageServiceClient.getBoardInfo(boardId);
-        log.info("boardData: {}", boardData);
-
-        // ObjectMapper를 사용한 매핑
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.convertValue(boardData.get("travelBoardResponseDTO"), TravelBoardDTO.class);
-    }
-
     public Page<Favorite> myFavorites(Integer memberId, Pageable pageable) {
         Page<Favorite> favorites = favoriteRepository.findAllByMemberId(memberId, pageable);
         return favorites;
