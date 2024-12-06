@@ -73,7 +73,7 @@ public class MyPageController {
         Page<travelPlanResDto> result = travels.getResult();
         List<travelPlanResDto> content = result.getContent();
 
-        return new ResponseEntity<>(content, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     // 공유여부 변경(작동 됨)
@@ -85,11 +85,11 @@ public class MyPageController {
     }
 
     //글 삭제(작동 됨)
-    @PostMapping("/my-page/delete/{boardId}")
-    public ResponseEntity<?> deleteBoard(@PathVariable Integer boardId
+    @PostMapping("/my-page/delete/{TravelId}")
+    public ResponseEntity<?> deleteBoard(@PathVariable Integer TravelId
     ) {
 
-        myPageService.deleteBoard(boardId);
+        myPageService.deleteBoard(TravelId);
 
         return ResponseEntity.ok().body("success");
     }
@@ -98,6 +98,8 @@ public class MyPageController {
     // 좋아요 리스트(작동 안됨: 아마 페이보릿 클라이언트 측이 완성이 안되서 생긴문제인듯)
     @GetMapping("/my-page/favorite")
     public ResponseEntity<?> favorite(Pageable pageable) {
+        log.info("/my-page/favorite: GET!, {}", pageable);
+
         HashMap<String, Object> favorite = myPageService.favorite(pageable);
 
 
@@ -145,6 +147,7 @@ public class MyPageController {
     public ResponseEntity<?> boardInfo(@PathVariable Integer travelNo) {
         HashMap<String, Object> map = new HashMap<>();
         CommonResDto<List<TravelJourneyRes>> dto = travelPlanServiceClient.findTravelById(travelNo);
+
         TravelBoardResponseDTO travelBoardResponseDTO = myPageService.boardInfoByTravelId(travelNo);
         List<TravelJourneyRes> Journeys = dto.getResult();
         map.put("TravelJouneyRes", Journeys);
@@ -190,8 +193,6 @@ public class MyPageController {
                 if (save != null) {
                     jourenyMap.put(String.valueOf(dto.getJourneyId().get(i)), save);
                 }
-
-
             }
             myPageService.updateJourneyImg(jourenyMap);
         }
@@ -201,11 +202,14 @@ public class MyPageController {
     }
 
     //뭔가 이상함 많이 이상함
-    @GetMapping("/favoriteTop")
+    @PostMapping("/favoriteTop")
     public ResponseEntity<?> favoriteTop(@RequestBody List<Integer> boardIds) {
         List<TravelBoardResponseDTO> boardIn = myPageService.getBoardIn(boardIds);
 
-        return new ResponseEntity<>(boardIn, HttpStatus.OK);
+        CommonResDto resDto =
+                new CommonResDto(HttpStatus.OK,"top3 TravelBoard 조회 완료", boardIn);
+
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
 
     //페이저블로 보드 페이지 뽑기(작동됨)

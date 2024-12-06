@@ -60,4 +60,9 @@ public class FavoriteService {
         Page<Favorite> favorites = favoriteRepository.findAllByMemberId(memberId, pageable);
         return favorites;
     }
+
+    public void deleteFavorite(Integer travelBoardId) {
+        favoriteRepository.deleteByTravelBoardId(travelBoardId);
+
+    }
 }

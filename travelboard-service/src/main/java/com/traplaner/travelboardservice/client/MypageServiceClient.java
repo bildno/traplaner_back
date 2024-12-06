@@ -1,7 +1,6 @@
 package com.traplaner.travelboardservice.client;
 
 import com.traplaner.travelboardservice.common.dto.CommonResDto;
-import com.traplaner.travelboardservice.travelBoard.dto.TravelBoardInfoDTO;
 import com.traplaner.travelboardservice.travelBoard.dto.TravelBoardListDTO;
 import com.traplaner.travelboardservice.travelBoard.dto.request.TravelBoardDTO;
 import org.springframework.cloud.openfeign.FeignClient;

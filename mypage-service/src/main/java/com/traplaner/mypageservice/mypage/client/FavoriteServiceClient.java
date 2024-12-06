@@ -7,13 +7,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.lang.constant.ConstantDesc;
 import java.util.List;
 
 @FeignClient(name="travelboard-service")
 public interface FavoriteServiceClient {
 
     @GetMapping("/my-favoriteList/{id}?page={page}&size={size}" )
-    CommonResDto<Page<FavoriteRes>> findByMemberId(@PathVariable int id, @PathVariable int page, @PathVariable int size);
+    CommonResDto<Page<FavoriteRes>>findByMemberId(@PathVariable int id, @PathVariable int page, @PathVariable int size);
+
+    @PostMapping("/deleteFavorite")
+    void deleteByTravelBoardId(@RequestParam Integer id);
 }

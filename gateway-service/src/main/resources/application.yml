@@ -111,7 +111,6 @@ spring:
           uri: lb://MYPAGE-SERVICE
           predicates:
             - Path=/mypage-service/**
-            - Method=GET
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/mypage-service/(?<segment>.*), /$\{segment}
