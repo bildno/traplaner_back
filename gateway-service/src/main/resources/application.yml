@@ -143,7 +143,6 @@ spring:
           uri: lb://TRAVELBOARD-SERVICE
           predicates:
             - Path=/travelboard-service/actuator/**
-            - Method=GET, POST
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
