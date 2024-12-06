@@ -7,7 +7,6 @@ import com.traplaner.mypageservice.mypage.common.auth.TokenUserInfo;
 import com.traplaner.mypageservice.mypage.common.dto.CommonResDto;
 import com.traplaner.mypageservice.mypage.dto.FavoriteRes;
 import com.traplaner.mypageservice.mypage.dto.TravelBoardDto;
-import com.traplaner.mypageservice.mypage.dto.TravelJourneyRes;
 import com.traplaner.mypageservice.mypage.dto.response.MemberResDto;
 import com.traplaner.mypageservice.mypage.dto.response.TravelBoardResponseDTO;
 import com.traplaner.mypageservice.mypage.dto.response.TravelListResponseDTO;
@@ -85,10 +84,15 @@ public class MyPageService {
 
     public void deleteBoard(Integer travelId) {
 
-        TravelBoard tb = myPageTravelBoardRepository.findByTravelId(travelId).orElseThrow(() -> new NullPointerException("업따"));
+        log.info("여기는 마이페이지 서비스 {}", travelId);
 
-        favoriteClient.deleteByTravelBoardId(tb.getId());
-        myPageTravelBoardRepository.deleteById(tb.getId());
+        Optional<TravelBoard> tb = myPageTravelBoardRepository.findByTravelId(travelId);
+
+        if(tb.isPresent()) {
+            favoriteClient.deleteByTravelBoardId(tb.get().getId());
+            myPageTravelBoardRepository.deleteById(tb.get().getId());
+        }
+
         travelServiceClient.deleteJourney(travelId);
         travelServiceClient.deleteTravel(travelId);
 

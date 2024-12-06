@@ -44,7 +44,8 @@ public class SecurityConfig {
                                     "/list",
                                     "/info/**",
                                     "/top3-favorite",
-                                    "/my-favoriteList/*"
+                                    "/my-favoriteList/*",
+                                    "/deleteFavorite"
                                     )
                             .permitAll()
                             .anyRequest().authenticated();
