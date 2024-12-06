@@ -153,7 +153,14 @@ public class MyPageService {
         return myPageTravelBoardRepository.save(travelBoard);
     }
 
-
+    public TravelBoardResponseDTO boardInfoByTravelId(Integer travelNo) {
+        TravelBoard travelBoard = myPageTravelBoardRepository.findByTravelId(travelNo).orElseThrow(
+                ()->{
+                    throw new EntityNotFoundException("그런 여행아이디를 가진 게시판은 없어용!");
+                }
+        );
+        return travelBoard.fromEntity();
+    }
     public Integer findByTravelId(Integer travelId) {
         Long travel = myPageTravelBoardRepository.countById(travelId);
 
