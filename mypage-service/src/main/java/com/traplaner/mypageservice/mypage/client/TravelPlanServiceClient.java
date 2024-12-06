@@ -7,6 +7,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.constant.ConstantDesc;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,9 +17,12 @@ public interface TravelPlanServiceClient {
 
     @GetMapping("/travelsByMemberId/{id}")
     CommonResDto<List<travelPlanResDto>> findByMemberId(@PathVariable Integer id);
+//
+//    @GetMapping("getTravelById/{travelId}")
+//    CommonResDto<travelPlanResDto> findById(@PathVariable int travelId);
 
-    @GetMapping("getTravelById/{travelId}")
-    travelPlanResDto findById(@PathVariable int travelId);
+    @PostMapping("/top3-travel")
+    CommonResDto<List<travelPlanResDto>> getTop3TravelPlan(@RequestBody List<Integer> ids);
 
     @GetMapping("/travelListsByMemberId?memberId={memberId}&page={page}&size={size}")
     CommonResDto<Page<travelPlanResDto>> findByMemberId(@PathVariable Integer memberId, @PathVariable int page, @PathVariable int size);
@@ -36,4 +40,10 @@ public interface TravelPlanServiceClient {
 
     @GetMapping("/changeShare/{id}")
     void updateShareById(@PathVariable int id);
+
+    @PostMapping("/deleteTravel")
+    void deleteTravel(@RequestBody Integer travelId);
+
+    @PostMapping("/deleteJourney")
+    void deleteJourney(@RequestBody Integer travelId);
 }

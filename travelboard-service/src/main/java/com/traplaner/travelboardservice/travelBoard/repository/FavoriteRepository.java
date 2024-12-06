@@ -33,4 +33,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
     Long getLikeCount(@Param("travelBoardId") Integer travelBoardId);
 
     Page<Favorite> findAllByMemberId(Integer memberId, Pageable pageable);
+
+    void deleteByTravelBoardId(Integer travelBoardId);
 }

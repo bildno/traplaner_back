@@ -83,27 +83,44 @@ public class MyPageService {
         travelServiceClient.updateShareById(id);
     }
 
-    public void deleteBoard(Integer boardId) {
+    public void deleteBoard(Integer travelId) {
 
-        myPageTravelBoardRepository.deleteById(boardId);
+        TravelBoard tb = myPageTravelBoardRepository.findByTravelId(travelId).orElseThrow(() -> new NullPointerException("업따"));
+
+        favoriteClient.deleteByTravelBoardId(tb.getId());
+        myPageTravelBoardRepository.deleteById(tb.getId());
+        travelServiceClient.deleteJourney(travelId);
+        travelServiceClient.deleteTravel(travelId);
+
     }
 
     public HashMap<String, Object> favorite(Pageable pageable) {
         HashMap<String, Object> map = new HashMap<>();
 
         TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("userinfo: {}", userinfo);
 
         CommonResDto<Page<FavoriteRes>> favorites = favoriteClient.findByMemberId(Integer.parseInt(userinfo.getId()), pageable.getPageNumber(), pageable.getPageSize());
+        log.info("favorites: {}", favorites);
         Page<FavoriteRes> result = favorites.getResult();
 
         List<TravelBoard> travelBoards = result.getContent().stream()
                 .map(favoriteRes -> myPageTravelBoardRepository.findById(favoriteRes.getId()).get())
                 .collect(Collectors.toList());
 
-        List<travelPlanResDto> travels =
-                travelBoards.stream().map(travel ->
-                        travelServiceClient.findById(travel.getTravelId())).collect(Collectors.toList());
+        log.info("travelBoards: {}", travelBoards);
 
+
+//        List<CommonResDto<travelPlanResDto>> collect
+//                = travelBoards.stream().map(travelBoard -> travelServiceClient.findById(travelBoard.getTravelId())).collect(Collectors.toList());
+
+        List<Integer> collect
+                = travelBoards.stream().map(travelBoard -> travelBoard.getTravelId()).collect(Collectors.toList());
+        log.info("collect: {}", collect);
+
+        CommonResDto<List<travelPlanResDto>> top3TravelPlan = travelServiceClient.getTop3TravelPlan(collect);
+        log.info("top3TravelPlan: {}", top3TravelPlan);
+        List<travelPlanResDto> travels = top3TravelPlan.getResult();
 
         map.put("favorites", result.getContent());
         map.put("travelBoards", travelBoards);
