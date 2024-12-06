@@ -54,6 +54,8 @@ public class FavoriteController {
     @PostMapping("/deleteFavorite")
     public ResponseEntity<?> deleteFavorite(@RequestBody Integer travelBoardId) {
         favoriteService.deleteFavorite(travelBoardId);
+
+        return ResponseEntity.ok().build();
     }
 
 }
