@@ -19,8 +19,6 @@ public class TravelBoardController {
     private final TravelBoardService travelBoardService;
 
     // 게시글 전체 조회
-
-    // 게시글 전체 조회
     @GetMapping("/list")
     public ResponseEntity<Page<TravelBoardListDTO>> getTravelBoardList(Pageable pageable) {
         Page<TravelBoardListDTO> list = travelBoardService.getTravelBoardList(pageable);
