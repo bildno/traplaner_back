@@ -207,8 +207,7 @@ public class MemberController {
     @ResponseBody
     public ResponseEntity<?> mailCheck(@RequestBody String email) {
         log.info("이메일 인증 요청 들어옴!: {}", email);
-        //여기도 중복검사 다시해야함
-        if(memberService.duplicateTest("email", email)) {
+        if(!memberService.duplicateTest("email", email)) {
             log.info("존재하지 않는 회원");
             CommonResDto resDto
                     = new CommonResDto(HttpStatus.BAD_REQUEST,"존재하지 않는 회원입니다.", "");
@@ -220,6 +219,7 @@ public class MemberController {
                     = new CommonResDto(HttpStatus.OK,"올바른 이메일입니다.",authNum);
             return new ResponseEntity<>(resDto, HttpStatus.OK);
         } catch (MessagingException e) {
+            //이거 왜 없는 메일도 보내지냐
             CommonResDto resDto
                     = new CommonResDto(HttpStatus.BAD_REQUEST,"존재하지 않는 이메일 입니다.","");
             return new ResponseEntity<>(resDto, HttpStatus.BAD_REQUEST);
