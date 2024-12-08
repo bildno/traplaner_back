@@ -74,7 +74,7 @@ public class MyPageController {
         Page<travelPlanResDto> result = travels.getResult();
         List<travelPlanResDto> content = result.getContent();
 
-        return new ResponseEntity<>(content, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     // 공유여부 변경(작동 됨)
@@ -86,11 +86,11 @@ public class MyPageController {
     }
 
     //글 삭제(작동 됨)
-    @PostMapping("/my-page/delete/{boardId}")
-    public ResponseEntity<?> deleteBoard(@PathVariable Integer boardId
+    @PostMapping("/my-page/delete/{TravelId}")
+    public ResponseEntity<?> deleteBoard(@PathVariable Integer TravelId
     ) {
 
-        myPageService.deleteBoard(boardId);
+        myPageService.deleteBoard(TravelId);
 
         return ResponseEntity.ok().body("success");
     }
@@ -99,6 +99,8 @@ public class MyPageController {
     // 좋아요 리스트(작동 안됨: 아마 페이보릿 클라이언트 측이 완성이 안되서 생긴문제인듯)
     @GetMapping("/my-page/favorite")
     public ResponseEntity<?> favorite(Pageable pageable) {
+        log.info("/my-page/favorite: GET!, {}", pageable);
+
         HashMap<String, Object> favorite = myPageService.favorite(pageable);
 
 
@@ -238,7 +240,6 @@ public class MyPageController {
                 = new CommonResDto<>(HttpStatus.OK,"TravelBoard 조회완료",dto);
         return new ResponseEntity<>(boardInfo, HttpStatus.OK);
     }
-
 
 }
 

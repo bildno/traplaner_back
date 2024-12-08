@@ -154,4 +154,21 @@ public class travelPlanController {
                 new CommonResDto(HttpStatus.OK,"top3 여행 조회 완료",travelsByIds);
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
+
+    @PostMapping("/deleteTravel")
+    public ResponseEntity<?> deleteTravel(@RequestBody Integer travelId){
+        travelRepository.deleteById(travelId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/deleteJourney")
+    public ResponseEntity<?> deleteJourney(@RequestBody Integer travelId){
+        log.info("트래블 아이디 {}", travelId);
+        journeyRepository.deleteById(travelId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
 }

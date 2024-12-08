@@ -1,4 +1,4 @@
-package com.traplaner.travelboardservice.travelBoard.dto.response;
+package com.traplaner.travelboardservice.travelBoard.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
