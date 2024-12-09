@@ -44,19 +44,20 @@ public class MainService {
                 .map(favoriteResDto -> favoriteResDto.getTravelBoardId())
                 .collect(Collectors.toList());
 
-        // 2. mypage-service feign 연동 top 3 tavelId 리스트 획득
+        // 2. mypage-service feign 연동 top 3 travelId 리스트 획득
         CommonResDto<List<TravelBoardResponseDTO>> top3TravelBoard
                 = mypageServiceClient.getTop3TravelBoard(travelBoardIds);
 
         List<TravelBoardResponseDTO> travelBoardResponseDtos = top3TravelBoard.getResult();
         log.info("====================>>> travelBoardResponseDtos: {}", travelBoardResponseDtos);
 
-        // 2.1. travelID 리스트를 만든다.(travel-service에 요청하기 위한 정보)
+        // 2.1. travelID 리스트를 만든다.(travelplan-service에 요청하기 위한 정보)
         List<Integer> travelIds = travelBoardResponseDtos.stream()
                 .map(travelBoardResponseDto -> travelBoardResponseDto.getTravelId())
                 .collect(Collectors.toList());
+        log.info("여행ID: {}", travelIds);
 
-        //3. travel-service feign 연동 top 2 Travel(id, 제목, 이미지) 정보 획득
+        //3. travelplan-service feign 연동 top 2 Travel(id, 제목, 이미지) 정보 획득
         CommonResDto<List<TravelResponseDTO>> top3Travel
                 = travelplanServiceClient.getTop3Travel(travelIds);
 
