@@ -72,7 +72,7 @@ public class TravelService {
                 String imageUrl
                         = s3Config.uploadToS3Bucket(reservationConfirmImage.getBytes(), uniqueFileName);
 
-                journeyRepository.save(journey.toEntity(travelId,imageUrl));
+                journeyRepository.save(journey.toEntity(travelId,uniqueFileName));
             }
             else{
                 journeyRepository.save(journey.toEntity(travelId));

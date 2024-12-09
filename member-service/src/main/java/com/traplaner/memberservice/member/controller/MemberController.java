@@ -106,7 +106,7 @@ public class MemberController {
         log.info("signup(): savePath {}", imageUrl);
         // e:파일 업로드 -------------------------
 
-        Member member = memberService.join(dto, imageUrl);
+        Member member = memberService.join(dto, uniqueFileName);
 
         CommonResDto resDto =
                 new CommonResDto(HttpStatus.CREATED, "member create 성공", member.getId());
