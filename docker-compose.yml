@@ -39,7 +39,7 @@ services:
     image: 124355678220.dkr.ecr.ap-northeast-2.amazonaws.com/gateway-service:latest
     container_name: gateway-service
     ports:
-      - "8000:8000"
+      - "8181:8181"
     networks:
       - msa-network
     depends_on:
