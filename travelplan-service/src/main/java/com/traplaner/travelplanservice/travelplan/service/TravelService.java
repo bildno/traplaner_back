@@ -1,6 +1,6 @@
 package com.traplaner.travelplanservice.travelplan.service;
 
-import com.traplaner.travelplanservice.common.util.FileUtils;
+import com.traplaner.travelplanservice.common.config.AwsS3Config;
 import com.traplaner.travelplanservice.travelplan.dto.TravelPlanRequestDTO.TravelInfo;
 import com.traplaner.travelplanservice.travelplan.dto.TravelResponseDTO;
 import com.traplaner.travelplanservice.travelplan.entity.Journey;
@@ -14,11 +14,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.traplaner.travelplanservice.travelplan.dto.TravelPlanRequestDTO.JourneyInfo;
 
@@ -30,8 +33,7 @@ public class TravelService {
 
     private final TravelRepository travelRepository;
     private final JourneyRepository journeyRepository;
-    @Value("${file.upload.root-path}")
-    private String rootPath;
+    private final AwsS3Config s3Config;
 
     public boolean changeShare(int travelId) {
         Travel travel = travelRepository.findById(travelId).orElseThrow(
@@ -58,14 +60,19 @@ public class TravelService {
 
     }
 
-    public void saveJourneys(List<JourneyInfo> journeys) {
+    public void saveJourneys(List<JourneyInfo> journeys) throws IOException {
         int travelId = travelRepository.findTopByOrderByIdDesc().getId();
         log.info("travelId: {}", travelId);
         for (JourneyInfo journey : journeys) {
             if(journey.getReservationConfirmImagePath()!=null) {
-                String savePath = FileUtils.uploadFile(
-                        journey.getReservationConfirmImagePath(), rootPath);
-                journeyRepository.save(journey.toEntity(travelId,savePath));
+                MultipartFile reservationConfirmImage = journey.getReservationConfirmImagePath();
+
+                String uniqueFileName
+                        = UUID.randomUUID() + "_" +     reservationConfirmImage.getOriginalFilename();
+                String imageUrl
+                        = s3Config.uploadToS3Bucket(reservationConfirmImage.getBytes(), uniqueFileName);
+
+                journeyRepository.save(journey.toEntity(travelId,uniqueFileName));
             }
             else{
                 journeyRepository.save(journey.toEntity(travelId));

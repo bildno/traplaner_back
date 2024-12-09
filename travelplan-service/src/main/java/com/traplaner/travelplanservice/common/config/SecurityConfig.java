@@ -47,7 +47,11 @@ public class SecurityConfig {
                                     "/changeShare/**",
                                     "/putJourneyImages",
                                     "/putTravelImage",
-                                    "/top3-travel"
+                                    "/top3-travel",
+                                    "/deleteJourney",
+                                    "/deleteTravel",
+                                    "/findTravel/*"
+
                                     )
                             .permitAll()
                             .anyRequest().authenticated();

@@ -23,11 +23,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -42,7 +41,7 @@ public class travelPlanController {
     public ResponseEntity<?> travelSave(@AuthenticationPrincipal TokenUserInfo userInfo,
                                         @RequestParam("data") String data,
                                         @RequestParam Map<String, MultipartFile> reservationFiles
-                             ) throws JsonProcessingException {
+                             ) throws IOException {
 
         log.info("reservationFile: {}", reservationFiles);
 
@@ -98,7 +97,7 @@ public class travelPlanController {
     //여행 아이디로 여정 리스트 조회 ()
     @GetMapping("/journeysByTravelId/{travelId}")
         public ResponseEntity<?> getJourneysByTravelId(@PathVariable("travelId") int travelId) {
-            List<Journey> journeys = journeyRepository.findAllByTravelId(travelId);
+            List<Journey> journeys = journeyRepository.findAllByTravelIdOrderByStartTimeAsc(travelId);
             log.info("journeys: {}", journeys);
             CommonResDto resDto =
                     new CommonResDto(HttpStatus.OK,"모든 여정 조회 완료",journeys);
@@ -153,4 +152,30 @@ public class travelPlanController {
                 new CommonResDto(HttpStatus.OK,"top3 여행 조회 완료",travelsByIds);
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
+
+    @PostMapping("/deleteTravel")
+    public ResponseEntity<?> deleteTravel(@RequestBody Integer travelId){
+        travelRepository.deleteById(travelId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/deleteJourney")
+    public ResponseEntity<?> deleteJourney(@RequestBody Integer travelId){
+        log.info("트래블 아이디 {}", travelId);
+        journeyRepository.deleteById(travelId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/findTravel/{travelId}")
+    public ResponseEntity<?> findTravel(@PathVariable Integer travelId){
+        Travel travel = travelRepository.findById(travelId).orElseThrow(() -> new NullPointerException("업따"));
+
+        CommonResDto resDto = new CommonResDto<>(HttpStatus.OK, "조회성공", travel);
+
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+
+
 }

@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Rollback(false)
 class TravelBoardRepositoryTest {
 
-
     @Autowired
     TravelBoardRepository travelBoardRepository;
 
@@ -40,7 +39,7 @@ class TravelBoardRepositoryTest {
                     LocalDateTime.now().plusDays(3 + (int) (Math.random() * randomPara) + 1);
 
             TravelBoard travelBoard = TravelBoard.builder()
-                    .travelId(tmpMemberId)
+                    .travelId(i)
                     .memberNickName("테스트" + tmpMemberNickNameId)
                     .writeDate(tmpEndDate)
                     .content("여행-" + i + " 좋았음. !!!!!!!!!!!!")

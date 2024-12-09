@@ -11,4 +11,6 @@ public interface JourneyRepository extends JpaRepository<Journey, Integer> {
     Optional<Journey> findByTravelId(int travelId);
 
     List<Journey> findAllByTravelId(int travelId);
+
+    List<Journey> findAllByTravelIdOrderByStartTimeAsc(int travelId);
 }

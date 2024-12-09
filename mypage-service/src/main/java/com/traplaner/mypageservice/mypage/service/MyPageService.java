@@ -7,7 +7,6 @@ import com.traplaner.mypageservice.mypage.common.auth.TokenUserInfo;
 import com.traplaner.mypageservice.mypage.common.dto.CommonResDto;
 import com.traplaner.mypageservice.mypage.dto.FavoriteRes;
 import com.traplaner.mypageservice.mypage.dto.TravelBoardDto;
-import com.traplaner.mypageservice.mypage.dto.TravelJourneyRes;
 import com.traplaner.mypageservice.mypage.dto.response.MemberResDto;
 import com.traplaner.mypageservice.mypage.dto.response.TravelBoardResponseDTO;
 import com.traplaner.mypageservice.mypage.dto.response.TravelListResponseDTO;
@@ -83,29 +82,48 @@ public class MyPageService {
         travelServiceClient.updateShareById(id);
     }
 
-    public void deleteBoard(Integer boardId) {
+    public void deleteBoard(Integer travelId) {
 
-        myPageTravelBoardRepository.deleteById(boardId);
+        log.info("여기는 마이페이지 서비스 {}", travelId);
+
+        Optional<TravelBoard> tb = myPageTravelBoardRepository.findByTravelId(travelId);
+
+        if(tb.isPresent()) {
+            favoriteClient.deleteByTravelBoardId(tb.get().getId());
+            myPageTravelBoardRepository.deleteById(tb.get().getId());
+        }
+
+        travelServiceClient.deleteJourney(travelId);
+        travelServiceClient.deleteTravel(travelId);
+
     }
 
     public HashMap<String, Object> favorite(Pageable pageable) {
         HashMap<String, Object> map = new HashMap<>();
 
         TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("userinfo: {}", userinfo);
 
-        List<FavoriteRes> byMemberId = favoriteClient.findByMemberId(Integer.parseInt(userinfo.getId()), pageable.getPageNumber(), pageable.getPageSize());
+        CommonResDto<Page<FavoriteRes>> favorites = favoriteClient.findByMemberId(Integer.parseInt(userinfo.getId()), pageable.getPageNumber(), pageable.getPageSize());
+        log.info("favorites: {}", favorites);
+        Page<FavoriteRes> result = favorites.getResult();
 
-
-        List<TravelBoard> travelBoards = byMemberId.stream()
+        List<TravelBoard> travelBoards = result.getContent().stream()
                 .map(favoriteRes -> myPageTravelBoardRepository.findById(favoriteRes.getId()).get())
                 .collect(Collectors.toList());
 
-        List<travelPlanResDto> travels =
-                travelBoards.stream().map(travel ->
-                        travelServiceClient.findById(travel.getTravelId())).collect(Collectors.toList());
+        log.info("travelBoards: {}", travelBoards);
 
 
-        map.put("favorites", byMemberId);
+        List<Integer> collect
+                = travelBoards.stream().map(travelBoard -> travelBoard.getTravelId()).collect(Collectors.toList());
+        log.info("collect: {}", collect);
+
+        CommonResDto<List<travelPlanResDto>> top3TravelPlan = travelServiceClient.getTop3TravelPlan(collect);
+        log.info("top3TravelPlan: {}", top3TravelPlan);
+        List<travelPlanResDto> travels = top3TravelPlan.getResult();
+
+        map.put("favorites", result);
         map.put("travelBoards", travelBoards);
         map.put("travels", travels);
 
@@ -136,7 +154,14 @@ public class MyPageService {
         return myPageTravelBoardRepository.save(travelBoard);
     }
 
-
+    public TravelBoardResponseDTO boardInfoByTravelId(Integer travelNo) {
+        TravelBoard travelBoard = myPageTravelBoardRepository.findByTravelId(travelNo).orElseThrow(
+                ()->{
+                    throw new EntityNotFoundException("그런 여행아이디를 가진 게시판은 없어용!");
+                }
+        );
+        return travelBoard.fromEntity();
+    }
     public Integer findByTravelId(Integer travelId) {
         Long travel = myPageTravelBoardRepository.countById(travelId);
 
@@ -164,13 +189,5 @@ public class MyPageService {
         return collect;
     }
 
-    public TravelBoardResponseDTO boardInfoByTravelId(Integer travelNo) {
-        TravelBoard travelBoard = myPageTravelBoardRepository.findByTravelId(travelNo).orElseThrow(
-                ()->{
-                    throw new EntityNotFoundException("그런 여행아이디를 가진 게시판은 없어용!");
-                }
-        );
-        return travelBoard.fromEntity();
-    }
 }
 
