@@ -43,6 +43,7 @@ spring:
         static: ap-northeast-2
       s3:
         bucket: traplaner-images
+
 file:
   upload:
     root-path: C:/devlop/upload
