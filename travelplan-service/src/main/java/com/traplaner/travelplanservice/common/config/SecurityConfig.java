@@ -49,7 +49,9 @@ public class SecurityConfig {
                                     "/putTravelImage",
                                     "/top3-travel",
                                     "/deleteJourney",
-                                    "/deleteTravel"
+                                    "/deleteTravel",
+                                    "/findTravel/*"
+
                                     )
                             .permitAll()
                             .anyRequest().authenticated();

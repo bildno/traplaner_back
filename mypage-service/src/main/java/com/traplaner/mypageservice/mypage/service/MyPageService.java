@@ -115,9 +115,6 @@ public class MyPageService {
         log.info("travelBoards: {}", travelBoards);
 
 
-//        List<CommonResDto<travelPlanResDto>> collect
-//                = travelBoards.stream().map(travelBoard -> travelServiceClient.findById(travelBoard.getTravelId())).collect(Collectors.toList());
-
         List<Integer> collect
                 = travelBoards.stream().map(travelBoard -> travelBoard.getTravelId()).collect(Collectors.toList());
         log.info("collect: {}", collect);
@@ -126,7 +123,7 @@ public class MyPageService {
         log.info("top3TravelPlan: {}", top3TravelPlan);
         List<travelPlanResDto> travels = top3TravelPlan.getResult();
 
-        map.put("favorites", result.getContent());
+        map.put("favorites", result);
         map.put("travelBoards", travelBoards);
         map.put("travels", travels);
 
@@ -192,13 +189,5 @@ public class MyPageService {
         return collect;
     }
 
-//    public TravelBoardResponseDTO boardInfoByTravelId(Integer travelNo) {
-//        TravelBoard travelBoard = myPageTravelBoardRepository.findByTravelId(travelNo).orElseThrow(
-//                ()->{
-//                    throw new EntityNotFoundException("그런 여행아이디를 가진 게시판은 없어용!");
-//                }
-//        );
-//        return travelBoard.fromEntity();
-//    }
 }
 

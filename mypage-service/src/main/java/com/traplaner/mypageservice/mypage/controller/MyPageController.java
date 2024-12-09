@@ -146,12 +146,17 @@ public class MyPageController {
     @GetMapping("my-page/board-info/{travelNo}")
     public ResponseEntity<?> boardInfo(@PathVariable Integer travelNo) {
         HashMap<String, Object> map = new HashMap<>();
-        CommonResDto<List<TravelJourneyRes>> dto = travelPlanServiceClient.findTravelById(travelNo);
 
+        CommonResDto<travelPlanResDto> byId = travelPlanServiceClient.findById(travelNo);
+        travelPlanResDto travel = byId.getResult();
+
+        CommonResDto<List<TravelJourneyRes>> dto = travelPlanServiceClient.findTravelById(travelNo);
         TravelBoardResponseDTO travelBoardResponseDTO = myPageService.boardInfoByTravelId(travelNo);
         List<TravelJourneyRes> Journeys = dto.getResult();
-        map.put("TravelJouneyRes", Journeys);
-        map.put("TravelBoardResponseDTO", travelBoardResponseDTO);
+
+        map.put("travel",travel);
+        map.put("Journey", Journeys);
+        map.put("TravelBoard", travelBoardResponseDTO);
 
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
@@ -172,13 +177,15 @@ public class MyPageController {
         HashMap<String, String> jourenyMap = new HashMap<>();
         HashMap<String, String> travelMap = new HashMap<>();
 
-        if (StringUtils.hasText(dto.getTravelImg().getOriginalFilename())) {
+        if(dto.getTravelImg() != null){
+            if (StringUtils.hasText(dto.getTravelImg().getOriginalFilename())) {
 
-            String savePath = FileUtils.uploadFile(dto.getTravelImg(), rootPath);
+                String savePath = FileUtils.uploadFile(dto.getTravelImg(), rootPath);
 
-            travelMap.put(String.valueOf(dto.getTravelId()), savePath);
-            myPageService.updateTravelImg(travelMap);
+                travelMap.put(String.valueOf(dto.getTravelId()), savePath);
+                myPageService.updateTravelImg(travelMap);
 
+            }
         }
 
         int byTravelId = myPageService.findByTravelId(Math.toIntExact(dto.getTravelId()));
@@ -187,15 +194,18 @@ public class MyPageController {
             TravelBoard board = myPageService.createBoard(Math.toIntExact(dto.getTravelId()), nickName, LocalDateTime.now(), dto.getContent());
         }
 
-        if (!dto.getJourneyImage().isEmpty()) {
-            for (int i = 0, j = dto.getJourneyId().size(); i < j; i++) {
-                String save = FileUtils.uploadFile(dto.getJourneyImage().get(i), rootPath);
-                if (save != null) {
-                    jourenyMap.put(String.valueOf(dto.getJourneyId().get(i)), save);
+
+            if (!dto.getJourneyImage().isEmpty()) {
+
+                for (int i = 0, j = dto.getJourneyImage().size(); i < j; i++) {
+                    if (dto.getJourneyImage().get(i) != null) {
+                        jourenyMap.put(String.valueOf(dto.getJourneyId().get(i)),
+                                String.valueOf(dto.getJourneyImage().get(i).getOriginalFilename()));
+                    }
                 }
+                log.info("저니 맵 {}", jourenyMap);
+                myPageService.updateJourneyImg(jourenyMap);
             }
-            myPageService.updateJourneyImg(jourenyMap);
-        }
 
         return new ResponseEntity<>("등록성공", HttpStatus.OK);
 

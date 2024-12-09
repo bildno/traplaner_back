@@ -46,4 +46,8 @@ public interface TravelPlanServiceClient {
 
     @PostMapping("/deleteJourney")
     void deleteJourney(@RequestBody Integer travelId);
+
+    @GetMapping("/findTravel/{travelNo}")
+    CommonResDto<travelPlanResDto> findById(@PathVariable Integer travelNo);
+
 }
