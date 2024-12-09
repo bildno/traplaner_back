@@ -16,7 +16,7 @@ public interface MemberServiceClient {
     CommonResDto<MemberResDto> findById(@PathVariable int id);
 
     @PutMapping("/changeInfoById")
-    CommonResDto<?> updateInfo(@RequestBody ModifyMemberInfoDTO dto);
+    CommonResDto<?> updateInfo(@RequestBody HashMap<String, String> map);
 
     @PostMapping("/duplicateTest")
     boolean duplicateTest(@RequestBody HashMap<String, String> map);

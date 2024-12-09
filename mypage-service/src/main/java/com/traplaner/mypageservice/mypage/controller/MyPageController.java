@@ -116,8 +116,12 @@ public class MyPageController {
     @PostMapping("/my-page/changeConfirm")
     public ResponseEntity<?> changeConfirm(@Validated @RequestBody ModifyMemberInfoDTO dto) {
 
+        HashMap<String, String> map = new HashMap<>();
+        map.put("id", String.valueOf(dto.getId()));
+        map.put("newPw", dto.getNewPw());
+        map.put("newNick", dto.getNewNick());
 
-        boolean b = (boolean) memberServiceClient.updateInfo(dto).getResult();
+        boolean b = (boolean) memberServiceClient.updateInfo(map).getResult();
 
 
         if (b) {
@@ -257,6 +261,15 @@ public class MyPageController {
         return new ResponseEntity<>(boardInfo, HttpStatus.OK);
     }
 
+
+    @GetMapping("/my-page/pwChange")
+    public ResponseEntity<?> getMyPagePwChange() {
+        CommonResDto<MemberResDto> memberInfo = myPageService.getMemberInfo();
+
+        MemberResDto result = memberInfo.getResult();
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
+    }
 }
 
 

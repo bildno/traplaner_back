@@ -189,5 +189,16 @@ public class MyPageService {
         return collect;
     }
 
+    public CommonResDto<MemberResDto> getMemberInfo() {
+        TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        String id = userinfo.getId();
+
+        CommonResDto<MemberResDto> byId = memberServiceClient.findById(Integer.parseInt(id));
+
+        return byId;
+
+
+    }
 }
 
