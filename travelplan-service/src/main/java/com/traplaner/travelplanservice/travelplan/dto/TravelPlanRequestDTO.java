@@ -101,6 +101,7 @@ public class TravelPlanRequestDTO {
                     .journeyName(journeyName)
                     .accommodationRoadAddressName(accommodationRoadAddressName)
                     .accommodationName(location)
+                    .day(day)
                     .startTime(s)
                     .endTime(e)
                     .googleMapLocationPinInformation(googleMapLocationPinInformation)

@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TravelBoardRepository extends JpaRepository<TravelBoard, Integer> {
 
+    boolean existsByTravelId(int travelId);
 }

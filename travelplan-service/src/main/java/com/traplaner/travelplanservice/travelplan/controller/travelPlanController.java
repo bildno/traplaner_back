@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +41,7 @@ public class travelPlanController {
     public ResponseEntity<?> travelSave(@AuthenticationPrincipal TokenUserInfo userInfo,
                                         @RequestParam("data") String data,
                                         @RequestParam Map<String, MultipartFile> reservationFiles
-                             ) throws JsonProcessingException {
+                             ) throws IOException {
 
         log.info("reservationFile: {}", reservationFiles);
 

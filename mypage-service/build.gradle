@@ -34,6 +34,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // S3 파일 연동
+    implementation 'io.awspring.cloud:spring-cloud-aws-s3:3.0.2'
 
     // Spring Cloud 환경에서 server to server 요청을 처리해 주는 feign client 라이브러리
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
