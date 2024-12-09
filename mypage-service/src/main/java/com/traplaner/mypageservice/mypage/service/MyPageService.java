@@ -109,7 +109,7 @@ public class MyPageService {
         Page<FavoriteRes> result = favorites.getResult();
 
         List<TravelBoard> travelBoards = result.getContent().stream()
-                .map(favoriteRes -> myPageTravelBoardRepository.findById(favoriteRes.getTravelBoardId()).get())
+                .map(favoriteRes -> myPageTravelBoardRepository.findById(favoriteRes.getId()).get())
                 .collect(Collectors.toList());
 
         log.info("travelBoards: {}", travelBoards);
