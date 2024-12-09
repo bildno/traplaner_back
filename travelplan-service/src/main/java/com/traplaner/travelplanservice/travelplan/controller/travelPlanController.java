@@ -166,5 +166,14 @@ public class travelPlanController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/findTravel/{travelId}")
+    public ResponseEntity<?> findTravel(@PathVariable Integer travelId){
+        Travel travel = travelRepository.findById(travelId).orElseThrow(() -> new NullPointerException("업따"));
+
+        CommonResDto resDto = new CommonResDto<>(HttpStatus.OK, "조회성공", travel);
+
+        return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+
 
 }
