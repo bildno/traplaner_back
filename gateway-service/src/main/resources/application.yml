@@ -4,18 +4,14 @@ server:
 spring:
   application:
     name: gateway-service
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
   cloud:
     gateway:
       globalcors:
         cors-configurations:
           "[/**]": # 모든 경로에 대한 CORS 설정
             allowed-origins:
-              - "http://localhost:3000"
+              # - "http://localhost:3000"
+              - "https://traplaner.site"
             allowed-methods:
               - GET
               - POST
@@ -43,28 +39,18 @@ spring:
           predicates:
             - Path=/member-service/**
           filters:
-            # 요청이 서비스로 전달되기 전 헤더에서 제거하고자 하는 값이 있을 때 사용하는 필터
             - RemoveRequestHeader=Cookie
-            # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/member-service/(?<segment>.*), /$\{segment}
-
-           # - StripPrefix=1
             - AuthorizationHeaderFilter
-
 
         - id: member-service
           uri: lb://MEMBER-SERVICE
           predicates:
             - Path=/member-service/actuator/**
-            - Method=GET, POST
           filters:
             - RemoveRequestHeader=Cookie
-
-            # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/member-service/(?<segment>.*), /$\{segment}
-            # - StripPrefix=1
             - AuthorizationHeaderFilter
-
 
         - id: travelplan-service
           uri: lb://TRAVELPLAN-SERVICE
@@ -73,15 +59,12 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/travelplan-service/(?<segment>.*), /$\{segment}
-
-            # - StripPrefix=1
             - AuthorizationHeaderFilter
 
         - id: travelplan-service
           uri: lb://TRAVELPLAN-SERVICE
           predicates:
             - Path=/travelplan-service/actuator/**
-            - Method=GET, POST
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
@@ -93,16 +76,12 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/main-service/(?<segment>.*), /$\{segment}
-
-            # - StripPrefix=1
             - AuthorizationHeaderFilter
-
 
         - id: main-service
           uri: lb://MAIN-SERVICE
           predicates:
             - Path=/main-service/actuator/**
-            - Method=GET, POST
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
@@ -114,15 +93,12 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/mypage-service/(?<segment>.*), /$\{segment}
-
-#             - StripPrefix=1
             - AuthorizationHeaderFilter
 
         - id: mypage-service
           uri: lb://MYPAGE-SERVICE
           predicates:
             - Path=/mypage-service/actuator/**
-            - Method=GET, POST
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
@@ -134,8 +110,6 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/travelboard-service/(?<segment>.*), /$\{segment}
-
-            # - StripPrefix=1
             - AuthorizationHeaderFilter
 
         - id: travelboard-service
@@ -145,33 +119,9 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-
-jwt:
-  expiration: 60
-  secretKey: ICzihf230K36+z90UWHfOEJZCf/CYB2CJaeKvX06/2QxI//izqT7pIs5Yr5KrIetZcQmt2JF6AlxU5zAcc38KQ==
-
-# 액츄에이터 등록 (beans: 컨테이너에 등록된 빈 보여줌, health: 서버 살아 있는지 알려줌)
-management:
-  endpoints:
-    web:
-      exposure:
-        include: refresh, health, busrefresh, beans, httpexchanges
-
-
-
-
-
-
-
-
-
-
-
-
+# log level setting
+logging:
+  level:
+    root: info
+    com:
+      traplaner: info
