@@ -5,10 +5,7 @@ import com.traplaner.mypageservice.mypage.dto.FavoriteRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.constant.ConstantDesc;
 import java.util.List;
@@ -20,5 +17,5 @@ public interface FavoriteServiceClient {
     CommonResDto<Page<FavoriteRes>>findByMemberId(@PathVariable int id, @PathVariable int page, @PathVariable int size);
 
     @PostMapping("/deleteFavorite")
-    void deleteByTravelBoardId(@RequestParam Integer id);
+    void deleteByTravelBoardId(@RequestBody Integer id);
 }

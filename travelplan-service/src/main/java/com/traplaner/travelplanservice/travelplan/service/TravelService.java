@@ -1,7 +1,6 @@
 package com.traplaner.travelplanservice.travelplan.service;
 
 import com.traplaner.travelplanservice.common.config.AwsS3Config;
-import com.traplaner.travelplanservice.common.util.FileUtils;
 import com.traplaner.travelplanservice.travelplan.dto.TravelPlanRequestDTO.TravelInfo;
 import com.traplaner.travelplanservice.travelplan.dto.TravelResponseDTO;
 import com.traplaner.travelplanservice.travelplan.entity.Journey;
@@ -35,9 +34,6 @@ public class TravelService {
     private final TravelRepository travelRepository;
     private final JourneyRepository journeyRepository;
     private final AwsS3Config s3Config;
-
-    @Value("${file.upload.root-path}")
-    private String rootPath;
 
     public boolean changeShare(int travelId) {
         Travel travel = travelRepository.findById(travelId).orElseThrow(
