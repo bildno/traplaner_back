@@ -2,15 +2,15 @@ server:
   port: 8888
 
 spring:
-  profiles:         # 로컬 세팅 사용, 배포서버로 올릴 경우에는 주석처리하세요.
-    active: native
+  #  profiles:         # 로컬 세팅 사용, 배포서버로 올릴 경우에는 주석처리하세요.
+  #    active: native
   application:
     name: config-service
   cloud:
     config:
       server:
-        native:   # 로컬 세팅 사용, 배포서버로 올릴 경우에는 주석처리하세요.
-          search-locations: file:///c:/playdata.io_backend6/projects/traplan-config
+        #        native:   # 로컬 세팅 사용, 배포서버로 올릴 경우에는 주석처리하세요.
+        #          search-locations: file:///c:/playdata.io_backend6/projects/traplan-config
         git:
           uri: git@github.com:jh080724/traplan-config.git
           default-label: main
@@ -19,4 +19,12 @@ spring:
           private-key: |
             ${GIT_PRIVATE_KEY}
 
-
+# log level setting
+logging:
+  level:
+    root: info
+    org:
+      hibernate.SQL: info
+      springframework.cloud.config: info
+    com:
+      traplaner: info

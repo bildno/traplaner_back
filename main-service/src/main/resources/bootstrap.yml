@@ -4,6 +4,6 @@ spring:
     name: main-service # 서비스 이름과 매칭되는 설정 파일(main-service.yml)을 지정
   cloud:
     config:
-      uri: http://localhost:8888  # Local Config-server 주소
-#      uri: http://config-service:8888  # Config-server 주소
+#      uri: http://localhost:8888  # Local Config-server 주소
+      uri: http://config-service:8888  # Config-server 주소
       profile: default

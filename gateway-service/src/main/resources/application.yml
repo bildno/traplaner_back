@@ -10,8 +10,8 @@ spring:
         cors-configurations:
           "[/**]": # 모든 경로에 대한 CORS 설정
             allowed-origins:
-              - "http://localhost:3000"
-#              - "https://separan.shop"
+              # - "http://localhost:3000"
+              - "https://traplaner.site"
             allowed-methods:
               - GET
               - POST
@@ -119,3 +119,9 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+# log level setting
+logging:
+  level:
+    root: info
+    com:
+      traplaner: info

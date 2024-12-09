@@ -11,6 +11,6 @@ logging:
     root: info
     org:
       hibernate:
-        SQL: debug
+        SQL: info
     com:
-      project: debug
+      traplaner: info

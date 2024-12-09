@@ -13,4 +13,4 @@ logging:
       hibernate:
         SQL: info
     com:
-      project: info
+      traplaner: info
