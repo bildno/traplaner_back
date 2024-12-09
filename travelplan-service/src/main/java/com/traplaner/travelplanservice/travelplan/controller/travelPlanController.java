@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -99,7 +97,7 @@ public class travelPlanController {
     //여행 아이디로 여정 리스트 조회 ()
     @GetMapping("/journeysByTravelId/{travelId}")
         public ResponseEntity<?> getJourneysByTravelId(@PathVariable("travelId") int travelId) {
-            List<Journey> journeys = journeyRepository.findAllByTravelId(travelId);
+            List<Journey> journeys = journeyRepository.findAllByTravelIdOrderByStartTimeAsc(travelId);
             log.info("journeys: {}", journeys);
             CommonResDto resDto =
                     new CommonResDto(HttpStatus.OK,"모든 여정 조회 완료",journeys);

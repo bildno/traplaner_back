@@ -55,6 +55,16 @@ public class FavoriteService {
         return favoriteRepository.getLikeCount(travelBoardId);  // 현재 좋아요 수
     }
 
+    // 좋아요 상태 확인
+    @Transactional
+    public boolean isLiked (Integer travelBoardId, int memberId) {
+        boolean isLiked = favoriteRepository.isLikedByMember(travelBoardId, memberId);
+        return isLiked; // 현재 좋아요 상태
+    }
+
+
+
+
     // 내가 좋아요한 게시물
     public Page<Favorite> myFavorites(Integer memberId, Pageable pageable) {
         Page<Favorite> favorites = favoriteRepository.findAllByMemberId(memberId, pageable);
