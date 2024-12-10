@@ -109,7 +109,7 @@ public class MyPageService {
         Page<FavoriteRes> result = favorites.getResult();
 
         List<TravelBoard> travelBoards = result.getContent().stream()
-                .map(favoriteRes -> myPageTravelBoardRepository.findById(favoriteRes.getId()).get())
+                .map(favoriteRes -> myPageTravelBoardRepository.findById(favoriteRes.getTravelBoardId()).get())
                 .collect(Collectors.toList());
 
         log.info("travelBoards: {}", travelBoards);
@@ -155,15 +155,20 @@ public class MyPageService {
     }
 
     public TravelBoardResponseDTO boardInfoByTravelId(Integer travelNo) {
-        TravelBoard travelBoard = myPageTravelBoardRepository.findByTravelId(travelNo).orElseThrow(
-                ()->{
-                    throw new EntityNotFoundException("그런 여행아이디를 가진 게시판은 없어용!");
-                }
-        );
-        return travelBoard.fromEntity();
+
+        boolean present = myPageTravelBoardRepository.findByTravelId(travelNo).isPresent();
+        if(present) {
+            TravelBoard travelBoard = myPageTravelBoardRepository.findByTravelId(travelNo).orElseThrow(
+                    ()->{
+                        throw new EntityNotFoundException("그런 여행아이디를 가진 게시판은 없어용!");
+                    }
+            );
+            return travelBoard.fromEntity();
+        }
+        return null;
     }
     public Integer findByTravelId(Integer travelId) {
-        Long travel = myPageTravelBoardRepository.countById(travelId);
+        Long travel = myPageTravelBoardRepository.countByTravelId(travelId);
 
         return Math.toIntExact(travel);
     }

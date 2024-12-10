@@ -18,7 +18,7 @@ public interface MyPageTravelBoardRepository extends JpaRepository<TravelBoard, 
     Page<TravelBoard> findByMemberNickName(String nickName, Pageable pageable);
 
 
-    Long countById(int travelId);
+    Long countByTravelId(int travelId);
 
 
     Optional<TravelBoard> findByTravelId(int travelNo);
