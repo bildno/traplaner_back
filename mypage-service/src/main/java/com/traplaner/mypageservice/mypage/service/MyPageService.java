@@ -1,154 +1,149 @@
 package com.traplaner.mypageservice.mypage.service;
 
-
+import com.traplaner.mypageservice.mypage.client.FavoriteServiceClient;
+import com.traplaner.mypageservice.mypage.client.MemberServiceClient;
+import com.traplaner.mypageservice.mypage.client.TravelPlanServiceClient;
+import com.traplaner.mypageservice.mypage.common.auth.TokenUserInfo;
+import com.traplaner.mypageservice.mypage.common.dto.CommonResDto;
+import com.traplaner.mypageservice.mypage.dto.FavoriteRes;
 import com.traplaner.mypageservice.mypage.dto.TravelBoardDto;
-import com.traplaner.mypageservice.mypage.dto.response.FavoriteListResponseDTO;
+import com.traplaner.mypageservice.mypage.dto.response.MemberResDto;
 import com.traplaner.mypageservice.mypage.dto.response.TravelBoardResponseDTO;
 import com.traplaner.mypageservice.mypage.dto.response.TravelListResponseDTO;
+import com.traplaner.mypageservice.mypage.dto.response.travelPlanResDto;
 import com.traplaner.mypageservice.mypage.entity.TravelBoard;
-import com.traplaner.mypageservice.mypage.mapper.MyPageBoardMapper;
-import jakarta.servlet.http.HttpSession;
+import com.traplaner.mypageservice.mypage.repository.MyPageTravelBoardRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @AllArgsConstructor
+@Transactional
 public class MyPageService {
 
-    private final MyPageBoardMapper myPageBoardMapper;
-    private final FavoriteMapper favoriteMapper;
-    private final MemberMapper memberMapper;
-    private final MyPageRepository MyPageRepository;
-    private final MyPageTravelRepository MyPageTravelRepository;
-    private final MemberRepository memberRepository;
-    private final MyPageTravelBoardRepository MyPageTravelBoardRepository;
-    private final MyPageTravelRepository myPageTravelRepository;
-    private final TravelRepository travelRepository;
-    private final JourneyRepository journeyRepository;
-
-
-
-
-    public Map<String, Object> findAll(int memberId, PageDTO page) {
-        PageMaker pageMaker = new PageMaker(page, myPageBoardMapper.getTotalCount(page, memberId));
-        List<Travel> travels = myPageBoardMapper.findAll(memberId, page);
-
-        List<TravelListResponseDTO> dtoList = travels.stream()
-                .map(travel -> new TravelListResponseDTO(travel))
-                .collect(Collectors.toList());
-
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("travels", dtoList);
-        result.put("pm", pageMaker);
-
-        return result;
-    }
-
-
-//    public Map<String, Object> findBoardAll(String nickName, PageDTO page) {
-//        PageMaker pageMaker = new PageMaker(page, myPageBoardMapper.getBoardTotal(page, nickName));
-//        List<TravelBoardResponseDTO> boardAll = myPageBoardMapper.findBoardAll(nickName, page);
-//
-//        Map<String, Object> result = new HashMap<>();
-//        result.put("boardAll", boardAll);
-//        result.put("pm", pageMaker);
-//
-//        return result;
-//    }
+    private final MyPageTravelBoardRepository myPageTravelBoardRepository;
+    private final MemberServiceClient memberServiceClient;
+    private final TravelPlanServiceClient travelServiceClient;
+    private final FavoriteServiceClient favoriteClient;
 
 
     // jpa
     public List<TravelListResponseDTO> myPage() {
 
         TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email = userinfo.getEmail();
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NullPointerException("없는 사람"));
-        log.info("이메일 {}", email);
-        log.info("아이디 {}", member.getId());
+        int id = Integer.parseInt(userinfo.getId());
 
-        List<Travel> byMemberId = MyPageTravelRepository.findByMemberId(member.getId());
-        List<TravelListResponseDTO> dtoList = byMemberId.stream().map(travel -> new TravelListResponseDTO(travel)).collect(Collectors.toList());
+        CommonResDto<List<travelPlanResDto>> byMemberId = travelServiceClient.findByMemberId(id);
+
+        List<TravelListResponseDTO> dtoList = byMemberId.getResult().stream().map(travel -> new TravelListResponseDTO(travel)).collect(Collectors.toList());
 
         return dtoList;
 
     }
 
+    public Page<TravelBoardResponseDTO> findBoardAll(Pageable pageable) {
 
-    public void updateShare(int id) {
-        myPageBoardMapper.updateShare(id);
+        TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        int id = Integer.parseInt(userinfo.getId());
+        CommonResDto<MemberResDto> byEmail = memberServiceClient.findById(id);
+        MemberResDto memberResDto = byEmail.getResult();
+        String nickName = memberResDto.getNickName();
+
+        Page<TravelBoard> byMemberNickName = myPageTravelBoardRepository.findByMemberNickName(nickName, pageable);
+        Page<TravelBoardResponseDTO> collect = byMemberNickName.map(travelBoard -> travelBoard.fromEntity());
+
+        return collect;
     }
 
-    public void deleteBoard(int boardId, HttpSession session) {
-        myPageBoardMapper.deleteTravelByMemberOrder(boardId);
-        List<MainTravelDto> dtoList = (List<MainTravelDto>) session.getAttribute("mainTravelDtoList");
+    public CommonResDto<Page<travelPlanResDto>> myTravel(Pageable pageable) {
+        TokenUserInfo user = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        List<MainTravelDto> filteredList = dtoList.stream()
-                .filter(dto -> dto.getId() != boardId)
+        return travelServiceClient.findByMemberId(Integer.valueOf(user.getId()), pageable.getPageNumber(), pageable.getPageSize());
+    }
+
+
+    public void updateShare(Integer id) {
+
+        travelServiceClient.updateShareById(id);
+    }
+
+    public void deleteBoard(Integer travelId) {
+
+        log.info("여기는 마이페이지 서비스 {}", travelId);
+
+        Optional<TravelBoard> tb = myPageTravelBoardRepository.findByTravelId(travelId);
+
+        if(tb.isPresent()) {
+            favoriteClient.deleteByTravelBoardId(tb.get().getId());
+            myPageTravelBoardRepository.deleteById(tb.get().getId());
+        }
+
+        travelServiceClient.deleteJourney(travelId);
+        travelServiceClient.deleteTravel(travelId);
+
+    }
+
+    public HashMap<String, Object> favorite(Pageable pageable) {
+        HashMap<String, Object> map = new HashMap<>();
+
+        TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("userinfo: {}", userinfo);
+
+        CommonResDto<Page<FavoriteRes>> favorites = favoriteClient.findByMemberId(Integer.parseInt(userinfo.getId()), pageable.getPageNumber(), pageable.getPageSize());
+        log.info("favorites: {}", favorites);
+        Page<FavoriteRes> result = favorites.getResult();
+
+        List<TravelBoard> travelBoards = result.getContent().stream()
+                .map(favoriteRes -> myPageTravelBoardRepository.findById(favoriteRes.getTravelBoardId()).get())
                 .collect(Collectors.toList());
 
-        session.setAttribute("mainTravelDtoList", filteredList);
+        log.info("travelBoards: {}", travelBoards);
 
-    }
 
-    public Map<String, Object> favorite(int memberId, PageDTO page) {
-        PageMaker pageMaker = new PageMaker(page, favoriteMapper.getTotal(page, memberId));
-        List<FavoriteListResponseDTO> favorites = favoriteMapper.favorite_List(memberId, page);
+        List<Integer> collect
+                = travelBoards.stream().map(travelBoard -> travelBoard.getTravelId()).collect(Collectors.toList());
+        log.info("collect: {}", collect);
 
-        favorites.forEach(dto -> {
-            dto.setFormatDate(FavoriteListResponseDTO.makeDateStringFomatter(dto.getWriteDate()));
+        CommonResDto<List<travelPlanResDto>> top3TravelPlan = travelServiceClient.getTop3TravelPlan(collect);
+        log.info("top3TravelPlan: {}", top3TravelPlan);
+        List<travelPlanResDto> travels = top3TravelPlan.getResult();
 
-        });
+        map.put("favorites", result);
+        map.put("travelBoards", travelBoards);
+        map.put("travels", travels);
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("favorite", favorites);
-        result.put("pm", pageMaker);
 
-        return result;
-    }
-
-    public Map<String, Object> travel(int travelId) {
-        List<Journey> journeys = myPageBoardMapper.journeySelect(travelId);
-        Travel travels = myPageBoardMapper.travelSelect(travelId);
-
-        Map<String, Object> result = new HashMap<>();
-
-        result.put("journeys", journeys);
-        result.put("travels", travels);
-
-        return result;
-
+        return map;
     }
 
 
-    public void updateTravelImg(Long travelId, String savePath) {
-        Travel travel = travelRepository.findById(travelId).orElseThrow(() -> new NullPointerException("업따"));
-        travel.setTravelImg(savePath);
-        travelRepository.save(travel);
+    public void updateTravelImg(HashMap<String, String> map) {
+        travelServiceClient.updateTravelImagesById(map);
     }
 
 
-    public void updateJourneyImg(Long travelId, String save) {
-        Travel travel = travelRepository.findById(travelId).orElseThrow(() -> new NullPointerException("없따"));
-        Journey journey = journeyRepository.findByTravel(travel).orElseThrow();
-        journey.setJourneyImg(save);
-        journeyRepository.save(journey);
+    public void updateJourneyImg(HashMap<String, String> map) {
+        travelServiceClient.updateJourneyImagesById(map);
     }
 
-    public TravelBoard createBoard(Long travelId, String memberNickName, LocalDateTime writeDate, String content) {
-        Travel travel = travelRepository.findById(travelId).orElseThrow();
+    public TravelBoard createBoard(Integer travelId, String memberNickName, LocalDateTime writeDate, String content) {
         TravelBoardDto build = TravelBoardDto.builder()
-                .travel(travel)
+                .travelId(travelId)
                 .memberNickName(memberNickName)
                 .writeDate(writeDate)
                 .content(content)
@@ -156,33 +151,59 @@ public class MyPageService {
 
         TravelBoard travelBoard = build.toEntity();
 
-        return MyPageTravelBoardRepository.save(travelBoard);
+        return myPageTravelBoardRepository.save(travelBoard);
     }
 
-    public Page<TravelBoardResponseDTO> findBoardAll(Pageable pageable) {
+    public TravelBoardResponseDTO boardInfoByTravelId(Integer travelNo) {
 
-        TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email = userinfo.getEmail();
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NullPointerException("없는사람"));
-        String nickName = member.getNickName();
-
-
-        return MyPageTravelBoardRepository.findByMemberNickName(nickName, pageable);
+        boolean present = myPageTravelBoardRepository.findByTravelId(travelNo).isPresent();
+        if(present) {
+            TravelBoard travelBoard = myPageTravelBoardRepository.findByTravelId(travelNo).orElseThrow(
+                    ()->{
+                        throw new EntityNotFoundException("그런 여행아이디를 가진 게시판은 없어용!");
+                    }
+            );
+            return travelBoard.fromEntity();
+        }
+        return null;
     }
-
-
-    public Page<Travel> myTravel(Pageable pageable) {
-        TokenUserInfo user = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        Member member = memberRepository.findByEmail(user.getEmail()).orElseThrow(() -> new NullPointerException("없는사람"));
-
-
-        return myPageTravelRepository.findByMemberId(member.getId(), pageable);
-    }
-
-    public int findByTravelId(Long travelId) {
-        Long travel = MyPageTravelBoardRepository.countById(travelId);
+    public Integer findByTravelId(Integer travelId) {
+        Long travel = myPageTravelBoardRepository.countByTravelId(travelId);
 
         return Math.toIntExact(travel);
     }
+
+
+    public TravelBoardResponseDTO boardInfo(Integer travelBoardNo) {
+        HashMap<String, Object> map = new HashMap<>();
+
+        TravelBoard travel = myPageTravelBoardRepository.findById(travelBoardNo).orElseThrow(() -> new EntityNotFoundException("없는 글"));
+        return travel.fromEntity();
+
+    }
+
+    public Page<TravelBoard> getBoardAll(Pageable pageable) {
+        Page<TravelBoard> all = myPageTravelBoardRepository.findAll(pageable);
+        return all;
+    }
+
+    public List<TravelBoardResponseDTO> getBoardIn(List<Integer> boardIds) {
+
+        List<TravelBoard> byIdIn = myPageTravelBoardRepository.findByIdIn(boardIds);
+        List<TravelBoardResponseDTO> collect = byIdIn.stream().map(travelBoard -> travelBoard.fromEntity()).collect(Collectors.toList());
+        return collect;
+    }
+
+    public CommonResDto<MemberResDto> getMemberInfo() {
+        TokenUserInfo userinfo = (TokenUserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        String id = userinfo.getId();
+
+        CommonResDto<MemberResDto> byId = memberServiceClient.findById(Integer.parseInt(id));
+
+        return byId;
+
+
+    }
 }
+

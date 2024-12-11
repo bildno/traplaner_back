@@ -1,74 +1,134 @@
 package com.traplaner.travelboardservice.travelBoard.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.traplaner.travelboardservice.client.MemberServiceClient;
+import com.traplaner.travelboardservice.client.MypageServiceClient;
+import com.traplaner.travelboardservice.client.TravelplanServiceClient;
+import com.traplaner.travelboardservice.common.dto.CommonResDto;
 import com.traplaner.travelboardservice.travelBoard.dto.*;
-import com.traplaner.travelboardservice.travelBoard.mapper.TravelBoardMapper;
-import jakarta.servlet.http.HttpSession;
+import com.traplaner.travelboardservice.travelBoard.dto.request.JourneyDTO;
+import com.traplaner.travelboardservice.travelBoard.dto.request.MemberDTO;
+import com.traplaner.travelboardservice.travelBoard.dto.request.TravelBoardDTO;
+import com.traplaner.travelboardservice.travelBoard.dto.request.TravelDTO;
+import com.traplaner.travelboardservice.travelBoard.repository.FavoriteRepository;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @Getter
+@Transactional
 public class TravelBoardService {
+    private final TravelplanServiceClient travelplanServiceClient;
+    private final MemberServiceClient memberServiceClient;
+    private final MypageServiceClient mypageServiceClient;
+    private final FavoriteRepository favoriteRepository;
 
-    private final TravelBoardMapper travelBoardMapper;
+    // travelboard 매핑
+    public TravelBoardDTO boardResDto (Integer boardId) {
+        CommonResDto<TravelBoardDTO> boardData = mypageServiceClient.getBoardInfo(boardId);
+        log.info("boardData: {}", boardData);
 
-    // mapper로 전달받은 entity list를 dto list로 변환해서 controller에게 리턴
-    public Map<String, Object> getList(PageDTO page) {
+        return boardData.getResult();
+    }
 
-        List<TravelBoardListResponseDTO> travelBoardListResponseDTOS = travelBoardMapper.findAll(page);
-        PageMaker pageMaker = new PageMaker(page, travelBoardMapper.getTotalCount(page));
+    private MemberDTO getMemberByMemberId(int memberId) {
+        //member 가져오기
+        CommonResDto<MemberDTO> memberResDto = memberServiceClient.findById(memberId);
+        MemberDTO member = memberResDto.getResult();
+        log.info("member:{}", member);
+        return member;
+    }
 
-        List<TravelBoardListResponseDTO> dtoList = new ArrayList<>(travelBoardListResponseDTOS);
+    private TravelDTO getTravelByBoardId(int boardId) {
+        //travel 가져오기
+        CommonResDto<TravelDTO> travelResDto = travelplanServiceClient.getTravelById(boardId);
+        log.info("travelResDto: {}", travelResDto);
+        TravelDTO travel = travelResDto.getResult();
+        log.info("travel:{}", travel);
+        return travel;
+    }
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("tbList", dtoList);
-        result.put("pm", pageMaker);
+    public Page<TravelBoardListDTO> getTravelBoardList(Pageable pageable) {
+        Page<TravelBoardListDTO> result = mypageServiceClient.getTravelBoards(pageable);
+
+        for(TravelBoardListDTO travelBoardListDTO : result.getContent()) {
+            TravelDTO travel = getTravelByBoardId(travelBoardListDTO.getId());
+            MemberDTO member = getMemberByMemberId(Integer.parseInt(travel.getMemberId()));
+
+            travelBoardListDTO.setTravelId(travel.getId());
+            travelBoardListDTO.setTravelImg(travel.getTravelImg());
+            travelBoardListDTO.setTitle(travel.getTitle());
+            travelBoardListDTO.setNickName(member.getNickName());
+            travelBoardListDTO.setLikeCount(favoriteRepository.getLikeCount(travelBoardListDTO.getId()));
+        }
+
+        log.info("result: {}", result);
+
         return result;
     }
 
-    public Map<String, Object> getOne(int id, HttpSession session) {
 
-        TravelBoardDetailResponseDTO travelBoardDetailResponseDTO = travelBoardMapper.findOne(id);
-        log.info("게시글 상세보기: {}", travelBoardDetailResponseDTO);
 
-        List<JourneyResponseDTO> journeyResponseDTOS = travelBoardMapper.journeys(travelBoardDetailResponseDTO.getTravelId());
-        List<JourneyResponseDTO> journey = new ArrayList<>(journeyResponseDTOS);
 
-        boolean flag = false;
-        if (session.getAttribute("login") != null) {
-            LoginUserResponseDTO login = (LoginUserResponseDTO) session.getAttribute("login");
-            flag = travelBoardMapper.isLikedByMember(Map.of("travelBoardId", id, "memberId", login.getId()));
-        }
+    // 특정 게시글 상세 조회
+    public TravelBoardInfoDTO getTravelBoardInfo(Integer boardId) {
 
-        log.info("좋아요 여부: {}", flag);
+        //travelboard 가져오기
+        TravelBoardDTO board = boardResDto(boardId);
+        log.info("\n\n\n{}\n\n\n", board);
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("tOne", travelBoardDetailResponseDTO);
-        result.put("journey", journey);
-        result.put("likeFlag", flag);
+        //travel 가져오기
+        CommonResDto<TravelDTO> travelResDto = travelplanServiceClient.getTravelById(board.getTravelId());
+        log.info("travelResDto: {}", travelResDto);
+        TravelDTO travel = travelResDto.getResult();
+        log.info("travel:{}", travel);
 
-        return result;
+        //member 가져오기
+        CommonResDto<MemberDTO> memberResDto = memberServiceClient.findById(Integer.valueOf(travel.getMemberId()));
+        MemberDTO member = memberResDto.getResult();
+        log.info("member:{}", member);
+
+        //journey 가져오기
+        CommonResDto<List<JourneyDTO>> journeysResDto = travelplanServiceClient.getJourneysByTravelId(board.getTravelId());
+        List<JourneyDTO> journeys = journeysResDto.getResult();
+        log.info("journeys:{}", journeys);
+        List<TravelBoardInfoDTO.JourneyInfoDTO> journeyDetails = journeys.stream()
+                .map(journey -> new TravelBoardInfoDTO.JourneyInfoDTO(
+                        journey.getJourneyName(),
+                        journey.getAccommodationName(),
+                        journey.getDay(),
+                        journey.getStartTime(),
+                        journey.getGoogleMapLocationPinInformation(),
+                        journey.getJourneyImg()
+                ))
+                .collect(Collectors.toList());
+
+        // 데이터 조합 후 반환
+        TravelBoardInfoDTO infoDTO = new TravelBoardInfoDTO(
+                board.getTravelId(),
+                board.getId(),
+                travel.getTitle(),
+                member.getNickName(),
+                board.getWriteDate(),
+                travel.getTravelImg(),
+                board.getContent(),
+                favoriteRepository.getLikeCount(board.getId()),
+                journeyDetails
+        );
+
+        log.info("\n\n\n{}\n\n\n", infoDTO);
+
+        return infoDTO;
     }
-
-    // 좋아요 상태 토글
-    @Transactional
-    public int toggleLike(int travelBoardId, int memberId) {
-        boolean isLiked = travelBoardMapper.isLikedByMember(Map.of("travelBoardId", travelBoardId, "memberId", memberId));
-        if (isLiked) {
-            travelBoardMapper.removeLike(Map.of("travelBoardId", travelBoardId, "memberId", memberId));
-        } else {
-            travelBoardMapper.addLike(Map.of("travelBoardId", travelBoardId, "memberId", memberId));
-        }
-        return travelBoardMapper.getLikeCount(travelBoardId);  // 현재 좋아요 수 반환
-    }
-
 }

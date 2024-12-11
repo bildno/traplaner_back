@@ -11,7 +11,7 @@
     <file type="web" url="file://$PROJECT_DIR$/travelboard-service" />
     <file type="web" url="file://$PROJECT_DIR$/travelplan-service" />
   </component>
-  <component name="ProjectRootManager">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_16" project-jdk-name="corretto-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

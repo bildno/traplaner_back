@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/main-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/main-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/member-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/member-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mypage-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/mypage-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/traplaner_back.iml" filepath="$PROJECT_DIR$/traplaner_back.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/travelboard-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/travelboard-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/travelplan-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/travelplan-service.main.iml" />
     </modules>
   </component>
 </project>

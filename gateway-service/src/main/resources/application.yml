@@ -1,4 +1,3 @@
-
 server:
   port: 8181
 
@@ -7,37 +6,50 @@ spring:
     name: gateway-service
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          "[/**]": # 모든 경로에 대한 CORS 설정
+            allowed-origins:
+              # - "http://localhost:3000"
+              - "https://traplan.site"
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowed-headers:
+              - "Content-Type"
+              - "Authorization"
+              - "X-Requested-With"
+            allow-credentials: true
       default-filters:
         - name: GlobalFilter
           args:
-            baseMessage: merong
+            baseMessage: Traplan Cloud Gateway Global Filter
             preLogger: true
             postLogger: true
+        - name: DedupeResponseHeader
+          args:
+            name: Access-Control-Allow-Credentials Access-Control-Allow-Origin
+            strategy: RETAIN_FIRST
       routes:
         - id: member-service
           uri: lb://MEMBER-SERVICE
           predicates:
             - Path=/member-service/**
           filters:
-            # 요청이 서비스로 전달되기 전 헤더에서 제거하고자 하는 값이 있을 때 사용하는 필터
             - RemoveRequestHeader=Cookie
-            # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/member-service/(?<segment>.*), /$\{segment}
-           # - StripPrefix=1
             - AuthorizationHeaderFilter
-
 
         - id: member-service
           uri: lb://MEMBER-SERVICE
           predicates:
             - Path=/member-service/actuator/**
-            - Method=GET, POST
           filters:
-            # 요청이 서비스로 전달되기 전 헤더에서 제거하고자 하는 값이 있을 때 사용하는 필터
             - RemoveRequestHeader=Cookie
-            # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/member-service/(?<segment>.*), /$\{segment}
-            # - StripPrefix=1
             - AuthorizationHeaderFilter
 
         - id: travelplan-service
@@ -45,70 +57,71 @@ spring:
           predicates:
             - Path=/travelplan-service/**
           filters:
-            # 요청이 서비스로 전달되기 전 헤더에서 제거하고자 하는 값이 있을 때 사용하는 필터
             - RemoveRequestHeader=Cookie
-            # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/travelplan-service/(?<segment>.*), /$\{segment}
-            # - StripPrefix=1
             - AuthorizationHeaderFilter
+
+        - id: travelplan-service
+          uri: lb://TRAVELPLAN-SERVICE
+          predicates:
+            - Path=/travelplan-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
 
         - id: main-service
           uri: lb://MAIN-SERVICE
           predicates:
             - Path=/main-service/**
           filters:
-            # 요청이 서비스로 전달되기 전 헤더에서 제거하고자 하는 값이 있을 때 사용하는 필터
             - RemoveRequestHeader=Cookie
-            # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/main-service/(?<segment>.*), /$\{segment}
-            # - StripPrefix=1
+            - AuthorizationHeaderFilter
+
+        - id: main-service
+          uri: lb://MAIN-SERVICE
+          predicates:
+            - Path=/main-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+        - id: mypage-service
+          uri: lb://MYPAGE-SERVICE
+          predicates:
+            - Path=/mypage-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/mypage-service/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
 
         - id: mypage-service
           uri: lb://MYPAGE-SERVICE
           predicates:
-            - Path=/mypageplan-service/**
+            - Path=/mypage-service/actuator/**
           filters:
-            # 요청이 서비스로 전달되기 전 헤더에서 제거하고자 하는 값이 있을 때 사용하는 필터
             - RemoveRequestHeader=Cookie
-            # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
-            - RewritePath=/mypage-service/(?<segment>.*), /$\{segment}
-            # - StripPrefix=1
-            - AuthorizationHeaderFilter
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
 
         - id: travelboard-service
           uri: lb://TRAVELBOARD-SERVICE
           predicates:
             - Path=/travelboard-service/**
           filters:
-            # 요청이 서비스로 전달되기 전 헤더에서 제거하고자 하는 값이 있을 때 사용하는 필터
             - RemoveRequestHeader=Cookie
-            # 요청 경로를 특정 패턴에 따라 새로운 경로로 변환 -> 정규표현식 사용 가능 (자유도 높음)
             - RewritePath=/travelboard-service/(?<segment>.*), /$\{segment}
-            # - StripPrefix=1
             - AuthorizationHeaderFilter
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-
-jwt:
-  expiration: 60
-  secretKey: ICzihf230K36+z90UWHfOEJZCf/CYB2CJaeKvX06/2QxI//izqT7pIs5Yr5KrIetZcQmt2JF6AlxU5zAcc38KQ==
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        - id: travelboard-service
+          uri: lb://TRAVELBOARD-SERVICE
+          predicates:
+            - Path=/travelboard-service/actuator/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+# log level setting
+logging:
+  level:
+    root: info
+    com:
+      traplaner: info

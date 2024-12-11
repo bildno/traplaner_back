@@ -1,52 +1,39 @@
 package com.traplaner.travelboardservice.travelBoard.controller;
 
-import com.traplaner.travelboardservice.travelBoard.dto.LoginUserResponseDTO;
-import com.traplaner.travelboardservice.travelBoard.dto.SearchDTO;
+import com.traplaner.travelboardservice.common.dto.CommonResDto;
+import com.traplaner.travelboardservice.travelBoard.dto.TravelBoardInfoDTO;
+import com.traplaner.travelboardservice.travelBoard.dto.TravelBoardListDTO;
 import com.traplaner.travelboardservice.travelBoard.service.TravelBoardService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
-@Controller
-@RequestMapping("/travelboard")
+@RestController
 @RequiredArgsConstructor
 @Slf4j
 public class TravelBoardController {
-
     private final TravelBoardService travelBoardService;
 
+    // 게시글 전체 조회
     @GetMapping("/list")
-    public String list(Model model, @ModelAttribute("s") SearchDTO page) {
-
-        Map<String, Object> map = travelBoardService.getList(page);
-        model.addAttribute("tbList", map.get("tbList"));
-        model.addAttribute("maker", map.get("pm"));
-        return "travelBoard/list";
+    public ResponseEntity<Page<TravelBoardListDTO>> getTravelBoardList(@PageableDefault(direction = Sort.Direction.DESC, sort = "writeDate") Pageable pageable) {
+        Page<TravelBoardListDTO> list = travelBoardService.getTravelBoardList(pageable);
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "보드 리스트 조회 완료!", list);
+        return new ResponseEntity(commonResDto, HttpStatus.OK);
     }
 
-    @GetMapping("/info/{id}")
-    public String info(Model model, @PathVariable("id") int id, HttpSession session) {
-        Map<String, Object> one = travelBoardService.getOne(id, session);
-        model.addAttribute("tOne", one.get("tOne"));
-        model.addAttribute("journey", one.get("journey"));
-        model.addAttribute("likeFlag", one.get("likeFlag"));
-        return "travelBoard/info";
+    // 특정 게시글 상세 조회
+    @GetMapping("/info/{boardId}")
+    public ResponseEntity<TravelBoardInfoDTO> getTravelBoardInfo(@PathVariable("boardId") Integer boardId) {
+        TravelBoardInfoDTO info = travelBoardService.getTravelBoardInfo(boardId);
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "보드 상세 조회 완료!", info);
+        return new ResponseEntity(commonResDto, HttpStatus.OK);
     }
-
-    @PostMapping("/{id}/toggle-like")
-    @ResponseBody
-    public ResponseEntity<Integer> toggleLike(@PathVariable int id, HttpSession session) {
-        LoginUserResponseDTO dto = (LoginUserResponseDTO)session.getAttribute("login");
-        log.info(String.valueOf(dto.getId()));
-        int likeCount = travelBoardService.toggleLike(id, dto.getId());
-        return ResponseEntity.ok(likeCount);  // 단일 정수 값 반환
-    }
-
 
 }

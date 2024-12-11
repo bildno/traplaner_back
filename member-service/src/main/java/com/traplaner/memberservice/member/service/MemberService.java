@@ -68,15 +68,24 @@ public class MemberService {
         memberRepository.save(foundMember);
         return true;
     }
+    public boolean changePasswordById(int id, String password) {
+
+        Member foundMember = memberRepository.findById(id).orElseThrow(()->
+                new EntityNotFoundException("비밀번호 변경 실패!")
+        );
+        foundMember.setPassword(encoder.encode(password));
+        memberRepository.save(foundMember);
+        return true;
+    }
 
     public Member login(LoginRequestDto dto) {
         Member member  = memberRepository.findByEmail(dto.getEmail()).orElseThrow(() ->
-                new EntityNotFoundException("User not found")
+                new EntityNotFoundException("NO_ACC")
         );
 
         // 비밀번호 확인하기 (암호화 되어있으니 encoder에게 부탁)
         if (!encoder.matches(dto.getPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new IllegalArgumentException("NO_PW");
         }
 
         return member;
@@ -90,5 +99,14 @@ public class MemberService {
 
     public boolean duplicateTest(String type, String keyword) {
         return memberRepository.duplicateTest(type,keyword);
+    }
+
+    public boolean changeNickNameById(int id, String nickName) {
+        Member member = memberRepository.findById(id).orElseThrow(() -> {
+            return new EntityNotFoundException("닉네임 변경 실패");
+        });
+        member.setNickName(nickName);
+        memberRepository.save(member);
+        return true;
     }
 }

@@ -1,6 +1,6 @@
 package com.traplaner.mypageservice.mypage.dto.response;
 
-import com.traplaner.travelplan.entity.Travel;
+
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,7 +19,7 @@ public class TravelListResponseDTO {
     private boolean share;
 
 
-    public TravelListResponseDTO(Travel travel) {
+    public TravelListResponseDTO(travelPlanResDto travel ) {
         this.id = travel.getId();
         this.title = travel.getTitle();
         this.startDate = makeDateStringFomatter((travel.getStartDate()));

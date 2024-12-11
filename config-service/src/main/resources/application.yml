@@ -1,20 +1,30 @@
 server:
   port: 8888
+
 spring:
-  profiles:
-    active: native
+  #  profiles:         # 로컬 세팅 사용, 배포서버로 올릴 경우에는 주석처리하세요.
+  #    active: native
   application:
     name: config-service
   cloud:
     config:
       server:
-        native:
-          search-locations: C:\Users\playdata2\Desktop\develop\git-local-repo
-#        git:
-#          uri: C:\Users\playdata2\Desktop\develop\git-local-repo
-management:
-  endpoints:
-    web:
-      exposure:
-        include: refresh, health, beans
+        #        native:   # 로컬 세팅 사용, 배포서버로 올릴 경우에는 주석처리하세요.
+        #          search-locations: file:///c:/playdata.io_backend6/projects/traplan-config
+        git:
+          uri: git@github.com:jh080724/traplan-config.git
+          default-label: main
+          host-key: " ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk="
+          host-key-algorithm: "ssh-rsa"
+          private-key: |
+            ${GIT_PRIVATE_KEY}
 
+# log level setting
+logging:
+  level:
+    root: info
+    org:
+      hibernate.SQL: info
+      springframework.cloud.config: info
+    com:
+      traplaner: info

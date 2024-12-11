@@ -29,7 +29,8 @@ public class AuthorizationHeaderFilter
     private String secretKey;
 
     private final List<String> allowUrl = Arrays.asList(
-            "/sign-up", "/sign-in", "/refresh", "/prod-list"
+            "/sign-up", "/sign-in", "/refresh", "/top3-favorite", "/pw-change","/duplicateTest","/info/**","/list","/email"
+
     );
 
     public AuthorizationHeaderFilter() {
@@ -42,9 +43,12 @@ public class AuthorizationHeaderFilter
             String path = exchange.getRequest().getURI().getPath();
             AntPathMatcher antPathMatcher = new AntPathMatcher();
 
+            log.info("Request Path: {}", path);
+            log.info("Allow URLs: {}", allowUrl);
             // 허용 url 리스트를 순회하면서 지금 들어온 요청 url과 하나라도 일치하면 true 리턴
             boolean isAllowed
                     = allowUrl.stream().anyMatch(url -> antPathMatcher.match(url, path));
+            log.info("isAllowed: {}", isAllowed);
             if (isAllowed) {
                 // 허용 url이 맞다면 그냥 통과~
                 return chain.filter(exchange);
@@ -56,7 +60,9 @@ public class AuthorizationHeaderFilter
 
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
                 // 토큰이 존재하지 않거나, Bearer로 시작하지 않는다면
-                return onError(exchange, "Authorization header is missing or invalid", HttpStatus.UNAUTHORIZED);
+                return onError(exchange,
+                        "Authorization header is missing or invalid",
+                        HttpStatus.UNAUTHORIZED);
             }
 
             // Bearer 떼기
@@ -71,8 +77,7 @@ public class AuthorizationHeaderFilter
             // 사용자 정보를 클레임에서 꺼내서 헤더에 담자.
             ServerHttpRequest request = exchange.getRequest()
                     .mutate()
-                    .header("X-User-Email", claims.getSubject())
-                    .header("X-User-Role", claims.get("role", String.class))
+                    .header("X-User-Id", claims.getSubject())
                     .build();
 
             // 새롭게 만든(토큰 정보를 헤더에 담은) request를 exchange에 갈아끼워서 보내자.

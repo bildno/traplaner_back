@@ -1,5 +1,6 @@
 package com.traplaner.mypageservice.mypage.entity;
 
+import com.traplaner.mypageservice.mypage.dto.response.TravelBoardResponseDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class TravelBoard {
     private Integer id;
 
     @JoinColumn
-    private int travelId;              // by jhjeong 11.21
+    private Integer travelId;              // by jhjeong 11.21
 
     @Column(name = "member_nick_name")
     private String memberNickName;
@@ -50,4 +51,14 @@ public class TravelBoard {
     // by jhjeong 11.20
 //    @OneToMany(mappedBy = "travelBoard", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Favorite> favorites;
+
+    public TravelBoardResponseDTO fromEntity() {
+        return TravelBoardResponseDTO.builder()
+                .id(id)
+                .travelId(travelId)
+                .memberNickName(memberNickName)
+                .writeDate(TravelBoardResponseDTO.makeDateStringFomatter(writeDate))
+                .content(content).build();
+    }
+
 }

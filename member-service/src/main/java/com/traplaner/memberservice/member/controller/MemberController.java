@@ -1,11 +1,12 @@
 package com.traplaner.memberservice.member.controller;
 
 import com.traplaner.memberservice.common.auth.JwtTokenProvider;
+import com.traplaner.memberservice.common.config.AwsS3Config;
 import com.traplaner.memberservice.common.dto.CommonErrorDto;
 import com.traplaner.memberservice.common.dto.CommonResDto;
-import com.traplaner.memberservice.common.util.FileUtils;
 import com.traplaner.memberservice.common.util.MailSenderService;
 import com.traplaner.memberservice.member.dto.LoginRequestDto;
+import com.traplaner.memberservice.member.dto.LoginUserResponseDTO;
 import com.traplaner.memberservice.member.dto.SignUpRequestDto;
 import com.traplaner.memberservice.member.entity.Member;
 import com.traplaner.memberservice.member.service.KakaoService;
@@ -22,9 +23,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -40,13 +44,14 @@ public class MemberController {
     private final KakaoService kakaoService;
     private final JwtTokenProvider jwtTokenProvider;
     private final Environment env;
+    private final AwsS3Config s3Config;
 
     @Qualifier("member-template")
     private final RedisTemplate redisTemplate;
 
     //비밀번호 변경로직
     @Transactional
-    @PutMapping("pw-change")
+    @PutMapping("/pw-change")
     @ResponseBody
     public ResponseEntity<?> pwChange(@RequestBody Map<String, String> map)
     {
@@ -58,25 +63,50 @@ public class MemberController {
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "비밀번호 변경 완료!",flag);
         return new ResponseEntity<>(commonResDto,HttpStatus.OK);
     }
+    // 멤버 아이디와 변경된 비밀번호로 비밀번호 변경
+    // dto로 바꿔서 받기 왜 바꿔 똑같잖아
+    @Transactional
+    @PutMapping("/changeInfoById")
+    @ResponseBody
+    public ResponseEntity<?> pwChangeById(@RequestBody Map<String, String> map)
+    {
+        int id = Integer.parseInt(map.get("id"));
+        boolean flag1 = true;
+        boolean flag2 = true;
+
+        if(map.containsKey("newPw")){
+            flag1 = memberService.changePasswordById(id, map.get("newPw"));
+        }
+        if(map.containsKey("newNick")){
+          flag2 = memberService.changeNickNameById(id, map.get("newNick"));
+        }
+
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 정보 변경 완료!", flag1 && flag2);
+        return new ResponseEntity<>(commonResDto,HttpStatus.OK);
+    }
 
 
     // 회원 가입 요청
     // 회원 가입 프로필 이미지 삽입 부분 바꿔야 할듯....
     @PostMapping("/sign-up")
-    public ResponseEntity<?> sign_up(@Valid SignUpRequestDto dto) {
+    public ResponseEntity<?> sign_up(@Valid SignUpRequestDto dto) throws IOException {
         log.info("member/sign-up: Post , dto: {}", dto.toString());
         dto.setLoginMethod(Member.LoginMethod.COMMON);
 
-        // s:파일 업로드 ----------------------
-//        String savePath = FileUtils.uploadFile(dto.getProfileImage(), rootPathProfile);
-        String savePath = FileUtils.uploadFile(dto.getProfileImage(), rootPath);
+        MultipartFile profileImage = dto.getProfileImage();
+
+        String uniqueFileName
+                = UUID.randomUUID() + "_" +     profileImage.getOriginalFilename();
+
+        String imageUrl
+                = s3Config.uploadToS3Bucket(profileImage.getBytes(), uniqueFileName);
 
 //        log.info("rootPathProfile: {}", rootPathProfile);
         log.info("rootPathProfile: {}", rootPath);
-        log.info("signup(): savePath {}", savePath);
+        log.info("signup(): savePath {}", imageUrl);
         // e:파일 업로드 -------------------------
 
-        Member member = memberService.join(dto, savePath);
+        Member member = memberService.join(dto, uniqueFileName);
 
         CommonResDto resDto =
                 new CommonResDto(HttpStatus.CREATED, "member create 성공", member.getId());
@@ -125,9 +155,12 @@ public class MemberController {
         Map<String, Object> logInfo = new HashMap<>();
         logInfo.put("token", token);
         logInfo.put("id", member.getId());
+        logInfo.put("nickName", member.getNickName());
+        logInfo.put("profile", member.getProfileImg());
+        logInfo.put("loginMethod", member.getLoginMethod());
 
         CommonResDto resDto
-                = new CommonResDto(HttpStatus.OK, "로그인 성공!", logInfo);
+                = new CommonResDto(HttpStatus.OK, "SUCCESS", logInfo);
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
 
@@ -174,8 +207,7 @@ public class MemberController {
     @ResponseBody
     public ResponseEntity<?> mailCheck(@RequestBody String email) {
         log.info("이메일 인증 요청 들어옴!: {}", email);
-        //여기도 중복검사 다시해야함
-        if(memberService.duplicateTest("email", email)) {
+        if(!memberService.duplicateTest("email", email)) {
             log.info("존재하지 않는 회원");
             CommonResDto resDto
                     = new CommonResDto(HttpStatus.BAD_REQUEST,"존재하지 않는 회원입니다.", "");
@@ -187,6 +219,7 @@ public class MemberController {
                     = new CommonResDto(HttpStatus.OK,"올바른 이메일입니다.",authNum);
             return new ResponseEntity<>(resDto, HttpStatus.OK);
         } catch (MessagingException e) {
+            //이거 왜 없는 메일도 보내지냐
             CommonResDto resDto
                     = new CommonResDto(HttpStatus.BAD_REQUEST,"존재하지 않는 이메일 입니다.","");
             return new ResponseEntity<>(resDto, HttpStatus.BAD_REQUEST);
@@ -194,6 +227,19 @@ public class MemberController {
 
 
     }
+    @GetMapping("/getMemberById/{id}")
+    public ResponseEntity<?> getMemberById(@PathVariable("id") int id) {
+       Member member = memberService.findById(id);
+       LoginUserResponseDTO dto = new LoginUserResponseDTO(member);
+       CommonResDto resDto
+               = new CommonResDto(HttpStatus.OK,"멤버 찾았음",member);
+       return new ResponseEntity<>(resDto, HttpStatus.OK);
+    }
+    // dto 변경
+
+
+
+
     @GetMapping("/health-check")
     public String healthCheck() {
         return String.format("It's Working in User Service"

@@ -1,22 +1,27 @@
 package com.traplaner.mypageservice.mypage.repository;
 
+
 import com.traplaner.mypageservice.mypage.dto.response.TravelBoardResponseDTO;
 import com.traplaner.mypageservice.mypage.entity.TravelBoard;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Quareery;\n" +
-            "\n" +
-            "public interface MyPageTravelBoardRepository extends JpaRepository<TravelBoard, Integer> {\n" +
-            "\n" +
-            "    @Query(value = \"select\" +\n" +
-            "            \" tb.id, \" +\n" +
-            "            \"tb.travel.id, \" +\n" +
-            "            \"tb.memberNickName, \" +\n" +
-            "            \"DATE_FORMAT(tb.writeDate, '%Y-%m-%d') as write_date \" +\n" +
-            "            \"from TravelBoard tb join Travel t on tb.travel.id  = t.id \" +\n" +
-            "            \"where tb.memberNickName = ?1 and t.sh = true")
-    Page<TravelBoardResponseDTO> findByMemberNickName(String nickName, Pageable pageable);
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface MyPageTravelBoardRepository extends JpaRepository<TravelBoard, Integer> {
 
 
-    Long countById(long travelId);
+    @Query(value = "select t from TravelBoard t where t.memberNickName = ?1")
+    Page<TravelBoard> findByMemberNickName(String nickName, Pageable pageable);
+
+
+    Long countByTravelId(int travelId);
+
+
+    Optional<TravelBoard> findByTravelId(int travelNo);
+
+    List<TravelBoard> findByIdIn(List<Integer> boardIds);
 }
