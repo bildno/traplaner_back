@@ -1,115 +1,94 @@
 package com.traplaner.memberservice.member.controller;
 
-import com.traplaner.memberservice.common.auth.JwtTokenProvider;
+import com.traplaner.memberservice.member.controller.port.MemberService;
+import com.traplaner.memberservice.member.controller.request.MemberSignUpRequest;
+import com.traplaner.memberservice.member.infrastructure.JwtTokenProvider;
 import com.traplaner.memberservice.common.config.AwsS3Config;
 import com.traplaner.memberservice.common.dto.CommonErrorDto;
 import com.traplaner.memberservice.common.dto.CommonResDto;
-import com.traplaner.memberservice.common.util.MailSenderService;
-import com.traplaner.memberservice.member.dto.LoginRequestDto;
-import com.traplaner.memberservice.member.dto.LoginUserResponseDTO;
-import com.traplaner.memberservice.member.dto.SignUpRequestDto;
-import com.traplaner.memberservice.member.entity.Member;
+import com.traplaner.memberservice.common.exception.ExpiredRefreshTokenException;
+import com.traplaner.memberservice.common.exception.MemberNotFoundException;
+import com.traplaner.memberservice.member.controller.response.RefreshResponse;
+import com.traplaner.memberservice.member.domain.RefreshRequest;
+import com.traplaner.memberservice.member.service.AuthService;
+import com.traplaner.memberservice.member.service.MailSenderService;
+import com.traplaner.memberservice.member.domain.LoginRequest;
+import com.traplaner.memberservice.member.domain.LoginResponse;
+import com.traplaner.memberservice.member.domain.Member;
 import com.traplaner.memberservice.member.service.KakaoService;
-import com.traplaner.memberservice.member.service.MemberService;
+import com.traplaner.memberservice.member.service.MemberServiceImpl;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/member")
 public class MemberController {
 
     private final MailSenderService mailSenderService;
-    @Value("${file.upload.root-path}")
-    private String rootPath;
-
     private final MemberService memberService;
     private final KakaoService kakaoService;
+    private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
     private final Environment env;
     private final AwsS3Config s3Config;
 
-    @Qualifier("member-template")
+//    @Qualifier("member-template")
     private final RedisTemplate redisTemplate;
 
     //비밀번호 변경로직
     @Transactional
     @PutMapping("/pw-change")
     @ResponseBody
-    public ResponseEntity<?> pwChange(@RequestBody Map<String, String> map)
+    public ResponseEntity<?> pwChangeByEmail(@RequestBody Map<String, String> map)
     {
         String email = map.get("email");
         String password = map.get("password");
         String flag = memberService.changePassword(email, password)?"성공!":"실패!";
         log.info(email);
         log.info("변경 비밀번호: {}", password);
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "비밀번호 변경 완료!",flag);
+        CommonResDto<Boolean> commonResDto = new CommonResDto<>(HttpStatus.OK, "비밀번호 변경 완료!",flag);
         return new ResponseEntity<>(commonResDto,HttpStatus.OK);
     }
     // 멤버 아이디와 변경된 비밀번호로 비밀번호 변경
-    // dto로 바꿔서 받기 왜 바꿔 똑같잖아
     @Transactional
     @PutMapping("/changeInfoById")
     @ResponseBody
-    public ResponseEntity<?> pwChangeById(@RequestBody Map<String, String> map)
+    public ResponseEntity<?> changeInfoById(@RequestBody Map<String, String> map)
     {
         int id = Integer.parseInt(map.get("id"));
         boolean flag1 = true;
         boolean flag2 = true;
 
         if(map.containsKey("newPw")){
-            flag1 = memberService.changePasswordById(id, map.get("newPw"));
+          flag1 = memberService.changePasswordById(id, map.get("newPw"));
         }
         if(map.containsKey("newNick")){
           flag2 = memberService.changeNickNameById(id, map.get("newNick"));
         }
 
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "member 정보 변경 완료!", flag1 && flag2);
+        CommonResDto<Boolean> commonResDto = new CommonResDto<>(HttpStatus.OK, "member 정보 변경 완료!", flag1 && flag2);
         return new ResponseEntity<>(commonResDto,HttpStatus.OK);
     }
-
-
     // 회원 가입 요청
-    // 회원 가입 프로필 이미지 삽입 부분 바꿔야 할듯....
     @PostMapping("/sign-up")
-    public ResponseEntity<?> sign_up(@Valid SignUpRequestDto dto) throws IOException {
+    public ResponseEntity<?> sign_up(@Valid MemberSignUpRequest dto) throws IOException {
         log.info("member/sign-up: Post , dto: {}", dto.toString());
-        dto.setLoginMethod(Member.LoginMethod.COMMON);
-
-        MultipartFile profileImage = dto.getProfileImage();
-
-        String uniqueFileName
-                = UUID.randomUUID() + "_" +     profileImage.getOriginalFilename();
-
-        String imageUrl
-                = s3Config.uploadToS3Bucket(profileImage.getBytes(), uniqueFileName);
-
-//        log.info("rootPathProfile: {}", rootPathProfile);
-        log.info("rootPathProfile: {}", rootPath);
-        log.info("signup(): savePath {}", imageUrl);
-        // e:파일 업로드 -------------------------
-
-        Member member = memberService.join(dto, uniqueFileName);
-
-        CommonResDto resDto =
-                new CommonResDto(HttpStatus.CREATED, "member create 성공", member.getId());
+        Member member = memberService.signUp(dto);
+        CommonResDto<Integer> resDto =
+                new CommonResDto<>(HttpStatus.CREATED, "member create 성공", member.getId());
 
         return new ResponseEntity<>(resDto, HttpStatus.CREATED);
     }
@@ -119,136 +98,61 @@ public class MemberController {
     @ResponseBody
     public ResponseEntity<?> check(@RequestBody Map<String, Object> params) {
 
-        System.out.println("=====================================");
-
         log.info("type: {}", params.get("type"));
         log.info("keyword: {}", params.get("keyword"));
-        //jpa로 다시해야함
+
         boolean flag = memberService.duplicateTest((String) params.get("type"), (String) params.get("keyword"));
         return ResponseEntity.ok()
                 .body(flag);
     }
 
-    //로그인 요청
     @PostMapping("/sign-in")
-    public ResponseEntity<?> signIn(@RequestBody LoginRequestDto dto) {
+    public ResponseEntity<?> signIn(@RequestBody LoginRequest dto) {
         // email, password가 맞는 지 검증
-        Member member = memberService.login(dto);
-
-        // 회원 정보가 일치한다면, JWT를 클라이언트에게 발급해 주어야 한다. -> 로그인 유지를 위해!
-        // Access Token을 생성해서 발급해 주겠다. -> 수명이 짧습니다.
-        String token
-                = jwtTokenProvider.createToken(member.getId());
-        log.info("token: {}", token);
-
-        // Refresh Token을 생성해 주겠다.
-        // Access Token의 수명이 만료되었을 경우 Refresh Token을 확인해서 리프레시가 유효한 경우
-        // 로그인 없이 Access Token을 재발급 해주는 용도로 사용.
-        String refreshToken
-                = jwtTokenProvider.createRefreshToken(member.getEmail());
-
-        // refresh Token을 DB에 저장하자. -> redis에 저장.
-        redisTemplate.opsForValue().set(member.getEmail(), refreshToken, 240, TimeUnit.HOURS);
-
-
-        // 생성된 토큰 외에 추가로 전달할 정보가 있다면 Map을 사용하는 것이 좋습니다.
-        Map<String, Object> logInfo = new HashMap<>();
-        logInfo.put("token", token);
-        logInfo.put("id", member.getId());
-        logInfo.put("nickName", member.getNickName());
-        logInfo.put("profile", member.getProfileImg());
-        logInfo.put("loginMethod", member.getLoginMethod());
-
-        CommonResDto resDto
-                = new CommonResDto(HttpStatus.OK, "SUCCESS", logInfo);
+        LoginResponse loginResponse = memberService.login(dto);
+        CommonResDto<LoginResponse> resDto
+                = new CommonResDto<>(HttpStatus.OK, "SUCCESS", loginResponse);
         return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
 
-    @Value("${sns.kakao.Client-Id}")
-    private String kakaoClientId;
-    @Value("${sns.kakao.logout-redirect}")
-    private String kakaoLogoutRedirectUri;
-
     // access token이 만료되어 새 토큰을 요청
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> id) {
-        log.info("/members/refresh: POST, id: {}", id);
-        Member member = memberService.findById(Integer.parseInt(id.get("id")));
-        log.info("조회된 Member: {}", member);
-
-        // email로 redis를 조회해서 refresh token을 가져오자
-        Object obj = redisTemplate.opsForValue().get(member.getEmail());
-        log.info("레디스에서 조회한 데이터: {}", obj);
-        if (obj == null) { // refresh token의 수명이 다됨.
-            log.info("refresh 만료!");
-            if(member.getLoginMethod() == Member.LoginMethod.KAKAO) {
-                // 카카오 로그인 세션 종료시키기 어떻게하징........ㅠ
-//                kakaoService.logout();
+    public ResponseEntity<?> refresh(@RequestBody RefreshRequest request) {
+        try {
+            String newAccessToken = authService.refreshAccessToken(request.memberId());
+            return ResponseEntity.ok(new CommonResDto(HttpStatus.OK, "새 토큰 발급됨!", new RefreshResponse(newAccessToken)));
+        } catch (ExpiredRefreshTokenException e) {
+            //이거 다시 처리해야함.
+            if (e.loginMethod() == Member.LoginMethod.KAKAO) {
+                // 카카오 로그아웃 요청 (Event로 처리해도 좋음)
             }
-            return new ResponseEntity<>(new CommonErrorDto(
-                    HttpStatus.UNAUTHORIZED,
-                    "EXPIRED_RT"
-            ), HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new CommonErrorDto(HttpStatus.UNAUTHORIZED, "EXPIRED_RT"));
         }
-
-        // 새로운 access token을 발급하자.
-        String newAccessToken
-                = jwtTokenProvider.createToken(member.getId());
-
-        Map<String, Object> info = new HashMap<>();
-        info.put("token", newAccessToken);
-        CommonResDto resDto
-                = new CommonResDto(HttpStatus.OK, "새 토큰 발급됨!", info);
-
-        return new ResponseEntity<>(resDto, HttpStatus.OK);
     }
 
     @PostMapping("/email")
     @ResponseBody
-    public ResponseEntity<?> mailCheck(@RequestBody String email) {
-        log.info("이메일 인증 요청 들어옴!: {}", email);
-        if(!memberService.duplicateTest("email", email)) {
-            log.info("존재하지 않는 회원");
-            CommonResDto resDto
-                    = new CommonResDto(HttpStatus.BAD_REQUEST,"존재하지 않는 회원입니다.", "");
-            return new ResponseEntity<>(resDto, HttpStatus.BAD_REQUEST);
-        };
+    public ResponseEntity<CommonResDto<String>> mailCheck(@RequestBody String email) {
         try {
-            String authNum = mailSenderService.joinMail(email);
-            CommonResDto resDto
-                    = new CommonResDto(HttpStatus.OK,"올바른 이메일입니다.",authNum);
-            return new ResponseEntity<>(resDto, HttpStatus.OK);
+            String authNum = memberService.verifyAndSendAuthCode(email);
+            return ResponseEntity.ok(new CommonResDto<>(HttpStatus.OK, "인증 번호 전송 완료", authNum));
+        } catch (MemberNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new CommonResDto<>(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.", ""));
         } catch (MessagingException e) {
-            //이거 왜 없는 메일도 보내지냐
-            CommonResDto resDto
-                    = new CommonResDto(HttpStatus.BAD_REQUEST,"존재하지 않는 이메일 입니다.","");
-            return new ResponseEntity<>(resDto, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new CommonResDto<>(HttpStatus.BAD_REQUEST, "이메일 전송 실패", ""));
         }
-
-
     }
+
     @GetMapping("/getMemberById/{id}")
     public ResponseEntity<?> getMemberById(@PathVariable("id") int id) {
        Member member = memberService.findById(id);
-       LoginUserResponseDTO dto = new LoginUserResponseDTO(member);
-       CommonResDto resDto
-               = new CommonResDto(HttpStatus.OK,"멤버 찾았음",member);
+       LoginResponse dto = new LoginResponse(member);
+       CommonResDto<Member> resDto
+               = new CommonResDto<>(HttpStatus.OK,"멤버 찾았음",member);
        return new ResponseEntity<>(resDto, HttpStatus.OK);
-    }
-    // dto 변경
-
-
-
-
-    @GetMapping("/health-check")
-    public String healthCheck() {
-        return String.format("It's Working in User Service"
-                + ", port(local.server.port)=" + env.getProperty("local.server.port")
-                + ", port(server.port)=" + env.getProperty("server.port")
-                + ", gateway ip=" + env.getProperty("gateway.ip")
-                + ", token secret=" + env.getProperty("token.secret")
-                + ", token expiration time=" + env.getProperty("token.expiration_time"));
-
     }
 
 }

@@ -1,4 +1,4 @@
-package com.traplaner.memberservice.member.dto;
+package com.traplaner.memberservice.member.controller.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Setter @Getter @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class KakaoUserResponseDTO {
+public class KakaoLoginResponse {
 
     private int id;
 

@@ -1,7 +1,6 @@
 package com.traplaner.memberservice.common.auth;
 
-import com.traplaner.memberservice.common.auth.JwtTokenProvider;
-import com.traplaner.memberservice.common.auth.TokenUserInfo;
+import com.traplaner.memberservice.member.infrastructure.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,6 +59,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // 필터를 통과하는 메서드 (doFilter 안하면 필터를 통과하지 못함)
 
         else {
+            List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            Authentication auth = new UsernamePasswordAuthenticationToken(
+                    new TokenUserInfo(MemberId),// 컨트롤러 등에서 활용할 유저 정보
+                    "" // 인증된 사용자 비밀번호: 보통 null 혹은 빈 문자열로 선언.
+                    ,authorities
+            );
+
+            // 시큐리티 컨테이너에 인증 정보 객체 등록
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
 //            log.warn("X-User-Id header is missing. Skipping authentication.");
 //            List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 //            authorities.add(new SimpleGrantedAuthority("ROLE_UNKNOWN"));

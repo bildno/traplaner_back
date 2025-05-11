@@ -56,15 +56,14 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
 //        http
-//                .exceptionHandling(exception -> {
-//                    // 인증 과정에서 예외가 발생한 경우 그 예외를 핸들링 할 객체를 등록.
-//                    exception.authenticationEntryPoint(customAuthenticationEntryPoint);
+////                .exceptionHandling(exception -> {
+////                    // 인증 과정에서 예외가 발생한 경우 그 예외를 핸들링 할 객체를 등록.
+////                    exception.authenticationEntryPoint(customAuthenticationEntryPoint);
 //                });
 
 
         return http.build();
     }
-
 
 
 }

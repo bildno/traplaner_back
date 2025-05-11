@@ -1,4 +1,4 @@
-package com.traplaner.memberservice.member.dto;
+package com.traplaner.memberservice.member.domain;
 
 
 import lombok.*;
@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @Setter @Getter @ToString
 @Builder
-public class LoginRequestDto {
+public class LoginRequest {
 
     private String email;
     private String password;

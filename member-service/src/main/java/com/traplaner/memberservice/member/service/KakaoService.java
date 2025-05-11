@@ -1,9 +1,7 @@
 package com.traplaner.memberservice.member.service;
 
-import com.traplaner.memberservice.common.auth.JwtTokenProvider;
-import com.traplaner.memberservice.member.dto.KakaoUserResponseDTO;
-import com.traplaner.memberservice.member.entity.Member;
-import com.traplaner.memberservice.member.dto.SignUpRequestDto;
+import com.traplaner.memberservice.member.infrastructure.JwtTokenProvider;
+import com.traplaner.memberservice.member.controller.response.KakaoLoginResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,17 +16,19 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static com.traplaner.memberservice.member.entity.Member.*;
-import static com.traplaner.memberservice.member.entity.Member.LoginMethod.*;
+//import java.util.Map;
+//import java.util.UUID;
+//import java.util.concurrent.TimeUnit;
+//
+//import static com.traplaner.memberservice.member.infrastructure.MemberEntity.LoginMethod.*;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class KakaoService {
-    private final MemberService memberService;
+    private final MemberServiceImpl memberService;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate redisTemplate;
 
@@ -37,7 +37,7 @@ public class KakaoService {
 
         String accessToken = getKakaoAccessToken(params);
         // 발급받은 액세스 토큰으로 사용자 정보 가져오기
-        KakaoUserResponseDTO kakaoUser = getKakaoUserInfo(accessToken);
+        KakaoLoginResponse kakaoUser = getKakaoUserInfo(accessToken);
         session.setAttribute("access_token", accessToken);
         session.setAttribute("kakaoAccount", kakaoUser.getId());
 
@@ -49,12 +49,12 @@ public class KakaoService {
         if (true) {
             // 커먼 아이디와 같은 이메일일 경우를 처리 해야함
             // 한 번도 카카오 로그인을 한 적이 없다면 회원 가입이 들어간다.
-            memberService.join(SignUpRequestDto.builder()
-                            .password(UUID.randomUUID().toString())
-                            .nickName(kakaoUser.getProperties().getNickname())
-                            .email(kakaoUser.getAccount().getEmail())
-                            .loginMethod(KAKAO)
-                            .build(), kakaoUser.getProperties().getProfileImage());
+//            memberService.signUp(MemberCreate.builder()
+//                            .password(UUID.randomUUID().toString())
+//                            .nickName(kakaoUser.getProperties().getNickname())
+//                            .email(kakaoUser.getAccount().getEmail())
+//                            .loginMethod(KAKAO)
+//                            .build(), kakaoUser.getProperties().getProfileImage());
         }
         // 우리 사이트 로그인 처리
         log.info("카카오 로그인이에욥!");
@@ -91,7 +91,7 @@ public class KakaoService {
     }
 
 
-    private KakaoUserResponseDTO getKakaoUserInfo(String accessToken) {
+    private KakaoLoginResponse getKakaoUserInfo(String accessToken) {
 
         String requestUri = "https://kapi.kakao.com/v2/user/me";
 
@@ -102,13 +102,13 @@ public class KakaoService {
 
         // 요청 보내기
         RestTemplate template = new RestTemplate();
-        ResponseEntity<KakaoUserResponseDTO> responseEntity = template.exchange(
+        ResponseEntity<KakaoLoginResponse> responseEntity = template.exchange(
                 requestUri,
                 HttpMethod.POST,
                 new HttpEntity<>(headers),
-                KakaoUserResponseDTO.class
+                KakaoLoginResponse.class
         );
-        KakaoUserResponseDTO userInfo = responseEntity.getBody();
+        KakaoLoginResponse userInfo = responseEntity.getBody();
 
         log.info("응답 데이터 결과: {}", userInfo);
 

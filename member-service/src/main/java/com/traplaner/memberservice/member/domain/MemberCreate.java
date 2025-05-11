@@ -1,10 +1,8 @@
-package com.traplaner.memberservice.member.dto;
-import com.traplaner.memberservice.member.entity.Member;
+package com.traplaner.memberservice.member.domain;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
@@ -13,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignUpRequestDto {
+public class MemberCreate {
 
     @NotBlank(message = "이메일 필수!")
     @Email
@@ -26,18 +24,17 @@ public class SignUpRequestDto {
     @Size(min = 2, max = 6)
     private String nickName;
 
-    private MultipartFile profileImage;
+    private String profileImage;
 
     private Member.LoginMethod loginMethod;
 
-
-    public Member toEntity(PasswordEncoder encoder, String savePath) {
+    public Member toModel() {
         return Member.builder()
                 .email(email)
-                .password(encoder.encode(password))
+                .password(password)
                 .nickName(nickName)
                 .loginMethod(loginMethod)
-                .profileImg(savePath)
+                .profileImg(profileImage)
                 .build();
     }
 }

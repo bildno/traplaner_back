@@ -1,5 +1,7 @@
-package com.traplaner.memberservice.common.auth;
+package com.traplaner.memberservice.member.infrastructure;
 
+import com.traplaner.memberservice.common.auth.TokenUserInfo;
+import com.traplaner.memberservice.member.service.port.TokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -12,7 +14,7 @@ import java.util.Date;
 @Component
 @Slf4j
 // 역할: 토큰을 발급하고, 서명 위조를 검사하는 객체
-public class JwtTokenProvider {
+public class JwtTokenProvider implements TokenProvider {
 
     // 서명에 사용할 값 (512비트 이상의 랜덤 문자열을 권장)
     // yml에 있는 값 땡겨오기 (properties 방식으로 선언)
@@ -41,6 +43,7 @@ public class JwtTokenProvider {
                 == 서명
             }
      */
+    @Override
     public String createToken(Integer id) {
         // Claims: 페이로드에 들어갈 사용자 정보
         Claims claims = Jwts.claims().setSubject(id.toString());
